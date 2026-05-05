@@ -1813,13 +1813,15 @@
         input.value = JSON.stringify(data);
         form.appendChild(input);
 
-        document.body.appendChild(form);
-        form.submit();
-
-        setTimeout(function() {
+        var firstLoad = true;
+        iframe.addEventListener('load', function() {
+          if (firstLoad) { firstLoad = false; return; }
           if (form.parentNode) document.body.removeChild(form);
           if (iframe.parentNode) document.body.removeChild(iframe);
-        }, 5000);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
       } catch (err) {
         console.error('Sheet sync failed:', err);
       }

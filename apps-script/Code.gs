@@ -12,6 +12,7 @@
 // 6. Copy the Web App URL
 // 7. Paste it as the SCRIPT_URL value in index.html
 
+var SPREADSHEET_ID = '1iF82FZVmyEICGrtb5uDJrY4y4e-0SYLEwHkcDXZvBXs';
 var SHEET_NAME = 'New Intake Form';
 
 var HEADERS = [
@@ -46,7 +47,7 @@ var HEADERS = [
 
 function doPost(e) {
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     var sheet = ss.getSheetByName(SHEET_NAME);
 
     if (!sheet) {
