@@ -1,0 +1,10 @@
+{
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "functions": {
+    "api/submit.js": {
+      "memory": 256,
+      "maxDuration": 15
+    }
+  }
+}

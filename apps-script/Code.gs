@@ -1,4 +1,4 @@
-// Google Apps Script — AICR Intake Form → Google Sheets
+// Google Apps Script — AICR Request-a-Proposal Form → Google Sheets
 //
 // SETUP INSTRUCTIONS:
 // 1. Open the target Google Sheet
@@ -10,7 +10,7 @@
 //    - Who has access: Anyone
 // 5. Authorize the permissions when prompted
 // 6. Copy the Web App URL
-// 7. Paste it as the SCRIPT_URL value in index.html
+// 7. Set that URL as SCRIPT_URL in index.html (search for "SCRIPT_URL")
 
 var SPREADSHEET_ID = '1iF82FZVmyEICGrtb5uDJrY4y4e-0SYLEwHkcDXZvBXs';
 var SHEET_NAME = 'New Intake Form';
@@ -21,32 +21,32 @@ var SHEET_NAME = 'New Intake Form';
 
 var HEADERS = [
   'Timestamp',
-  'Organization',
-  'G2 Profile Link(s)',
+  'Company',
+  'G2 Profile',
   'Contact Name',
   'Contact Email',
-  'Key Stakeholders',
-  'Research Purpose',
-  'Research Topics',
-  'Key Insights Sought',
-  'Target Audience',
-  'Geographies',
-  'Exclusions',
-  'Panel Sourcing',
-  'Competitive Benchmarking',
-  'Competitors',
-  'Panel Size',
+  'Stakeholders',
+  'Product Type',
+  'Sample Size',
   'Respondent Seniority',
-  'Interview Length',
-  'Report Format(s)',
-  'Add-ons',
-  'Analytical Lenses',
-  'Branding',
-  'G2 Assets Integration',
-  'Writing Lead',
-  'Target Delivery Date',
-  'Timeline Flexibility',
-  'Estimated Total ($)'
+  'Research Depth',
+  'Interview Targets',
+  'Research Topics',
+  'Synth Category',
+  'Synth Angle',
+  'Synth Persona',
+  'Case Study Interviews',
+  'Case Study Seniority',
+  'Geographies',
+  'Delivery Tier',
+  'AEO Add-on',
+  'Report Format',
+  'Goals',
+  'Brief Description',
+  'Engagement Type',
+  'Cadence',
+  'Deadline',
+  'Deadline Flexibility'
 ];
 
 function doPost(e) {
@@ -62,42 +62,45 @@ function doPost(e) {
       sheet.appendRow(HEADERS);
       sheet.getRange(1, 1, 1, HEADERS.length)
         .setFontWeight('bold')
-        .setBackground('#5A39A2')
+        .setBackground('#5746B2')
         .setFontColor('#FFFFFF');
       sheet.setFrozenRows(1);
     }
 
-    var raw = (e.parameter && e.parameter.payload) ? e.parameter.payload : e.postData.contents;
-    var data = JSON.parse(raw);
+    // Accepts both form-encoded (?payload=...) and raw JSON body
+    var raw = (e.parameter && e.parameter.payload)
+      ? e.parameter.payload
+      : e.postData.contents;
+    var d = JSON.parse(raw);
 
     sheet.appendRow([
-      data.timestamp         || '',
-      data.orgName           || '',
-      data.g2Links           || '',
-      data.contactName       || '',
-      data.contactEmail      || '',
-      data.stakeholders      || '',
-      data.purpose           || '',
-      data.topics            || '',
-      data.insights          || '',
-      data.audience          || '',
-      data.geographies       || '',
-      data.exclusions        || '',
-      data.panelSourcing     || '',
-      data.competitive       || '',
-      data.competitors       || '',
-      data.panelSize ? String(data.panelSize) : '',
-      data.seniority         || '',
-      data.interviewLength   || '',
-      (data.reportFormat || []).join(', '),
-      (data.addons       || []).join(', '),
-      (data.lenses       || []).join(', '),
-      data.branding          || '',
-      data.g2Assets          || '',
-      data.writingLead       || '',
-      data.targetDate        || '',
-      data.flexibility       || '',
-      data.estimatedTotal    || ''
+      d.timestamp           || '',
+      d.company             || '',
+      d.g2Profile           || '',
+      d.contactName         || '',
+      d.contactEmail        || '',
+      d.stakeholders        || '',
+      d.productType         || '',
+      d.sampleSize          || '',
+      d.seniority           || '',
+      d.researchDepth       || '',
+      d.interviewTargets    || '',
+      d.researchTopics      || '',
+      d.synthCategory       || '',
+      d.synthAngle          || '',
+      d.synthPersona        || '',
+      d.caseStudyInterviews || '',
+      d.caseStudySeniority  || '',
+      d.geographies         || '',
+      d.deliveryTier        || '',
+      d.aeoAddon            || '',
+      d.reportFormat        || '',
+      d.goals               || '',
+      d.description         || '',
+      d.engagementType      || '',
+      d.cadence             || '',
+      d.deadline            || '',
+      d.deadlineFlexibility || ''
     ]);
 
     return ContentService
@@ -111,9 +114,8 @@ function doPost(e) {
   }
 }
 
-// Allows testing from the Apps Script editor via doGet
 function doGet() {
   return ContentService
-    .createTextOutput('AICR intake endpoint is live.')
+    .createTextOutput('AICR proposal endpoint is live.')
     .setMimeType(ContentService.MimeType.TEXT);
 }
