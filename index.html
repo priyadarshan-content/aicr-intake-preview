@@ -1541,11 +1541,11 @@
 
   // ============ HELPERS ============
   function getRadioValue(name) {
-    const el = document.querySelector(\`input[name="${name}"]:checked\`);
+    const el = document.querySelector(`input[name="${name}"]:checked`);
     return el ? el.value : '';
   }
   function getCheckedLabels(name) {
-    return Array.from(document.querySelectorAll(\`input[name="${name}"]:checked\`))
+    return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
       .map(i => i.closest('.option-content')?.querySelector('.option-label')?.textContent?.trim() || i.value)
       .join(', ');
   }
@@ -1570,7 +1570,7 @@
     }
 
     function markRadio(name, cardId, errId) {
-      const checked = document.querySelector(\`input[name="${name}"]:checked\`);
+      const checked = document.querySelector(`input[name="${name}"]:checked`);
       const card = document.getElementById(cardId);
       const err = document.getElementById(errId);
       if (!checked) {
@@ -1584,7 +1584,7 @@
     }
 
     function markCheckboxGroup(name, cardId, errId) {
-      const checked = document.querySelectorAll(\`input[name="${name}"]:checked\`);
+      const checked = document.querySelectorAll(`input[name="${name}"]:checked`);
       const card = document.getElementById(cardId);
       const err = document.getElementById(errId);
       if (checked.length === 0) {
