@@ -461,6 +461,12 @@
     font-weight: 600;
     color: var(--g2-dark);
   }
+  .feature-desc {
+    font-size: 12px;
+    color: var(--g2-text-light);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
 
   /* Buttons */
   .btn {
@@ -572,7 +578,13 @@
 <div class="header">
   <div class="header-logo">
     <a href="https://aicr.sell.g2.com" aria-label="G2 AI Custom Research" style="display:inline-flex; line-height:0; text-decoration:none;">
-      <img src="https://logo.clearbit.com/g2.com" alt="G2" class="g2-logo-svg">
+      <svg class="g2-logo-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="G2">
+        <rect width="80" height="80" rx="14" ry="14" fill="#FF492C"/>
+        <text x="40" y="56" text-anchor="middle"
+              font-family="Figtree, -apple-system, sans-serif"
+              font-weight="800" font-size="44" fill="#FFFFFF"
+              letter-spacing="-1.5">G2</text>
+      </svg>
     </a>
     <div class="header-divider" aria-hidden="true"></div>
     <div>
@@ -602,14 +614,17 @@
       <div class="feature-item">
         <div class="feature-icon">🎙️</div>
         <div class="feature-name">AI-Moderated Interviews</div>
+        <div class="feature-desc">Real conversations at scale with verified professionals</div>
       </div>
       <div class="feature-item">
         <div class="feature-icon">📊</div>
         <div class="feature-name">Actionable Deliverables</div>
+        <div class="feature-desc">Reports and insights you can act on immediately</div>
       </div>
       <div class="feature-item">
         <div class="feature-icon">🏆</div>
         <div class="feature-name">Powered by G2 Data</div>
+        <div class="feature-desc">Built on the world's largest software marketplace</div>
       </div>
     </div>
     <button class="btn btn-primary btn-large" onclick="goToStep(1)">Get Started →</button>
