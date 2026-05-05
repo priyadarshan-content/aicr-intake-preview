@@ -1795,48 +1795,61 @@
 
     y = 50;
 
+    // Helper: get label-only text from an option card (avoids grabbing description subtitle)
+    const cardLabel = sel =>
+      document.querySelector(sel)?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || null;
+    const cardLabels = sel =>
+      Array.from(document.querySelectorAll(sel))
+        .map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim())
+        .filter(Boolean).join(', ');
+
     // Gather data
     let summaryData = {
-      company: document.getElementById('rp_company')?.value || 'Not provided',
-      contact: document.getElementById('rp_name')?.value || 'Not provided',
-      email: document.getElementById('rp_email')?.value || 'Not provided',
-      productType: document.querySelector('input[name="rp_product_type"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
-      deliveryTier: document.querySelector('input[name="rp_delivery_tier"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
-      aeoAddon: document.querySelector('input[name="rp_aeo_addon"]:checked')?.parentElement?.textContent?.trim() || 'None',
-      panelSize: document.getElementById('rp_sample_size')?.value || 'Not selected',
-      seniority: document.querySelector('input[name="rp_seniority"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
-      researchDepth: document.querySelector('input[name="rp_research_depth"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
-      complexity: Array.from(document.querySelectorAll('input[name="rp_complexity"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || 'None',
-      audioTranscript: document.querySelector('input[name="rp_audio_transcript"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
-      geographies: Array.from(document.querySelectorAll('input[name="rp_geographies"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || 'Not selected',
-      goals: Array.from(document.querySelectorAll('input[name="rp_goals"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || 'Not selected',
-      description: document.getElementById('rp_description')?.value || 'Not provided',
-      engagementType: document.querySelector('input[name="rp_engagement_type"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
-      deadline: document.getElementById('rp_deadline_date')?.value || 'Not provided'
+      company:        document.getElementById('rp_company')?.value || 'Not provided',
+      contact:        document.getElementById('rp_name')?.value || 'Not provided',
+      email:          document.getElementById('rp_email')?.value || 'Not provided',
+      productType:    cardLabel('input[name="rp_product_type"]:checked') || 'Not selected',
+      deliveryTier:   cardLabel('input[name="rp_delivery_tier"]:checked') || 'Not selected',
+      aeoAddon:       cardLabel('input[name="rp_aeo_addon"]:checked') || 'None',
+      panelSize:      document.getElementById('rp_sample_size')?.value || '',
+      seniority:      cardLabel('input[name="rp_seniority"]:checked') || '',
+      researchDepth:  cardLabel('input[name="rp_research_depth"]:checked') || '',
+      audioTranscript:cardLabel('input[name="rp_audio_transcript"]:checked') || '',
+      geographies:    cardLabels('input[name="rp_geographies"]:checked') || 'Not selected',
+      goals:          cardLabels('input[name="rp_goals"]:checked') || '',
+      description:    document.getElementById('rp_description')?.value || 'Not provided',
+      engagementType: cardLabel('input[name="rp_engagement_type"]:checked') || '',
+      deadline:       document.getElementById('rp_deadline_date')?.value || 'Not provided'
     };
 
-    // Content section
-    doc.setFontSize(11);
+    // ── Section heading ──────────────────────────────────────────────────────
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...dark);
+    doc.setTextColor(...purple);
     doc.text('ENGAGEMENT DETAILS', ML, y);
+    // Purple rule under heading
+    doc.setDrawColor(...purple);
+    doc.setLineWidth(0.5);
+    doc.line(ML, y + 2, W - MR, y + 2);
     y += 10;
 
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-
-    // Helper: add a key-value row
+    // Helper: add a key-value row with G2 purple labels
     const addRow = (label, value) => {
-      checkPage(8);
+      checkPage(10);
+      // Thin light-gray separator
+      doc.setDrawColor(...lightGray);
+      doc.setLineWidth(0.2);
+      doc.line(ML, y - 1, W - MR, y - 1);
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(...dark);
-      doc.setFontSize(9);
-      doc.text(label + ':', ML, y);
+      doc.setTextColor(...purple);
+      doc.setFontSize(8.5);
+      doc.text(label + ':', ML, y + 3.5);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(...text);
-      const lines = doc.splitTextToSize(value || 'Not provided', CW - 60);
-      doc.text(lines, ML + 60, y);
-      y += Math.max(6, lines.length * 4.5) + 2;
+      doc.setFontSize(9);
+      const lines = doc.splitTextToSize(value || 'Not provided', CW - 62);
+      doc.text(lines, ML + 62, y + 3.5);
+      y += Math.max(8, lines.length * 5) + 2;
     };
 
     addRow('Company', summaryData.company);
