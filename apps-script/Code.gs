@@ -15,6 +15,10 @@
 var SPREADSHEET_ID = '1iF82FZVmyEICGrtb5uDJrY4y4e-0SYLEwHkcDXZvBXs';
 var SHEET_NAME = 'New Intake Form';
 
+// Works whether the script is bound to a spreadsheet (via Extensions → Apps Script)
+// or standalone. Bound scripts are recommended — open the target sheet,
+// go to Extensions → Apps Script, paste this file, and deploy from there.
+
 var HEADERS = [
   'Timestamp',
   'Organization',
@@ -47,7 +51,7 @@ var HEADERS = [
 
 function doPost(e) {
   try {
-    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
     var sheet = ss.getSheetByName(SHEET_NAME);
 
     if (!sheet) {
