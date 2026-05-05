@@ -62,7 +62,8 @@ function doPost(e) {
       sheet.setFrozenRows(1);
     }
 
-    var data = JSON.parse(e.postData.contents);
+    var raw = (e.parameter && e.parameter.payload) ? e.parameter.payload : e.postData.contents;
+    var data = JSON.parse(raw);
 
     sheet.appendRow([
       data.timestamp         || '',

@@ -1793,14 +1793,33 @@
   // Paste your deployed Apps Script Web App URL here after following apps-script/Code.gs setup instructions
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8C1hxDK69JKs0mBkZj4SJ7oOw9KS_hwXP4krjpCskGbfdIINuoYIAAld1sk1PVE_NFw/exec';
 
-  async function submitForm() {
+  function submitForm() {
     if (SCRIPT_URL) {
       try {
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          body: JSON.stringify(gatherData())
-        });
+        var data = gatherData();
+        var iframe = document.createElement('iframe');
+        iframe.name = 'aicr_submit';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = SCRIPT_URL;
+        form.target = 'aicr_submit';
+
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'payload';
+        input.value = JSON.stringify(data);
+        form.appendChild(input);
+
+        document.body.appendChild(form);
+        form.submit();
+
+        setTimeout(function() {
+          if (form.parentNode) document.body.removeChild(form);
+          if (iframe.parentNode) document.body.removeChild(iframe);
+        }, 5000);
       } catch (err) {
         console.error('Sheet sync failed:', err);
       }
