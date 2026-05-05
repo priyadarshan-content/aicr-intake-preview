@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G2 AI Custom Research — Request a Proposal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    /* G2 Brand Palette — exact values from G2 brand book */
+    --g2-rorange: #FF492C;
+    --g2-rorange-light: #FFF0ED;
+    --g2-purple: #5746B2;
+    --g2-purple-dark: #46389A;
+    --g2-purple-light: #EFEDF7;
+    --g2-navy: #062846;
+    --g2-green: #27D3BC;
+    --g2-green-light: #E5FAF6;
+    --g2-yellow: #FFC800;
+    --g2-blue: #288DFF;
+    /* Legacy aliases mapped to brand-correct values */
+    --g2-red-orange: #FF492C;
+    --g2-red-orange-light: #FFF0ED;
+    --g2-teal: #27D3BC;
+    --g2-teal-light: #E5FAF6;
+    --g2-gold: #FFC800;
+    --g2-purple-deep: #062846;
+    --g2-dark: #111111;
+    --g2-dark-2: #1E1E2A;
+    --g2-dark-3: #2F2F3D;
+    --g2-text: #505059;
+    --g2-text-light: #8C8C96;
+    --g2-gray-light: #C7CDD6;
+    --g2-white: #FFFFFF;
+    --g2-cream: #F5F0EB;
+    --g2-cream-2: #EDE8E2;
+    --radius: 12px;
+    --shadow: 0 1px 2px rgba(17,17,17,0.04);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--g2-cream);
+    color: var(--g2-text);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: var(--g2-white);
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--g2-cream-2);
+    box-shadow: 0 1px 8px rgba(37,37,48,0.06);
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .g2-logo-svg {
+    width: 40px; height: 40px;
+    display: block;
+  }
+  .header-divider {
+    width: 1px;
+    height: 28px;
+    background: var(--g2-cream-2);
+  }
+  .header-title {
+    color: var(--g2-dark);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .header-subtitle {
+    color: var(--g2-text-light);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .admin-badge {
+    display: none;
+    background: var(--g2-purple);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    animation: pulse 2s infinite;
+  }
+  .admin-badge.visible { display: block; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  /* Admin pricing panel */
+  .admin-panel {
+    display: none;
+    position: fixed;
+    right: 0;
+    top: 68px;
+    width: 360px;
+    height: calc(100vh - 68px);
+    background: var(--g2-purple-deep);
+    color: white;
+    box-shadow: -4px 0 24px rgba(6,40,70,0.4);
+    z-index: 200;
+    overflow-y: auto;
+    padding: 28px;
+  }
+  .admin-panel.visible { display: block; animation: slideIn 0.3s ease; }
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  .admin-panel h3 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .price-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .price-line .label { color: rgba(255,255,255,0.6); }
+  .price-line .value { font-weight: 600; color: var(--g2-white); }
+  .price-line.discount .value { color: var(--g2-teal); }
+  .price-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 0;
+    font-size: 20px;
+    font-weight: 800;
+    margin-top: 8px;
+    border-top: 2px solid var(--g2-red-orange);
+  }
+  .price-total .value { color: var(--g2-red-orange); }
+  .admin-notes {
+    margin-top: 20px;
+  }
+  .admin-notes textarea {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.12);
+    color: white;
+    font-size: 13px;
+  }
+  .admin-notes textarea:focus { border-color: var(--g2-purple); background: rgba(255,255,255,0.12); }
+  .admin-section {
+    margin-bottom: 24px;
+  }
+  .admin-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--g2-red-orange);
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .admin-flag {
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+  }
+
+  /* Progress */
+  .progress-bar {
+    background: var(--g2-white);
+    padding: 16px 40px;
+    position: sticky;
+    top: 68px;
+    z-index: 99;
+    border-bottom: 1px solid var(--g2-cream-2);
+  }
+  .progress-steps {
+    display: flex;
+    gap: 4px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .progress-step {
+    flex: 1;
+    height: 4px;
+    background: var(--g2-cream-2);
+    border-radius: 2px;
+    transition: background 0.4s;
+    cursor: pointer;
+    position: relative;
+  }
+  .progress-step.active { background: var(--g2-purple); }
+  .progress-step.completed { background: var(--g2-purple); opacity: 0.5; }
+  .progress-step:hover::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--g2-dark);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .step-labels {
+    display: flex;
+    max-width: 900px;
+    margin: 8px auto 0;
+    gap: 4px;
+  }
+  .step-label {
+    flex: 1;
+    text-align: center;
+    font-size: 10px;
+    color: var(--g2-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .step-label.active { color: var(--g2-purple); font-weight: 600; }
+
+  /* Main */
+  .main {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+
+  /* Section */
+  .section {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .section.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    margin-bottom: 32px;
+  }
+  .section-number {
+    display: inline-block;
+    background: var(--g2-purple);
+    color: white;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    text-align: center;
+    line-height: 32px;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--g2-dark);
+  }
+  .section-desc {
+    color: var(--g2-text-light);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--g2-white);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--g2-cream-2);
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--g2-dark);
+  }
+  .card-hint {
+    font-size: 13px;
+    color: var(--g2-text-light);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  /* Inputs */
+  input[type="text"], input[type="email"], input[type="url"], input[type="date"], textarea, select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--g2-cream-2);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    background: var(--g2-cream);
+    color: var(--g2-dark);
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--g2-purple);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(87, 70, 178, 0.12);
+  }
+  textarea { resize: vertical; min-height: 100px; }
+
+  /* Two-column layout for inputs */
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  /* Radio/Checkbox cards */
+  .option-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .option-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .option-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .option-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  .option-card {
+    position: relative;
+    border: 2px solid var(--g2-cream-2);
+    border-radius: 10px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--g2-white);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .option-card:hover { border-color: var(--g2-purple); background: var(--g2-purple-light); }
+  .option-card.selected {
+    border-color: var(--g2-purple);
+    background: var(--g2-purple-light);
+    box-shadow: 0 0 0 1px var(--g2-purple);
+  }
+  .option-card input { display: none; }
+
+  .option-indicator {
+    width: 22px; height: 22px;
+    border: 2px solid var(--g2-gray-light);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    margin-top: 1px;
+  }
+  .option-card.checkbox .option-indicator { border-radius: 6px; }
+  .option-card.selected .option-indicator {
+    border-color: var(--g2-purple);
+    background: var(--g2-purple);
+  }
+  .option-card.selected .option-indicator::after {
+    content: '';
+    width: 8px; height: 8px;
+    background: white;
+    border-radius: 50%;
+  }
+  .option-card.checkbox.selected .option-indicator::after {
+    content: '\2713';
+    background: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    width: auto; height: auto;
+    border-radius: 0;
+  }
+
+  .option-content { flex: 1; }
+  .option-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--g2-dark);
+  }
+  .option-desc {
+    font-size: 12px;
+    color: var(--g2-text-light);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  /* Welcome card (Step 0) — flat G2 brand styling, no gradients */
+  .welcome-card {
+    background: var(--g2-white);
+    border: 1px solid var(--g2-cream-2);
+    border-radius: var(--radius);
+    padding: 60px 40px;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .welcome-card .welcome-title {
+    font-size: 50px;
+    font-weight: 800;
+    line-height: 1.12;
+    color: var(--g2-dark);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .welcome-card .welcome-subtitle {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--g2-rorange);
+    margin-bottom: 16px;
+  }
+  .welcome-card .welcome-text {
+    font-size: 15px;
+    color: var(--g2-text);
+    margin-bottom: 32px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  /* Feature highlights */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .feature-item {
+    text-align: center;
+  }
+  .feature-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  .feature-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--g2-dark);
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--g2-purple);
+    color: white;
+  }
+  .btn-primary:hover {
+    background: var(--g2-purple-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(87, 70, 178, 0.18);
+  }
+  .btn-secondary {
+    background: var(--g2-white);
+    color: var(--g2-dark);
+    border: 2px solid var(--g2-gray-light);
+  }
+  .btn-secondary:hover {
+    border-color: var(--g2-purple);
+    color: var(--g2-purple);
+  }
+  .btn-large {
+    padding: 16px 40px;
+    font-size: 15px;
+  }
+
+  /* Navigation buttons */
+  .nav-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 40px;
+    justify-content: space-between;
+  }
+
+  /* Summary card */
+  .summary-item {
+    background: var(--g2-white);
+    border: 1px solid var(--g2-cream-2);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .summary-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--g2-text-light);
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .summary-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--g2-dark);
+    line-height: 1.6;
+  }
+
+  /* Required field marker */
+  .required::after {
+    content: ' *';
+    color: var(--g2-red-orange);
+    font-weight: 700;
+  }
+  .field-error {
+    border-color: var(--g2-red-orange) !important;
+    box-shadow: 0 0 0 3px rgba(255, 73, 44, 0.12) !important;
+  }
+  .card-error {
+    border-color: var(--g2-red-orange) !important;
+    box-shadow: 0 0 0 2px rgba(255, 73, 44, 0.12) !important;
+  }
+  .error-msg {
+    color: var(--g2-red-orange);
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 8px;
+    display: none;
+  }
+  .error-msg.show { display: block; }
+  .required-legend {
+    font-size: 12px;
+    color: var(--g2-text-light);
+    margin-bottom: 24px;
+  }
+  .required-legend span { color: var(--g2-red-orange); font-weight: 700; }
+
+  /* Hidden by default (conditional show) */
+  .conditional {
+    display: none;
+  }
+  .conditional.show {
+    display: block;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-logo">
+    <a href="https://www.g2.com" aria-label="G2" style="display:inline-flex; line-height:0; text-decoration:none;">
+      <svg class="g2-logo-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="G2">
+        <rect width="80" height="80" rx="14" ry="14" fill="#FF492C"/>
+        <text x="40" y="56" text-anchor="middle"
+              font-family="Figtree, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+              font-weight="800" font-size="44" fill="#FFFFFF"
+              letter-spacing="-1.5">G2</text>
+      </svg>
+    </a>
+    <div class="header-divider" aria-hidden="true"></div>
+    <div>
+      <div class="header-title">AI Custom Research</div>
+      <div class="header-subtitle">Request a Proposal</div>
+    </div>
+  </div>
+  <div class="admin-badge" id="admin-badge">ADMIN MODE</div>
+</div>
+
+<!-- Progress Bar -->
+<div class="progress-bar">
+  <div class="progress-steps" id="progress-steps"></div>
+  <div class="step-labels" id="step-labels"></div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+<!-- Step 0: Welcome -->
+<div class="section active" data-step="0">
+  <div class="welcome-card">
+    <div class="welcome-title">AI Custom Research</div>
+    <div class="welcome-subtitle">Request a Proposal</div>
+    <div class="welcome-text">Tell us what you need and we'll put together a tailored proposal. Takes about 3-5 minutes.</div>
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon">🎙️</div>
+        <div class="feature-name">AI-Moderated Interviews</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📊</div>
+        <div class="feature-name">Actionable Deliverables</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-name">Powered by G2 Data</div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-large" onclick="goToStep(1)">Get Started →</button>
+  </div>
+</div>
+
+<!-- Step 1: About You -->
+<div class="section" data-step="1">
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <h2 class="section-title">About You</h2>
+    <p class="section-desc">Help us understand your organization and who we'll be working with.</p>
+  </div>
+
+  <div class="required-legend"><span>*</span> Required field</div>
+
+  <div class="card" id="card_company">
+    <div class="card-title required">Company / Organization Name</div>
+    <input type="text" id="rp_company" placeholder="Your company name">
+    <div class="error-msg" id="err_company">Please enter your company name.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Your G2 Profile or Category <span style="color: var(--g2-text-light);">(optional)</span></div>
+    <div class="card-hint">If your company has a G2 profile or you operate in a specific G2 category, share the link(s) — it helps us understand your market and competitive context.</div>
+    <textarea id="rp_g2_profile" placeholder="e.g., https://www.g2.com/products/your-product or https://www.g2.com/categories/your-category"></textarea>
+  </div>
+
+  <div class="card" id="card_name_email">
+    <div class="card-title required">Your Name & Email</div>
+    <div class="input-row">
+      <input type="text" id="rp_name" placeholder="Your full name">
+      <input type="email" id="rp_email" placeholder="your@email.com">
+    </div>
+    <div class="error-msg" id="err_name_email">Please enter your name and email.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Stakeholders <span style="color: var(--g2-text-light);">(optional)</span></div>
+    <div class="card-hint">Who else is involved in this decision or will review the proposal?</div>
+    <textarea id="rp_stakeholders" placeholder="e.g., John Smith (CMO), Jane Doe (Product Lead)..."></textarea>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Step 2: What Do You Need? -->
+<div class="section" data-step="2">
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <h2 class="section-title">What Do You Need?</h2>
+    <p class="section-desc">Tell us about your research requirements.</p>
+  </div>
+
+  <div class="required-legend"><span>*</span> Required field</div>
+
+  <div class="card" id="card_product_type">
+    <div class="card-title required">Product Type</div>
+    <div class="card-hint">What type of research do you need?</div>
+    <div class="option-grid cols-3">
+      <div class="option-card" onclick="selectProductType(this, 'custom_research')">
+        <input type="radio" name="rp_product_type">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Custom Research</div><div class="option-desc">AI-moderated interviews at scale with real people</div></div>
+      </div>
+      <div class="option-card" onclick="selectProductType(this, 'synthetic_report')">
+        <input type="radio" name="rp_product_type">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Synthetic Report</div><div class="option-desc">Analysis of existing G2 review data — no custom fielding</div></div>
+      </div>
+      <div class="option-card" onclick="selectProductType(this, 'case_study')">
+        <input type="radio" name="rp_product_type">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Case Study</div><div class="option-desc">1-on-1 customer interviews to capture outcomes and ROI</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conditional: Custom Research fields -->
+  <div class="conditional" id="rp-custom-research-fields">
+    <div class="card" id="card_sample_size">
+      <div class="card-title required">Approximate Sample Size</div>
+      <select id="rp_sample_size">
+        <option value="">Select sample size...</option>
+        <option value="100">100 respondents</option>
+        <option value="150">150 respondents</option>
+        <option value="200">200 respondents</option>
+        <option value="300">300 respondents</option>
+        <option value="400">400 respondents</option>
+        <option value="500">500 respondents</option>
+        <option value="600">600 respondents</option>
+        <option value="700">700 respondents</option>
+        <option value="800">800 respondents</option>
+        <option value="900">900 respondents</option>
+        <option value="1000">1000 respondents</option>
+      </select>
+    </div>
+
+    <div class="card" id="card_seniority">
+      <div class="card-title required">Who Do You Want to Talk To?</div>
+      <div class="card-hint">Seniority level affects recruitment complexity and research design.</div>
+      <div class="option-grid cols-3">
+        <div class="option-card" onclick="selectOption(this, 'rp_seniority', 'standard')">
+          <input type="radio" name="rp_seniority">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Manager & Below</div><div class="option-desc">ICs, analysts, team leads, managers</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_seniority', 'senior_director')">
+          <input type="radio" name="rp_seniority">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Director+</div><div class="option-desc">Directors, VPs, C-Suite, Founders</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_seniority', 'b2c_consumer')">
+          <input type="radio" name="rp_seniority">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">B2C / Consumer</div><div class="option-desc">End users, general population</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card_research_depth">
+      <div class="card-title required">Research Depth</div>
+      <div class="card-hint">How deep should each conversation go? This helps us design the right interview length.</div>
+      <div class="option-grid cols-3">
+        <div class="option-card" onclick="selectOption(this, 'rp_research_depth', 'quick_pulse')">
+          <input type="radio" name="rp_research_depth">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Quick Pulse</div><div class="option-desc">1-2 focused topics, high-level sentiment</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_research_depth', 'standard')">
+          <input type="radio" name="rp_research_depth">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Standard</div><div class="option-desc">3-5 themes with follow-up questions</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_research_depth', 'deep_dive')">
+          <input type="radio" name="rp_research_depth">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Deep Dive</div><div class="option-desc">Comprehensive exploration, complex topics</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Who Should We Be Interviewing? <span style="color: var(--g2-text-light);">(optional)</span></div>
+      <div class="card-hint">Describe the ideal interviewee — job titles, roles, industries, company size, or level of expertise. The more specific you are, the better we can design the screener.</div>
+      <textarea id="rp_interview_targets" placeholder="e.g., 'IT Directors and VP-level decision-makers at enterprise companies (1,000+ employees) in financial services, healthcare, and manufacturing'"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Topics & Key Insights <span style="color: var(--g2-text-light);">(optional)</span></div>
+      <div class="card-hint">What specific topics, challenges, or questions should the research explore? What insights are you hoping to get out of this?</div>
+      <textarea id="rp_research_topics" placeholder="e.g., 'How is AI impacting procurement workflows? What are the biggest pain points with current tools? How do buyers evaluate vendors in this space?'"></textarea>
+    </div>
+
+  </div>
+
+  <!-- Conditional: Synthetic Report fields -->
+  <div class="conditional" id="rp-synthetic-report-fields">
+    <div class="card" id="card_synth_category">
+      <div class="card-title required">G2 Category or Product</div>
+      <div class="card-hint">Synthetic reports are built from G2 review data — the more reviews in the category or product, the richer the output. Share the G2 category or product profile(s) you'd like the report to focus on.</div>
+      <textarea id="rp_synth_category" placeholder="e.g., 'ERP Systems category' or 'https://www.g2.com/categories/erp-systems' or a specific product profile"></textarea>
+    </div>
+
+    <div class="card" id="card_synth_angle">
+      <div class="card-title required">Report Topic / Angle</div>
+      <div class="card-hint">What narrative or theme should the report explore? This shapes the interview questions the AI personas respond to based on real reviewer data.</div>
+      <textarea id="rp_synth_angle" placeholder="e.g., 'Buyer priorities when evaluating project management tools for mid-market teams' or 'How our product compares to the category on ease of use and implementation'"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Target Persona <span style="color: var(--g2-text-light);">(optional)</span></div>
+      <div class="card-hint">Whose perspective should the report reflect? Note: G2 reviews skew toward end users and managers — if you need senior leadership perspectives, custom research with real interviews may be a better fit.</div>
+      <textarea id="rp_synth_persona" placeholder="e.g., 'IT Directors evaluating security tools at mid-market companies' or 'End users of HR platforms at enterprises with 500+ employees'"></textarea>
+    </div>
+  </div>
+
+  <!-- Conditional: Case Study fields -->
+  <div class="conditional" id="rp-case-study-fields">
+    <div class="card" id="card_cs_interviews">
+      <div class="card-title required">How Many Interviews?</div>
+      <div class="card-hint">Select the number of customer interviews you need.</div>
+      <div class="option-grid cols-3">
+        <div class="option-card" onclick="selectOption(this, 'rp_case_study_interviews', '1-2')">
+          <input type="radio" name="rp_case_study_interviews">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">1–2</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_case_study_interviews', '3-4')">
+          <input type="radio" name="rp_case_study_interviews">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">3–4</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_case_study_interviews', '5-9')">
+          <input type="radio" name="rp_case_study_interviews">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">5–9</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_case_study_interviews', '10-14')">
+          <input type="radio" name="rp_case_study_interviews">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">10–14</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_case_study_interviews', '15-19')">
+          <input type="radio" name="rp_case_study_interviews">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">15–19</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_case_study_interviews', '20+')">
+          <input type="radio" name="rp_case_study_interviews">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">20+</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card_cs_seniority">
+      <div class="card-title required">Customer Seniority</div>
+      <div class="card-hint">Who will be interviewed?</div>
+      <div class="option-grid cols-2">
+        <div class="option-card" onclick="selectOption(this, 'rp_cs_seniority', 'standard')">
+          <input type="radio" name="rp_cs_seniority">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Manager & Below</div><div class="option-desc">ICs, analysts, team leads, managers</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_cs_seniority', 'senior_director')">
+          <input type="radio" name="rp_cs_seniority">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Director+</div><div class="option-desc">Directors, VPs, C-Suite, Founders</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Common fields for all product types -->
+  <div class="card" id="card_geographies">
+    <div class="card-title required">Geographies</div>
+    <div class="option-grid cols-3">
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'North America')">
+        <input type="checkbox" name="rp_geographies">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">North America</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'Western Europe')">
+        <input type="checkbox" name="rp_geographies">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Western Europe</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'APAC')">
+        <input type="checkbox" name="rp_geographies">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">APAC</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'Latin America')">
+        <input type="checkbox" name="rp_geographies">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Latin America</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'Middle East & Africa')">
+        <input type="checkbox" name="rp_geographies">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Middle East & Africa</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'Global')">
+        <input type="checkbox" name="rp_geographies">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Global</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card_report_type">
+    <div class="card-title required">Report Type</div>
+    <div class="card-hint">Choose the level of deliverable and branding.</div>
+    <div class="option-grid cols-2">
+      <div class="option-card" onclick="selectOption(this, 'rp_delivery_tier', 'standard')">
+        <input type="radio" name="rp_delivery_tier">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Standard Report</div><div class="option-desc">G2-branded report, 2 iteration rounds, standard deliverable package</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'rp_delivery_tier', 'custom')">
+        <input type="radio" name="rp_delivery_tier">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Custom Report</div><div class="option-desc">Client-branded report, 4 iteration rounds, premium deliverable package</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">AEO Add-on <span style="color: var(--g2-dark); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;">AI Engine Optimization</span> <span style="color: var(--g2-text-light);">(optional)</span></div>
+    <div class="card-hint">Get your report published as an interactive HTML page with a parallel AI-optimized markdown file — so AI engines (ChatGPT, Perplexity, Gemini) can discover and cite your content. Works best when hosted on G2 for maximum reach.</div>
+    <div class="option-grid cols-2">
+      <div class="option-card" onclick="selectOption(this, 'rp_aeo_addon', 'g2_hosted')">
+        <input type="radio" name="rp_aeo_addon">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Yes (G2-hosted)</div><div class="option-desc">Published on G2 — maximum AI engine discoverability and traffic</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'rp_aeo_addon', 'no')">
+        <input type="radio" name="rp_aeo_addon">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Not now</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Report Format <span style="color: var(--g2-text-light);">(optional)</span></div>
+    <div class="card-hint">Choose PDF report, findings presentation, or both.</div>
+    <div class="option-grid cols-3">
+      <div class="option-card" onclick="selectOption(this, 'rp_report_format', 'pdf')">
+        <input type="radio" name="rp_report_format">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">PDF Report</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'rp_report_format', 'pptx')">
+        <input type="radio" name="rp_report_format">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Findings Presentation (PPTX)</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'rp_report_format', 'both')">
+        <input type="radio" name="rp_report_format">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Both</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Step 3: Goals & Context -->
+<div class="section" data-step="3">
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <h2 class="section-title">Goals & Context</h2>
+    <p class="section-desc">Help us understand your research objectives and timeline.</p>
+  </div>
+
+  <div class="required-legend"><span>*</span> Required field</div>
+
+  <div class="card">
+    <div class="card-title">What Are You Trying to Achieve? <span style="color: var(--g2-text-light);">(optional)</span></div>
+    <div class="option-grid cols-2">
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_goals', 'Brand positioning')">
+        <input type="checkbox" name="rp_goals">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Brand positioning</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_goals', 'Demand generation')">
+        <input type="checkbox" name="rp_goals">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Demand generation</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_goals', 'Competitive intelligence')">
+        <input type="checkbox" name="rp_goals">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Competitive intelligence</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_goals', 'Product marketing')">
+        <input type="checkbox" name="rp_goals">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Product marketing</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_goals', 'Sales enablement')">
+        <input type="checkbox" name="rp_goals">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Sales enablement</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_goals', 'Market exploration')">
+        <input type="checkbox" name="rp_goals">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Market exploration</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_goals', 'Internal strategy')">
+        <input type="checkbox" name="rp_goals">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Internal strategy</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_goals', 'Other')">
+        <input type="checkbox" name="rp_goals">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Other</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card_description">
+    <div class="card-title required">Brief Description</div>
+    <div class="card-hint">What's the topic or research question?</div>
+    <textarea id="rp_description" placeholder="e.g., 'We want to understand buyer priorities for AI-powered procurement tools and how our product is perceived vs. competitors...'"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">One-off or Recurring? <span style="color: var(--g2-text-light);">(optional)</span></div>
+    <div class="option-grid cols-2">
+      <div class="option-card" onclick="selectOption(this, 'rp_engagement_type', 'one-off')">
+        <input type="radio" name="rp_engagement_type">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">One-off Report</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'rp_engagement_type', 'recurring')">
+        <input type="radio" name="rp_engagement_type">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Recurring Engagement</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conditional" id="rp-cadence-field">
+    <div class="card">
+      <div class="card-title">Cadence (if Recurring)</div>
+      <select id="rp_cadence">
+        <option value="">Select cadence...</option>
+        <option value="monthly">Monthly</option>
+        <option value="quarterly">Quarterly</option>
+        <option value="semi-annual">Semi-annual</option>
+        <option value="annual">Annual</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">When Do You Need This By? <span style="color: var(--g2-text-light);">(optional)</span></div>
+    <input type="date" id="rp_deadline_date">
+    <div style="margin-top: 16px;">
+      <div class="option-grid cols-3">
+        <div class="option-card" onclick="selectOption(this, 'rp_deadline_flex', 'firm')">
+          <input type="radio" name="rp_deadline_flex">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Firm deadline</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_deadline_flex', 'preferred')">
+          <input type="radio" name="rp_deadline_flex">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Preferred date</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_deadline_flex', 'flexible')">
+          <input type="radio" name="rp_deadline_flex">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">No hard deadline</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Step 4: Summary & Submit -->
+<div class="section" data-step="4">
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <h2 class="section-title">Review Your Request</h2>
+    <p class="section-desc">Make sure everything looks good before submitting.</p>
+  </div>
+
+  <div id="rp-summary-container" style="margin-bottom: 32px;"></div>
+
+  <div class="card" style="background: var(--g2-purple-light); border: 1px solid var(--g2-purple);">
+    <p style="color: var(--g2-dark); font-size: 14px; line-height: 1.6;">
+      Our team will review your request and get back to you within 1-2 business days with a tailored proposal.
+    </p>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <button class="btn btn-secondary" onclick="exportClientPDF()" style="background: var(--g2-purple); color: white; border: none; width: 100%; padding: 14px 24px; font-size: 15px;">
+      📥 Download Summary (PDF)
+    </button>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    <button class="btn btn-primary" onclick="submitForm()">Submit Request →</button>
+  </div>
+</div>
+
+</div>
+
+<!-- Admin Pricing Panel -->
+<div id="adminPanel" class="admin-panel">
+  <h3>Pricing Calculator</h3>
+  <div id="pricingBreakdown"></div>
+  <div class="admin-section" style="margin-top:24px;">
+    <div class="admin-section-title">Recommendations</div>
+    <div id="adminRecommendations"></div>
+  </div>
+  <div class="admin-notes">
+    <h3 style="margin-top:20px;">Internal Notes</h3>
+    <textarea id="adminNotes" rows="4" placeholder="Notes, risks, flags..."></textarea>
+    <div style="margin-top:12px;">
+      <label style="font-size:12px; color:var(--g2-gray-light);">Pricing approved by:</label>
+      <input type="text" id="approvedBy" placeholder="Name" style="margin-top:6px; background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:white; padding:8px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.12); font-family:inherit; font-size:13px;">
+    </div>
+    <button onclick="exportClientPDF()" style="margin-top:20px; width:100%; padding:12px; background:var(--g2-red-orange); color:white; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+      Export Client Summary (PDF)
+    </button>
+    <button onclick="exportInternalScopesPDF()" style="margin-top:8px; width:100%; padding:12px; background:var(--g2-teal); color:white; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+      Export Internal Scoping PDF
+    </button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  // ============ STATE ============
+  let currentStep = 0;
+  const maxSteps = 5; // Steps 0-4
+  let adminMode = false;
+
+  const stepLabels = ['Welcome', 'About You', 'What Do You Need?', 'Goals & Context', 'Review'];
+
+  // Pricing state
+  let pricing = {
+    panelSize: null,
+    panelPrice: 0,
+    deliveryTier: null,
+    aeoAddon: null,
+    caseStudyInterviews: null
+  };
+
+  // New 3D pricing model: basePriceTable[seniority][reportType] × panelMultipliers[panelSize]
+  const basePriceTable = {
+    users:  { standard: 25000, custom: 35000 },
+    buyers: { standard: 35000, custom: 50000 },
+    vp:     { standard: 65000, custom: 75000 }
+  };
+
+  const panelMultipliers = {
+    100: 1.00, 150: 1.50, 200: 1.80, 300: 2.45, 400: 2.95,
+    500: 3.45, 600: 3.85, 700: 4.25, 800: 4.55, 900: 4.85, 1000: 5.05
+  };
+
+  const interviewLengthModifiers = {
+    quick_pulse: 0,
+    standard: 0.15,
+    deep_dive: 0.30
+  };
+
+  // ============ ADMIN MODE ============
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+      adminMode = !adminMode;
+      document.getElementById('adminPanel').classList.toggle('visible', adminMode);
+      document.getElementById('admin-badge').classList.toggle('visible', adminMode);
+      if (adminMode) updatePricing();
+    }
+  });
+
+  function updatePricing() {
+    let lines = [];
+    let total = 0;
+
+    // Gather current form values
+    const panelSize = document.getElementById('rp_sample_size')?.value;
+    const seniority = document.querySelector('input[name="rp_seniority"]:checked')?.value || 'users';
+    const reportType = document.querySelector('input[name="rp_delivery_tier"]:checked')?.value || 'standard';
+    const researchDepth = document.querySelector('input[name="rp_research_depth"]:checked')?.value || 'standard';
+    const aeoAddon = document.querySelector('input[name="rp_aeo_addon"]:checked')?.value;
+
+    // Base pricing via 3D model
+    const seniorityLabels = { users: 'Users', buyers: 'Buyers', vp: 'VP+' };
+    const reportLabels = { standard: 'Standard', custom: 'Custom' };
+
+    if (panelSize && basePriceTable[seniority] && panelMultipliers[panelSize]) {
+      const baseAt100 = basePriceTable[seniority][reportType] || basePriceTable[seniority].standard;
+      const mult = panelMultipliers[panelSize];
+      const lenMod = interviewLengthModifiers[researchDepth] || 0;
+      const scaledBase = Math.round(baseAt100 * mult);
+      const adjustedBase = Math.round(scaledBase * (1 + lenMod));
+
+      lines.push({ label: `Base (${seniorityLabels[seniority]} / ${reportLabels[reportType]})`, value: baseAt100, dim: true });
+      lines.push({ label: `× ${mult}x panel multiplier (N=${panelSize})`, value: scaledBase, dim: true });
+      if (lenMod > 0) {
+        lines.push({ label: `+ ${Math.round(lenMod * 100)}% interview length`, value: adjustedBase - scaledBase, dim: true });
+      }
+      lines.push({ label: `Subtotal: ${reportLabels[reportType]} Report`, value: adjustedBase });
+      total += adjustedBase;
+    }
+
+    // AEO add-on
+    if (aeoAddon === 'g2_hosted') {
+      lines.push({ label: 'AEO: G2-hosted', value: 3000 });
+      total += 3000;
+    }
+
+    // Audio Recording & Transcript ($50/respondent)
+    const audioTranscript = document.querySelector('input[name="rp_audio_transcript"]:checked')?.value;
+    if (audioTranscript === 'yes' && panelSize) {
+      const audioTotal = 50 * parseInt(panelSize);
+      lines.push({ label: `Audio & Transcript (${panelSize} × $50)`, value: audioTotal });
+      total += audioTotal;
+    }
+
+    // Report format add-on
+    const reportFormat = document.querySelector('input[name="rp_report_format"]:checked')?.value;
+    if (reportFormat === 'both') {
+      lines.push({ label: 'Both PDF + PPTX', value: 5000 });
+      total += 5000;
+    }
+
+    // Case study pricing
+    const caseStudyInterviews = document.querySelector('input[name="rp_case_study_interviews"]:checked')?.value;
+    if (caseStudyInterviews) {
+      const interviews = parseInt(caseStudyInterviews);
+      let caseStudyPrice = 0;
+      if (interviews <= 2) caseStudyPrice = interviews * 5000;
+      else if (interviews <= 4) caseStudyPrice = interviews * 4000;
+      else if (interviews <= 9) caseStudyPrice = interviews * 3500;
+      else if (interviews <= 14) caseStudyPrice = interviews * 3000;
+      else if (interviews <= 19) caseStudyPrice = interviews * 2750;
+      else caseStudyPrice = interviews * 2500;
+
+      if (caseStudyPrice > 0) {
+        lines.push({ label: `Case Studies (${interviews} interviews)`, value: caseStudyPrice });
+        total += caseStudyPrice;
+      }
+    }
+
+    // Render pricing breakdown
+    let html = '';
+    lines.forEach(l => {
+      const formatted = `$${l.value.toLocaleString()}`;
+      const dimStyle = l.dim ? ' style="opacity:0.6; font-size:12px;"' : '';
+      html += `<div class="price-line"${dimStyle}><span class="label">${l.label}</span><span class="value">${formatted}</span></div>`;
+    });
+    html += `<div class="price-total"><span>Estimated Total</span><span class="value">$${total.toLocaleString()}</span></div>`;
+    document.getElementById('pricingBreakdown').innerHTML = html;
+
+    // Generate recommendations
+    let recs = [];
+    if (panelSize && parseInt(panelSize) < 150) {
+      recs.push('UPSELL: Consider recommending larger panel (150+) for more robust insights.');
+    }
+    if (reportType === 'standard') {
+      recs.push('UPSELL: Custom Report adds client branding + 4 iterations — higher value for the client.');
+    }
+    if (seniority === 'users' && panelSize && parseInt(panelSize) >= 400) {
+      recs.push('NOTE: Large User-tier panel — check if Buyers tier is more appropriate for the research goals.');
+    }
+    if (recs.length === 0) recs.push('No flags — selections look well-aligned.');
+    document.getElementById('adminRecommendations').innerHTML = recs.map(r => `<div class="admin-flag">${r}</div>`).join('');
+  }
+
+  // ============ PROGRESS BAR ============
+  function updateProgressBar() {
+    let stepsHTML = '';
+    let labelsHTML = '';
+
+    for (let i = 0; i < maxSteps; i++) {
+      const isActive = i === currentStep;
+      const isCompleted = i < currentStep;
+      let classes = 'progress-step';
+      if (isActive) classes += ' active';
+      if (isCompleted) classes += ' completed';
+
+      stepsHTML += `<div class="${classes}" data-label="${stepLabels[i] || ''}"></div>`;
+      labelsHTML += `<div class="step-label ${isActive ? 'active' : ''}">${stepLabels[i] || ''}</div>`;
+    }
+
+    document.getElementById('progress-steps').innerHTML = stepsHTML;
+    document.getElementById('step-labels').innerHTML = labelsHTML;
+  }
+
+  // ============ STEP NAVIGATION ============
+  function goToStep(step) {
+    currentStep = step;
+    updateProgressBar();
+    showStep(step);
+  }
+
+  function nextStep() {
+    if (currentStep < maxSteps - 1) {
+      currentStep++;
+      updateProgressBar();
+      showStep(currentStep);
+    }
+  }
+
+  function prevStep() {
+    if (currentStep > 0) {
+      currentStep--;
+      updateProgressBar();
+      showStep(currentStep);
+    }
+  }
+
+  function showStep(step) {
+    // Hide all sections
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(s => s.classList.remove('active'));
+
+    // Show correct section
+    const targetSection = document.querySelector(`.section[data-step="${step}"]`);
+    if (targetSection) targetSection.classList.add('active');
+
+    // Build summary if on final step
+    if (step === 4) {
+      buildSummary();
+    }
+
+    if (adminMode) updatePricing();
+    window.scrollTo(0, 0);
+  }
+
+  // ============ OPTION SELECTION ============
+  function selectOption(card, fieldName, value) {
+    // Mark card as selected
+    const siblings = card.parentElement.querySelectorAll('.option-card');
+    siblings.forEach(s => s.classList.remove('selected'));
+    card.classList.add('selected');
+
+    // Set input value
+    const input = card.querySelector('input');
+    input.checked = true;
+
+    // Handle conditional visibility
+    if (fieldName === 'rp_product_type') {
+      handleProductTypeChange(value);
+    }
+
+    if (fieldName === 'rp_engagement_type') {
+      handleEngagementChange(value);
+    }
+  }
+
+  function toggleCheckbox(card, fieldName, value) {
+    card.classList.toggle('selected');
+    const input = card.querySelector('input');
+    input.checked = !input.checked;
+  }
+
+  function selectProductType(card, productType) {
+    selectOption(card, 'rp_product_type', productType);
+  }
+
+  function handleProductTypeChange(type) {
+    const customFields = document.getElementById('rp-custom-research-fields');
+    const syntheticFields = document.getElementById('rp-synthetic-report-fields');
+    const caseStudyFields = document.getElementById('rp-case-study-fields');
+
+    customFields.classList.remove('show');
+    syntheticFields.classList.remove('show');
+    caseStudyFields.classList.remove('show');
+
+    if (type === 'custom_research') {
+      customFields.classList.add('show');
+    } else if (type === 'synthetic_report') {
+      syntheticFields.classList.add('show');
+    } else if (type === 'case_study') {
+      caseStudyFields.classList.add('show');
+    }
+  }
+
+  function handleEngagementChange(type) {
+    const cadenceField = document.getElementById('rp-cadence-field');
+    if (type === 'recurring') {
+      cadenceField.classList.add('show');
+    } else {
+      cadenceField.classList.remove('show');
+    }
+  }
+
+  // ============ SUMMARY BUILDER ============
+  function buildSummary() {
+    const company = document.getElementById('rp_company').value || 'Not provided';
+    const name = document.getElementById('rp_name').value || 'Not provided';
+    const email = document.getElementById('rp_email').value || 'Not provided';
+    const productType = document.querySelector('input[name="rp_product_type"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
+    const sampleSize = document.getElementById('rp_sample_size').value || 'Not provided';
+    const seniority = document.querySelector('input[name="rp_seniority"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
+    const caseStudyInterviews = document.querySelector('input[name="rp_case_study_interviews"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
+
+    const geographies = Array.from(document.querySelectorAll('input[name="rp_geographies"]:checked')).map(i => i.parentElement.textContent.trim()).join(', ') || 'Not selected';
+    const deliveryTier = document.querySelector('input[name="rp_delivery_tier"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
+    const aeoAddon = document.querySelector('input[name="rp_aeo_addon"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
+
+    const goals = Array.from(document.querySelectorAll('input[name="rp_goals"]:checked')).map(i => i.parentElement.textContent.trim()).join(', ') || 'Not selected';
+    const description = document.getElementById('rp_description').value || 'Not provided';
+    const engagementType = document.querySelector('input[name="rp_engagement_type"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
+    const cadence = (engagementType === 'Recurring Engagement') ? (document.getElementById('rp_cadence').value || 'Not selected') : 'N/A';
+    const deadline = document.getElementById('rp_deadline_date').value || 'Not provided';
+    const deadlineFlexibility = document.querySelector('input[name="rp_deadline_flex"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
+
+    let html = `
+      <div class="summary-item">
+        <div class="summary-label">Company</div>
+        <div class="summary-value">${company}</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Contact</div>
+        <div class="summary-value">${name} (${email})</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Product Type</div>
+        <div class="summary-value">${productType}</div>
+      </div>
+    `;
+
+    const researchDepth = document.querySelector('input[name="rp_research_depth"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
+    const audioTranscript = document.querySelector('input[name="rp_audio_transcript"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
+
+    if (productType === 'Custom Research') {
+      const interviewTargets = document.getElementById('rp_interview_targets')?.value || '';
+      const researchTopics = document.getElementById('rp_research_topics')?.value || '';
+      html += `
+        <div class="summary-item">
+          <div class="summary-label">Sample Size</div>
+          <div class="summary-value">${sampleSize}</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Respondent Seniority</div>
+          <div class="summary-value">${seniority}</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Research Depth</div>
+          <div class="summary-value">${researchDepth}</div>
+        </div>
+        ${interviewTargets ? `<div class="summary-item"><div class="summary-label">Interview Targets</div><div class="summary-value">${interviewTargets}</div></div>` : ''}
+        ${researchTopics ? `<div class="summary-item"><div class="summary-label">Topics & Key Insights</div><div class="summary-value">${researchTopics}</div></div>` : ''}
+        <div class="summary-item">
+          <div class="summary-label">Audio Recording & Transcript</div>
+          <div class="summary-value">${audioTranscript}</div>
+        </div>
+      `;
+    }
+
+    if (productType === 'Synthetic Report') {
+      const synthCategory = document.getElementById('rp_synth_category')?.value || 'Not provided';
+      const synthAngle = document.getElementById('rp_synth_angle')?.value || 'Not provided';
+      const synthPersona = document.getElementById('rp_synth_persona')?.value || '';
+      html += `
+        <div class="summary-item">
+          <div class="summary-label">G2 Category / Product</div>
+          <div class="summary-value">${synthCategory}</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Report Topic / Angle</div>
+          <div class="summary-value">${synthAngle}</div>
+        </div>
+        ${synthPersona ? `<div class="summary-item"><div class="summary-label">Target Persona</div><div class="summary-value">${synthPersona}</div></div>` : ''}
+      `;
+    }
+
+    if (productType === 'Case Study') {
+      html += `
+        <div class="summary-item">
+          <div class="summary-label">Number of Interviews</div>
+          <div class="summary-value">${caseStudyInterviews}</div>
+        </div>
+      `;
+    }
+
+    html += `
+      <div class="summary-item">
+        <div class="summary-label">Geographies</div>
+        <div class="summary-value">${geographies}</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Delivery Tier</div>
+        <div class="summary-value">${deliveryTier}</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">AEO Add-on</div>
+        <div class="summary-value">${aeoAddon}</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Goals</div>
+        <div class="summary-value">${goals}</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Research Focus</div>
+        <div class="summary-value">${description}</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Engagement Type</div>
+        <div class="summary-value">${engagementType}</div>
+      </div>
+      ${cadence !== 'N/A' ? `<div class="summary-item"><div class="summary-label">Cadence</div><div class="summary-value">${cadence}</div></div>` : ''}
+      <div class="summary-item">
+        <div class="summary-label">Deadline</div>
+        <div class="summary-value">${deadline} (${deadlineFlexibility})</div>
+      </div>
+    `;
+
+    document.getElementById('rp-summary-container').innerHTML = html;
+  }
+
+  // ============ FORM SUBMISSION ============
+  function submitForm() {
+    alert('Request A Proposal submitted! Our team will review and get back to you within 1-2 business days.');
+    console.log('RP form data submitted');
+  }
+
+  // ============ PDF EXPORT FUNCTIONS ============
+  function exportClientPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const W = 210, H = 297;
+    const ML = 20, MR = 20, MT = 20, MB = 20;
+    const CW = W - ML - MR;
+    let y = MT;
+
+    // G2 Brand Colors (PDF/print values)
+    const navy = [6, 40, 70];           // #062846
+    const purple = [87, 70, 178];       // #5746B2
+    const redOrange = [255, 73, 44];    // #FF492C (Rorange)
+    const teal = [39, 211, 188];        // #27D3BC (G2 Green)
+    const dark = [17, 17, 17];          // #111
+    const text = [80, 80, 89];
+    const lightGray = [199, 205, 214];
+    const white = [255, 255, 255];
+
+    // Helper: check page overflow
+    function checkPage(needed) {
+      if (y + needed > H - MB) {
+        addFooter();
+        doc.addPage();
+        y = MT;
+      }
+    }
+
+    function addFooter() {
+      doc.setFontSize(8);
+      doc.setTextColor(...lightGray);
+      doc.text('G2 AI Custom Research Summary', W / 2, H - 8, { align: 'center' });
+    }
+
+    // Header — Navy band with on-brand G2 logo mark, standing alone
+    doc.setFillColor(...navy);
+    doc.rect(0, 0, W, 40, 'F');
+
+    // G2 logo mark (Rorange rounded square + white "G2") — logo stands alone, no text beside it
+    doc.setFillColor(...redOrange);
+    doc.roundedRect(ML, 12, 16, 16, 2.5, 2.5, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('G2', ML + 8, 22.5, { align: 'center' });
+
+    // Page title — separate from logo, with clear-space
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('AI Custom Research', ML + 26, 20);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Engagement Summary', ML + 26, 28);
+
+    y = 50;
+
+    // Gather data
+    let summaryData = {
+      company: document.getElementById('rp_company')?.value || 'Not provided',
+      contact: document.getElementById('rp_name')?.value || 'Not provided',
+      email: document.getElementById('rp_email')?.value || 'Not provided',
+      productType: document.querySelector('input[name="rp_product_type"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
+      deliveryTier: document.querySelector('input[name="rp_delivery_tier"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
+      aeoAddon: document.querySelector('input[name="rp_aeo_addon"]:checked')?.parentElement?.textContent?.trim() || 'None',
+      panelSize: document.getElementById('rp_sample_size')?.value || 'Not selected',
+      seniority: document.querySelector('input[name="rp_seniority"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
+      researchDepth: document.querySelector('input[name="rp_research_depth"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
+      complexity: Array.from(document.querySelectorAll('input[name="rp_complexity"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || 'None',
+      audioTranscript: document.querySelector('input[name="rp_audio_transcript"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
+      geographies: Array.from(document.querySelectorAll('input[name="rp_geographies"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || 'Not selected',
+      goals: Array.from(document.querySelectorAll('input[name="rp_goals"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || 'Not selected',
+      description: document.getElementById('rp_description')?.value || 'Not provided',
+      engagementType: document.querySelector('input[name="rp_engagement_type"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
+      deadline: document.getElementById('rp_deadline_date')?.value || 'Not provided'
+    };
+
+    // Content section
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...dark);
+    doc.text('ENGAGEMENT DETAILS', ML, y);
+    y += 10;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+
+    // Helper: add a key-value row
+    const addRow = (label, value) => {
+      checkPage(8);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...dark);
+      doc.setFontSize(9);
+      doc.text(label + ':', ML, y);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...text);
+      const lines = doc.splitTextToSize(value || 'Not provided', CW - 60);
+      doc.text(lines, ML + 60, y);
+      y += Math.max(6, lines.length * 4.5) + 2;
+    };
+
+    addRow('Company', summaryData.company);
+    addRow('Primary Contact', `${summaryData.contact} (${summaryData.email})`);
+    addRow('Product Type', summaryData.productType);
+    addRow('Delivery Tier', summaryData.deliveryTier);
+    if (summaryData.aeoAddon) addRow('AEO Add-on', summaryData.aeoAddon);
+    if (summaryData.panelSize) addRow('Panel Size', `${summaryData.panelSize} respondents`);
+    if (summaryData.seniority) addRow('Respondent Seniority', summaryData.seniority);
+    if (summaryData.researchDepth) addRow('Research Depth', summaryData.researchDepth);
+    if (summaryData.complexity && summaryData.complexity !== 'None') addRow('Complexity Factors', summaryData.complexity);
+    if (summaryData.audioTranscript) addRow('Audio & Transcript', summaryData.audioTranscript);
+    if (summaryData.geographies) addRow('Geographies', summaryData.geographies);
+    if (summaryData.goals) addRow('Goals', summaryData.goals);
+    if (summaryData.description) addRow('Research Focus', summaryData.description);
+    if (summaryData.engagementType) addRow('Engagement Type', summaryData.engagementType);
+    addRow('Target Delivery Date', summaryData.deadline);
+
+    addFooter();
+    doc.save(`G2_Research_Summary_${new Date().getTime()}.pdf`);
+  }
+
+  function exportInternalScopesPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const W = 210, H = 297;
+    const ML = 20, MR = 20, MT = 20, MB = 20;
+    const CW = W - ML - MR;
+    let y = MT;
+
+    // G2 Brand Colors (PDF/print values)
+    const navy = [6, 40, 70];           // #062846
+    const purple = [87, 70, 178];       // #5746B2
+    const redOrange = [255, 73, 44];    // #FF492C (Rorange)
+    const teal = [39, 211, 188];        // #27D3BC (G2 Green)
+    const dark = [17, 17, 17];          // #111
+    const text = [80, 80, 89];
+    const lightGray = [199, 205, 214];
+    const deepPurple = [6, 40, 70];     // Use Navy instead of off-brand deep purple
+
+    // Helper: check page overflow
+    function checkPage(needed) {
+      if (y + needed > H - MB) {
+        addFooter();
+        doc.addPage();
+        y = MT;
+      }
+    }
+
+    function addFooter() {
+      doc.setFontSize(8);
+      doc.setTextColor(...lightGray);
+      doc.text('G2 AI Custom Research — Internal Scoping Document | CONFIDENTIAL', W / 2, H - 8, { align: 'center' });
+    }
+
+    // Header — Navy band with on-brand G2 logo mark
+    doc.setFillColor(...navy);
+    doc.rect(0, 0, W, 50, 'F');
+
+    // G2 logo (Rorange rounded square + white "G2") — standing alone with clear-space
+    doc.setFillColor(...redOrange);
+    doc.roundedRect(ML, 14, 16, 16, 2.5, 2.5, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('G2', ML + 8, 24.5, { align: 'center' });
+
+    // Page title (separated from logo with clear-space)
+    doc.setFontSize(16);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.text('AI Custom Research', ML + 26, 22);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Internal Scoping & Pricing', ML + 26, 30);
+
+    // Confidential badge — Rorange pill on navy
+    doc.setFillColor(...redOrange);
+    doc.roundedRect(W - MR - 38, 14, 38, 8, 1.5, 1.5, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.text('CONFIDENTIAL', W - MR - 36, 19);
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(255, 255, 255);
+    const approvedBy = document.getElementById('approvedBy').value || '(Not specified)';
+    doc.text(`Approved by: ${approvedBy}`, ML + 22, 39);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, ML + 22, 45);
+
+    y = 60;
+
+    // Gather data
+    let data = {
+      company: document.getElementById('rp_company')?.value || 'TBD',
+      contact: document.getElementById('rp_name')?.value || 'TBD',
+      email: document.getElementById('rp_email')?.value || 'TBD',
+      productType: document.querySelector('input[name="rp_product_type"]:checked')?.parentElement?.textContent?.trim() || 'TBD',
+      deliveryTier: document.querySelector('input[name="rp_delivery_tier"]:checked')?.parentElement?.textContent?.trim() || 'TBD',
+      aeoAddon: document.querySelector('input[name="rp_aeo_addon"]:checked')?.parentElement?.textContent?.trim() || 'None',
+      panelSize: document.getElementById('rp_sample_size')?.value || 'TBD',
+      researchDepth: document.querySelector('input[name="rp_research_depth"]:checked')?.parentElement?.textContent?.trim() || 'TBD',
+      complexity: Array.from(document.querySelectorAll('input[name="rp_complexity"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || 'None',
+      audioTranscript: document.querySelector('input[name="rp_audio_transcript"]:checked')?.parentElement?.textContent?.trim() || 'No',
+      goals: Array.from(document.querySelectorAll('input[name="rp_goals"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || '',
+      description: document.getElementById('rp_description')?.value || ''
+    };
+
+    // Section header helper
+    const sectionHeader = (title) => {
+      checkPage(12);
+      doc.setFillColor(...purple);
+      doc.roundedRect(ML, y, CW, 8, 1, 1, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(title.toUpperCase(), ML + 4, y + 5.5);
+      y += 12;
+    };
+
+    const kvRow = (label, value) => {
+      if (!value) return;
+      checkPage(6);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...dark);
+      doc.text(label + ':', ML + 2, y + 4);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...text);
+      const lines = doc.splitTextToSize(value, CW - 50);
+      doc.text(lines, ML + 50, y + 4);
+      y += Math.max(6, lines.length * 3.5) + 1;
+    };
+
+    sectionHeader('Engagement Overview');
+    kvRow('Client', data.company);
+    kvRow('Contact', `${data.contact} (${data.email})`);
+    kvRow('Product Type', data.productType);
+    kvRow('Delivery Tier', data.deliveryTier);
+
+    sectionHeader('Scope of Work');
+    if (data.panelSize) kvRow('Panel Size', `${data.panelSize} respondents`);
+    if (data.researchDepth) kvRow('Research Depth', data.researchDepth);
+    if (data.complexity && data.complexity !== 'None') kvRow('Complexity Factors', data.complexity);
+    if (data.audioTranscript && data.audioTranscript !== 'No') kvRow('Audio & Transcript', data.audioTranscript);
+    if (data.aeoAddon && data.aeoAddon !== 'None') kvRow('AEO Add-on', data.aeoAddon);
+    if (data.goals) kvRow('Goals', data.goals);
+    if (data.description) kvRow('Research Focus', data.description);
+
+    sectionHeader('Pricing Breakdown');
+    // Get pricing breakdown from admin panel
+    const pricingHTML = document.getElementById('pricingBreakdown').innerHTML;
+    if (pricingHTML) {
+      checkPage(30);
+      doc.setFontSize(9);
+      doc.setTextColor(...text);
+      doc.text('(See pricing details in admin panel)', ML + 2, y + 4);
+      y += 10;
+    }
+
+    sectionHeader('Internal Notes');
+    const notes = document.getElementById('adminNotes').value || 'None';
+    checkPage(Math.ceil(notes.length / 60) * 4 + 4);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...text);
+    const noteLines = doc.splitTextToSize(notes, CW - 4);
+    doc.text(noteLines, ML + 2, y + 4);
+
+    addFooter();
+    doc.save(`G2_Internal_Scoping_${new Date().getTime()}.pdf`);
+  }
+
+  // ============ INITIALIZE ============
+  updateProgressBar();
+</script>
+
+</body>
+</html>
