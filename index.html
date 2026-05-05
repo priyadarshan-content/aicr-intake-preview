@@ -1693,18 +1693,37 @@
   }
 
   // ============ FORM SUBMISSION ============
-  async function submitForm() {
+  function submitForm() {
     if (!validateStep(3)) return;
-    try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'payload=' + encodeURIComponent(JSON.stringify(gatherData()))
-      });
-    } catch (err) {
-      console.error('Sheet sync failed:', err);
-    }
+
+    const data = gatherData();
+
+    // Hidden iframe form submit — bypasses CORS entirely; works 100% with Apps Script
+    const iframe = document.createElement('iframe');
+    iframe.name = 'gs_submit_frame';
+    iframe.style.cssText = 'display:none;position:absolute;width:0;height:0;border:0;';
+    document.body.appendChild(iframe);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = SCRIPT_URL;
+    form.target = 'gs_submit_frame';
+    form.style.display = 'none';
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'payload';
+    input.value = JSON.stringify(data);
+    form.appendChild(input);
+
+    document.body.appendChild(form);
+    form.submit();
+
+    setTimeout(() => {
+      if (form.parentNode) form.parentNode.removeChild(form);
+      if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+    }, 5000);
+
     // Advance to confirmation step
     currentStep = maxSteps;
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
