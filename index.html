@@ -1697,39 +1697,44 @@
     if (!validateStep(3)) return;
 
     const data = gatherData();
+    const cbName = 'gsCallback_' + Date.now();
+    const script = document.createElement('script');
 
-    // Hidden iframe form submit — bypasses CORS entirely; works 100% with Apps Script
-    const iframe = document.createElement('iframe');
-    iframe.name = 'gs_submit_frame';
-    iframe.style.cssText = 'display:none;position:absolute;width:0;height:0;border:0;';
-    document.body.appendChild(iframe);
+    const btn = document.querySelector('[onclick="submitForm()"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
 
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = SCRIPT_URL;
-    form.target = 'gs_submit_frame';
-    form.style.display = 'none';
+    const done = (ok, errMsg) => {
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Request →'; }
+      if (ok) {
+        currentStep = maxSteps;
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        const confirmEl = document.getElementById('rp-confirmation');
+        if (confirmEl) confirmEl.style.display = 'block';
+        window.scrollTo(0, 0);
+      } else {
+        let errEl = document.getElementById('submit-error');
+        if (!errEl) {
+          errEl = document.createElement('p');
+          errEl.id = 'submit-error';
+          errEl.style.cssText = 'color:#cc0000;margin-top:8px;font-size:14px;';
+          if (btn) btn.insertAdjacentElement('afterend', errEl);
+        }
+        errEl.textContent = 'Submission error: ' + (errMsg || 'unknown — check Apps Script executions log');
+      }
+    };
 
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'payload';
-    input.value = JSON.stringify(data);
-    form.appendChild(input);
+    window[cbName] = res => done(res && res.success, res && res.error);
+    script.onerror = () => done(false, 'Network error — could not reach Apps Script');
 
-    document.body.appendChild(form);
-    form.submit();
+    // JSONP GET: URL params survive Google's redirect chain; POST bodies do not
+    script.src = SCRIPT_URL
+      + '?callback=' + cbName
+      + '&payload=' + encodeURIComponent(JSON.stringify(data));
 
-    setTimeout(() => {
-      if (form.parentNode) form.parentNode.removeChild(form);
-      if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-    }, 5000);
-
-    // Advance to confirmation step
-    currentStep = maxSteps;
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    const confirmEl = document.getElementById('rp-confirmation');
-    if (confirmEl) confirmEl.style.display = 'block';
-    window.scrollTo(0, 0);
+    setTimeout(() => done(false, 'Timed out after 15 s'), 15000);
+    document.head.appendChild(script);
   }
 
   // ============ PDF EXPORT FUNCTIONS ============
