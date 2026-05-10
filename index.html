@@ -408,7 +408,105 @@
     line-height: 1.4;
   }
 
-  /* Welcome card (Step 0) — flat G2 brand styling, no gradients */
+  /* Welcome hero (Step 0) — mirrors sell.g2.com/g2-ai-custom-research */
+  .welcome-hero {
+    position: relative;
+    padding: 80px 0 64px;
+    overflow: hidden;
+    min-height: 460px;
+    display: flex;
+    align-items: flex-start;
+  }
+  .welcome-content {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+  }
+  .welcome-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: var(--g2-purple);
+    margin-bottom: 20px;
+  }
+  .welcome-headline {
+    font-size: 54px;
+    font-weight: 800;
+    line-height: 1.08;
+    color: var(--g2-navy);
+    letter-spacing: -0.025em;
+    margin-bottom: 22px;
+  }
+  .welcome-subtext {
+    font-size: 17px;
+    color: var(--g2-text);
+    line-height: 1.65;
+    margin-bottom: 36px;
+    max-width: 500px;
+  }
+  .feature-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 44px;
+  }
+  .feature-pill {
+    background: var(--g2-white);
+    border: 1px solid var(--g2-cream-2);
+    border-radius: 999px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--g2-dark);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .welcome-shapes {
+    position: absolute;
+    top: 0; right: -20px;
+    width: 320px; height: 100%;
+    pointer-events: none;
+  }
+  .shape-ring {
+    position: absolute;
+    top: 28px; right: 48px;
+    width: 140px; height: 140px;
+    border: 18px solid var(--g2-teal);
+    border-radius: 50%;
+  }
+  .shape-half {
+    position: absolute;
+    top: 148px; right: -4px;
+    width: 96px; height: 192px;
+    background: var(--g2-purple);
+    border-radius: 96px 0 0 96px;
+    opacity: 0.9;
+  }
+  .shape-quarter-a {
+    position: absolute;
+    bottom: 80px; right: 68px;
+    width: 88px; height: 88px;
+    background: var(--g2-rorange);
+    border-radius: 88px 0 0 0;
+  }
+  .shape-quarter-b {
+    position: absolute;
+    bottom: 80px; right: -4px;
+    width: 72px; height: 88px;
+    background: var(--g2-rorange);
+    border-radius: 0 0 0 72px;
+  }
+  @media (max-width: 680px) {
+    .welcome-shapes { display: none; }
+    .welcome-headline { font-size: 36px; }
+    .welcome-hero { padding: 48px 0 40px; min-height: auto; }
+  }
+
+  /* Welcome card (confirmation screen) — flat G2 brand styling */
   .welcome-card {
     background: var(--g2-white);
     border: 1px solid var(--g2-cream-2);
@@ -469,9 +567,9 @@
 
   /* Buttons */
   .btn {
-    padding: 12px 24px;
+    padding: 12px 28px;
     border: none;
-    border-radius: 8px;
+    border-radius: 999px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -479,13 +577,13 @@
     font-family: inherit;
   }
   .btn-primary {
-    background: var(--g2-purple);
+    background: var(--g2-navy);
     color: white;
   }
   .btn-primary:hover {
-    background: var(--g2-purple-dark);
+    background: #0a3a60;
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(87, 70, 178, 0.18);
+    box-shadow: 0 8px 16px rgba(6, 40, 70, 0.22);
   }
   .btn-secondary {
     background: var(--g2-white);
@@ -577,7 +675,10 @@
 <div class="header">
   <div class="header-logo">
     <a href="https://aicr.sell.g2.com" aria-label="G2 AI Custom Research" style="display:inline-flex; line-height:0; text-decoration:none;">
-      <img src="https://www.google.com/s2/favicons?domain=g2.com&sz=64" alt="G2" class="g2-logo-svg">
+      <svg class="g2-logo-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="40" height="40" rx="8" fill="#FF492C"/>
+        <text x="20" y="28" text-anchor="middle" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="22" fill="#fff">G2</text>
+      </svg>
     </a>
     <div class="header-divider" aria-hidden="true"></div>
     <div>
@@ -599,28 +700,24 @@
 
 <!-- Step 0: Welcome -->
 <div class="section active" data-step="0">
-  <div class="welcome-card">
-    <div class="welcome-title">AI Custom Research</div>
-    <div class="welcome-subtitle">Request a Proposal</div>
-    <div class="welcome-text">Tell us what you need and we'll put together a tailored proposal. Takes about 3-5 minutes.</div>
-    <div class="features-grid">
-      <div class="feature-item">
-        <div class="feature-icon">🎙️</div>
-        <div class="feature-name">AI-Moderated Interviews</div>
-        <div class="feature-desc">Real conversations at scale with verified professionals</div>
+  <div class="welcome-hero">
+    <div class="welcome-content">
+      <div class="welcome-eyebrow">G2 AI Custom Research</div>
+      <h1 class="welcome-headline">Research that<br>moves markets.</h1>
+      <p class="welcome-subtext">Tell us what you need and we'll put together a tailored proposal. Takes about 3–5 minutes.</p>
+      <div class="feature-pills">
+        <span class="feature-pill">🎙️ AI-Moderated Interviews</span>
+        <span class="feature-pill">📊 Actionable Deliverables</span>
+        <span class="feature-pill">🏆 Powered by G2 Data</span>
       </div>
-      <div class="feature-item">
-        <div class="feature-icon">📊</div>
-        <div class="feature-name">Actionable Deliverables</div>
-        <div class="feature-desc">Reports and insights you can act on immediately</div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">🏆</div>
-        <div class="feature-name">Powered by G2 Data</div>
-        <div class="feature-desc">Built on the world's largest software marketplace</div>
-      </div>
+      <button class="btn btn-primary btn-large" onclick="goToStep(1)">Get Started →</button>
     </div>
-    <button class="btn btn-primary btn-large" onclick="goToStep(1)">Get Started →</button>
+    <div class="welcome-shapes" aria-hidden="true">
+      <div class="shape-ring"></div>
+      <div class="shape-half"></div>
+      <div class="shape-quarter-a"></div>
+      <div class="shape-quarter-b"></div>
+    </div>
   </div>
 </div>
 
@@ -1056,6 +1153,33 @@
     </div>
   </div>
 
+  <div class="card" id="card_budget">
+    <div class="card-title">Approximate Budget <span style="color: var(--g2-text-light);">(optional)</span></div>
+    <div class="card-hint">Helps us tailor the proposal scope and delivery options.</div>
+    <div class="option-grid cols-4">
+      <div class="option-card" onclick="selectOption(this, 'rp_budget', 'under_25k')">
+        <input type="radio" name="rp_budget">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">&lt; $25K</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'rp_budget', '25k_75k')">
+        <input type="radio" name="rp_budget">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">$25K – $75K</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'rp_budget', 'over_75k')">
+        <input type="radio" name="rp_budget">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">$75K+</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'rp_budget', 'not_sure')">
+        <input type="radio" name="rp_budget">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Not sure yet</div></div>
+      </div>
+    </div>
+  </div>
+
   <div class="card">
     <div class="card-title">When Do You Need This By? <span style="color: var(--g2-text-light);">(optional)</span></div>
     <input type="date" id="rp_deadline_date">
@@ -1157,7 +1281,7 @@
 <script>
   // Set this to your Apps Script Web App URL after deploying Code.gs
   // Extensions → Apps Script → Deploy → New deployment → Web app → Anyone
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWQ5ctO-LxvmdT2iKcSNNF6nbX16lE65Bm6reJLi99fUHWmbKPNtJorQdzngORXXzjkg/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8C1hxDK69JKs0mBkZj4SJ7oOw9KS_hwXP4krjpCskGbfdIINuoYIAAld1sk1PVE_NFw/exec';
 
   // ============ STATE ============
   let currentStep = 0;
@@ -1607,9 +1731,15 @@
       const email = (document.getElementById('rp_email')?.value || '').trim();
       const card = document.getElementById('card_name_email');
       const err = document.getElementById('err_name_email');
-      if (!name || !email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!name || !email || !emailRegex.test(email)) {
         if (card) card.classList.add('card-error');
-        if (err) err.classList.add('show');
+        if (err) {
+          err.classList.add('show');
+          err.textContent = (!name || !email)
+            ? 'Please enter your name and email.'
+            : 'Please enter a valid email address (e.g. name@company.com).';
+        }
         valid = false;
       } else {
         if (card) card.classList.remove('card-error');
@@ -1686,6 +1816,7 @@
       cadence: document.getElementById('rp_cadence')?.value || '',
       deadline: document.getElementById('rp_deadline_date')?.value || '',
       deadlineFlexibility: getRadioValue('rp_deadline_flex'),
+      budget: getRadioValue('rp_budget'),
       // Admin
       adminNotes: (document.getElementById('adminNotes')?.value || '').trim(),
       approvedBy: (document.getElementById('approvedBy')?.value || '').trim(),
@@ -1703,7 +1834,12 @@
     const btn = document.querySelector('[onclick="submitForm()"]');
     if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
 
+    let timeoutId;
+    let settled = false;
     const done = (ok, errMsg) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeoutId);
       delete window[cbName];
       if (script.parentNode) script.parentNode.removeChild(script);
       if (btn) { btn.disabled = false; btn.textContent = 'Submit Request →'; }
@@ -1733,7 +1869,7 @@
       + '?callback=' + cbName
       + '&payload=' + encodeURIComponent(JSON.stringify(data));
 
-    setTimeout(() => done(false, 'Timed out after 15 s'), 15000);
+    timeoutId = setTimeout(() => done(false, 'Timed out after 15 s'), 15000);
     document.head.appendChild(script);
   }
 
@@ -1819,7 +1955,8 @@
       goals:          cardLabels('input[name="rp_goals"]:checked') || '',
       description:    document.getElementById('rp_description')?.value || 'Not provided',
       engagementType: cardLabel('input[name="rp_engagement_type"]:checked') || '',
-      deadline:       document.getElementById('rp_deadline_date')?.value || 'Not provided'
+      deadline:       document.getElementById('rp_deadline_date')?.value || 'Not provided',
+      budget:         cardLabel('input[name="rp_budget"]:checked') || ''
     };
 
     // ── Section heading ──────────────────────────────────────────────────────
@@ -1866,6 +2003,7 @@
     if (summaryData.goals) addRow('Goals', summaryData.goals);
     if (summaryData.description) addRow('Research Focus', summaryData.description);
     if (summaryData.engagementType) addRow('Engagement Type', summaryData.engagementType);
+    if (summaryData.budget) addRow('Budget Range', summaryData.budget);
     addRow('Target Delivery Date', summaryData.deadline);
 
     addFooter();
