@@ -259,27 +259,38 @@
   }
 
   .section-header {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 12px;
+    align-items: center;
     margin-bottom: 32px;
   }
   .section-number {
-    display: inline-block;
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--g2-purple);
     color: white;
     width: 32px; height: 32px;
     border-radius: 8px;
-    text-align: center;
-    line-height: 32px;
     font-weight: 700;
     font-size: 14px;
-    margin-bottom: 12px;
+    flex-shrink: 0;
   }
   .section-title {
+    grid-column: 2;
+    grid-row: 1;
     font-size: 28px;
     font-weight: 800;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     color: var(--g2-dark);
   }
   .section-desc {
+    grid-column: 2;
+    grid-row: 2;
     color: var(--g2-text-light);
     font-size: 15px;
     line-height: 1.6;
@@ -1646,6 +1657,15 @@
   </div>
 </div>
 
+<div id="pb-confirmation" style="display:none;">
+  <div class="welcome-card">
+    <div style="font-size:48px; margin-bottom:16px;">✅</div>
+    <div class="welcome-title" style="font-size:32px;">Brief Submitted!</div>
+    <div class="welcome-subtitle">We'll review your brief and be in touch shortly.</div>
+    <button class="btn btn-primary btn-large" onclick="exportBriefClientPDF()">📥 Download Your Brief (PDF)</button>
+  </div>
+</div>
+
 </div><!-- /brief .main -->
 
 <!-- Brief Admin Pricing Panel -->
@@ -1681,6 +1701,8 @@
   // Set this to your Apps Script Web App URL after deploying Code.gs
   // Extensions → Apps Script → Deploy → New deployment → Web app → Anyone
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8C1hxDK69JKs0mBkZj4SJ7oOw9KS_hwXP4krjpCskGbfdIINuoYIAAld1sk1PVE_NFw/exec';
+  // Set this to your BriefCode.gs Web App URL after deploying it
+  const BRIEF_SCRIPT_URL = 'PASTE_YOUR_BRIEF_SCRIPT_URL_HERE';
 
   // ============ STATE ============
   let currentStep = 0;
@@ -2237,6 +2259,35 @@
     };
   }
 
+  function gatherBriefData() {
+    const commsChannel = Array.from(document.querySelectorAll('input[name="pb_comms_channel"]:checked'))
+      .map(i => i.value).join(', ');
+    return {
+      timestamp:           new Date().toISOString(),
+      company:             (document.getElementById('pb_company')?.value || '').trim(),
+      researchSummary:     (document.getElementById('pb_research_summary')?.value || '').trim(),
+      researchQuestions:   (document.getElementById('pb_research_questions')?.value || '').trim(),
+      keyInsights:         (document.getElementById('pb_key_insights')?.value || '').trim(),
+      usagePlans:          (document.getElementById('pb_usage_plans')?.value || '').trim(),
+      audience:            (document.getElementById('pb_audience')?.value || '').trim(),
+      exclusions:          (document.getElementById('pb_exclusions')?.value || '').trim(),
+      customerType:        getRadioValue('pb_customer_type'),
+      painPoints:          (document.getElementById('pb_pain_points')?.value || '').trim(),
+      familiarity:         getRadioValue('pb_familiarity'),
+      decisionLevel:       getRadioValue('pb_decision_level'),
+      benchmarking:        getRadioValue('pb_benchmarking'),
+      competitors:         (document.getElementById('pb_competitors')?.value || '').trim(),
+      designReferences:    (document.getElementById('pb_design_references')?.value || '').trim(),
+      involvementLevel:    (document.getElementById('pb_involvement_level')?.value || '').trim(),
+      deadline:            document.getElementById('pb_deadline')?.value || '',
+      deadlineFlexibility: getRadioValue('pb_deadline_flex'),
+      milestones:          (document.getElementById('pb_milestones')?.value || '').trim(),
+      commsChannel:        commsChannel,
+      blockers:            (document.getElementById('pb_blockers')?.value || '').trim(),
+      additionalNotes:     (document.getElementById('pb_additional_notes')?.value || '').trim(),
+    };
+  }
+
   // ============ FORM SUBMISSION ============
   function submitForm() {
     if (!validateStep(3)) return;
@@ -2685,7 +2736,49 @@
 
   // ============ BRIEF SUBMISSION ============
   function submitBrief() {
-    exportBriefClientPDF();
+    const data = gatherBriefData();
+    const cbName = 'gsBriefCallback_' + Date.now();
+    const script = document.createElement('script');
+
+    const btn = document.querySelector('[onclick="submitBrief()"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+
+    let timeoutId;
+    let settled = false;
+    const done = (ok, errMsg) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Brief →'; }
+      if (ok) {
+        document.querySelectorAll('[data-form="brief"] .section').forEach(s => s.classList.remove('active'));
+        const confirmEl = document.getElementById('pb-confirmation');
+        if (confirmEl) confirmEl.style.display = 'block';
+        window.scrollTo(0, 0);
+        exportBriefClientPDF();
+      } else {
+        let errEl = document.getElementById('brief-submit-error');
+        if (!errEl) {
+          errEl = document.createElement('p');
+          errEl.id = 'brief-submit-error';
+          errEl.style.cssText = 'color:#cc0000;margin-top:8px;font-size:14px;';
+          if (btn) btn.insertAdjacentElement('afterend', errEl);
+        }
+        errEl.textContent = 'Submission error: ' + (errMsg || 'unknown — check Apps Script executions log');
+      }
+    };
+
+    window[cbName] = res => done(res && res.success, res && res.error);
+    script.onerror = () => done(false, 'Network error — could not reach Apps Script');
+
+    script.src = BRIEF_SCRIPT_URL
+      + '?callback=' + cbName
+      + '&payload=' + encodeURIComponent(JSON.stringify(data));
+
+    timeoutId = setTimeout(() => done(false, 'Timed out after 15 s'), 15000);
+    document.head.appendChild(script);
   }
 
   // ============ BRIEF PDF EXPORTS ============
