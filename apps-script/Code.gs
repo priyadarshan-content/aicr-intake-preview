@@ -189,7 +189,7 @@ function onFormSubmit(e) {
 }
 
 function checkForNewResponses() {
-  var ss = SpreadsheetApp.getActive();
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   var sheet = ss.getSheetByName(TARGET_SHEET_NAME);
   if (!sheet) return;
 
@@ -249,7 +249,7 @@ function sendSlackNotification(named, sheet, rowNum) {
 // ─── Slack — new intake form polling (time-driven trigger) ────────────────────
 
 function initializeLastProcessedRow() {
-  var ss = SpreadsheetApp.getActive();
+  var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   var sheet = ss.getSheetByName(TARGET_SHEET_NAME);
   if (!sheet) {
     Logger.log('Sheet not found: ' + TARGET_SHEET_NAME);
