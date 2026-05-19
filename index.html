@@ -718,7 +718,7 @@
 <div data-form="proposal">
 
 <!-- Progress Bar -->
-<div class="progress-bar">
+<div class="progress-bar" id="proposal-progress-bar" style="display:none;">
   <div class="progress-steps" id="progress-steps"></div>
   <div class="step-labels" id="step-labels"></div>
 </div>
@@ -1317,36 +1317,8 @@
   <button onclick="switchTab('proposal'); goToStep(0);" style="background:none; border:none; color:var(--g2-text-light); font-size:13px; cursor:pointer; font-family:inherit; padding:0;">← Back to main page</button>
 </div>
 
-<!-- Brief Progress Bar -->
-<div class="progress-bar">
-  <div class="progress-steps" id="pb-progress-steps"></div>
-  <div class="step-labels" id="pb-step-labels"></div>
-</div>
-
 <!-- Brief Main Content -->
 <div class="main">
-
-<!-- Brief Step 0: Welcome / Choice Screen -->
-<div class="section active" data-step="0">
-  <div class="welcome-card">
-    <div class="welcome-title">AI Custom Research</div>
-    <div class="welcome-subtitle">Project Brief</div>
-    <div class="welcome-text">Help us prepare for your kickoff call. Choose how you'd like to share your research needs below.</div>
-  </div>
-
-  <div class="choice-grid">
-    <div class="choice-card" onclick="goToBriefStep(1)">
-      <div class="choice-icon">📋</div>
-      <div class="choice-title">Fill Out the Form</div>
-      <div class="choice-desc">Answer a few quick questions to brief us on your project</div>
-    </div>
-    <div class="choice-card" onclick="openAIInterview()">
-      <div class="choice-icon">🎙️</div>
-      <div class="choice-title">Talk to Our AI Researcher</div>
-      <div class="choice-desc">Experience our AI-moderated interview tool firsthand — the same one we'll use for your research</div>
-    </div>
-  </div>
-</div>
 
 <!-- Brief Step 1: Project Overview -->
 <div class="section" data-step="1">
@@ -1713,7 +1685,7 @@
   const stepLabels = ['Welcome', 'About You', 'What Do You Need?', 'Goals & Context', 'Review'];
 
   // ── Brief state ──────────────────────────────────────────────────────────────
-  let briefStep = 0;
+  let briefStep = 1;
   const briefMaxSteps = 8; // Steps 0-7
   let briefAdminMode = false;
   const briefStepLabels = ['Welcome', 'Overview', 'Objectives', 'Audience', 'Competitive', 'Design', 'Logistics', 'Review'];
@@ -1862,7 +1834,7 @@
     let stepsHTML = '';
     let labelsHTML = '';
 
-    for (let i = 0; i < maxSteps; i++) {
+    for (let i = 1; i < maxSteps; i++) { // step 0 is the hero, skip it
       const isActive = i === currentStep;
       const isCompleted = i < currentStep;
       let classes = 'progress-step';
@@ -1875,6 +1847,7 @@
 
     document.getElementById('progress-steps').innerHTML = stepsHTML;
     document.getElementById('step-labels').innerHTML = labelsHTML;
+    document.getElementById('proposal-progress-bar').style.display = currentStep === 0 ? 'none' : '';
   }
 
   // ============ STEP NAVIGATION ============
@@ -2610,7 +2583,7 @@
 
   function startBrief() {
     switchTab('brief');
-    goToBriefStep(0);
+    goToBriefStep(1);
   }
 
   // ============ BRIEF ADMIN ============
@@ -2628,21 +2601,7 @@
   }
 
   // ============ BRIEF PROGRESS BAR ============
-  function updateBriefProgressBar() {
-    var stepsHTML = '';
-    var labelsHTML = '';
-    for (var i = 0; i < briefMaxSteps; i++) {
-      var isActive = i === briefStep;
-      var isCompleted = i < briefStep;
-      var classes = 'progress-step';
-      if (isActive) classes += ' active';
-      if (isCompleted) classes += ' completed';
-      stepsHTML += '<div class="' + classes + '" data-label="' + (briefStepLabels[i] || '') + '"></div>';
-      labelsHTML += '<div class="step-label ' + (isActive ? 'active' : '') + '">' + (briefStepLabels[i] || '') + '</div>';
-    }
-    document.getElementById('pb-progress-steps').innerHTML = stepsHTML;
-    document.getElementById('pb-step-labels').innerHTML = labelsHTML;
-  }
+  function updateBriefProgressBar() { /* progress bar removed from brief */ }
 
   // ============ BRIEF STEP NAVIGATION ============
   function goToBriefStep(step) {
@@ -2660,7 +2619,7 @@
   }
 
   function prevBriefStep() {
-    if (briefStep > 0) {
+    if (briefStep > 1) {
       briefStep--;
       updateBriefProgressBar();
       showBriefStep(briefStep);
