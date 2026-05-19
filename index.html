@@ -185,13 +185,43 @@
     line-height: 1.5;
   }
 
+  /* Tab Navigation */
+  .tab-nav {
+    background: var(--g2-white);
+    padding: 0 40px;
+    position: sticky;
+    top: 68px;
+    z-index: 99;
+    border-bottom: 1px solid var(--g2-cream-2);
+    display: flex;
+    justify-content: center;
+  }
+  .tab-btn {
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    background: none;
+    color: var(--g2-text-light);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.2s, border-color 0.2s;
+    font-family: inherit;
+  }
+  .tab-btn.active {
+    color: var(--g2-purple);
+    border-bottom-color: var(--g2-purple);
+  }
+  .tab-btn:hover:not(.active) { color: var(--g2-text); }
+
   /* Progress */
   .progress-bar {
     background: var(--g2-white);
     padding: 16px 40px;
     position: sticky;
-    top: 68px;
-    z-index: 99;
+    top: 116px;
+    z-index: 98;
     border-bottom: 1px solid var(--g2-cream-2);
   }
   .progress-steps {
@@ -666,6 +696,34 @@
   .conditional.show {
     display: block;
   }
+
+  /* Brief: Choice screen (Step 0) */
+  .choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+  }
+  .choice-card {
+    background: var(--g2-white);
+    border: 2px solid var(--g2-cream-2);
+    border-radius: 12px;
+    padding: 32px 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .choice-card:hover {
+    border-color: var(--g2-purple);
+    box-shadow: 0 8px 32px rgba(87, 70, 178, 0.15);
+    transform: translateY(-4px);
+  }
+  .choice-icon { font-size: 48px; margin-bottom: 16px; }
+  .choice-title { font-size: 18px; font-weight: 700; color: var(--g2-dark); margin-bottom: 12px; }
+  .choice-desc { font-size: 14px; color: var(--g2-text-light); line-height: 1.6; }
 </style>
 </head>
 
@@ -685,6 +743,15 @@
   </div>
   <div class="admin-badge" id="admin-badge">ADMIN MODE</div>
 </div>
+
+<!-- Tab Navigation -->
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('proposal')">Request a Proposal</button>
+  <button class="tab-btn" onclick="switchTab('brief')">Submit a Creative Brief</button>
+</nav>
+
+<!-- Proposal Form -->
+<div data-form="proposal">
 
 <!-- Progress Bar -->
 <div class="progress-bar">
@@ -1274,6 +1341,392 @@
   </div>
 </div>
 
+</div><!-- /data-form="proposal" -->
+
+<!-- Creative Brief Form -->
+<div data-form="brief" style="display:none;">
+
+<!-- Brief Progress Bar -->
+<div class="progress-bar">
+  <div class="progress-steps" id="pb-progress-steps"></div>
+  <div class="step-labels" id="pb-step-labels"></div>
+</div>
+
+<!-- Brief Main Content -->
+<div class="main">
+
+<!-- Brief Step 0: Welcome / Choice Screen -->
+<div class="section active" data-step="0">
+  <div class="welcome-card">
+    <div class="welcome-title">AI Custom Research</div>
+    <div class="welcome-subtitle">Project Brief</div>
+    <div class="welcome-text">Help us prepare for your kickoff call. Choose how you'd like to share your research needs below.</div>
+  </div>
+
+  <div class="choice-grid">
+    <div class="choice-card" onclick="goToBriefStep(1)">
+      <div class="choice-icon">📋</div>
+      <div class="choice-title">Fill Out the Form</div>
+      <div class="choice-desc">Answer a few quick questions to brief us on your project</div>
+    </div>
+    <div class="choice-card" onclick="openAIInterview()">
+      <div class="choice-icon">🎙️</div>
+      <div class="choice-title">Talk to Our AI Researcher</div>
+      <div class="choice-desc">Experience our AI-moderated interview tool firsthand — the same one we'll use for your research</div>
+    </div>
+  </div>
+</div>
+
+<!-- Brief Step 1: Project Overview -->
+<div class="section" data-step="1">
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <h2 class="section-title">Project Overview</h2>
+    <p class="section-desc">Basic information about your project.</p>
+  </div>
+
+  <div class="required-legend"><span>*</span> indicates required fields</div>
+
+  <div class="card">
+    <div class="card-title required">Company Name</div>
+    <input type="text" id="pb_company" placeholder="Your company name">
+  </div>
+
+  <div class="card">
+    <div class="card-title required">In a Sentence, What's This Research About?</div>
+    <input type="text" id="pb_research_summary" placeholder="e.g., 'Understanding why mid-market buyers switch ERP providers'">
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevBriefStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextBriefStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Brief Step 2: Research Objectives -->
+<div class="section" data-step="2">
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <h2 class="section-title">Research Objectives</h2>
+    <p class="section-desc">Dive deeper into your research goals and key questions.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title required">Specific Topics, Challenges, or Questions</div>
+    <div class="card-hint">What specific areas should this research address?</div>
+    <textarea id="pb_research_questions" placeholder="e.g., 'How do buyers evaluate pricing models?', 'What features matter most?', 'What's the decision timeline?'"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Insights You're Hoping to Gain</div>
+    <textarea id="pb_key_insights" placeholder="e.g., 'Understand the top 3 buying criteria', 'Identify price sensitivity levels', 'Map decision-maker personas'..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How Will You Use the Findings?</div>
+    <div class="card-hint">What actions do you plan to take based on this research?</div>
+    <textarea id="pb_usage_plans" placeholder="e.g., 'Inform our messaging strategy', 'Build new product features', 'Create sales collateral'..."></textarea>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevBriefStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextBriefStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Brief Step 3: Audience & Panel -->
+<div class="section" data-step="3">
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <h2 class="section-title">Audience & Panel</h2>
+    <p class="section-desc">Define your ideal respondents and sourcing preferences.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title required">Primary Audience</div>
+    <div class="card-hint">Job titles, roles, seniority, industries, company size, use cases, etc.</div>
+    <textarea id="pb_audience" placeholder="e.g., 'VP/Director-level procurement leaders at mid-market manufacturing companies (500-5000 employees) using ERP software...'"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Respondent Exclusions</div>
+    <div class="card-hint">Any companies, roles, or backgrounds to exclude?</div>
+    <textarea id="pb_exclusions" placeholder="e.g., 'Current customers', 'Companies with fewer than 100 employees'..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Who Should We Talk To?</div>
+    <div class="card-hint">Should we interview people who already use your product, people who don't yet, or a mix?</div>
+    <div class="option-grid cols-3">
+      <div class="option-card" onclick="selectOption(this, 'pb_customer_type', 'current')">
+        <input type="radio" name="pb_customer_type">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Existing Users</div><div class="option-desc">People already using your product</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_customer_type', 'prospective')">
+        <input type="radio" name="pb_customer_type">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Prospective Buyers</div><div class="option-desc">People not yet using your product</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_customer_type', 'both')">
+        <input type="radio" name="pb_customer_type">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Both</div><div class="option-desc">A mix of current and prospective</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Pain Points or Interests of This Audience</div>
+    <div class="card-hint">What does this audience care about most? What frustrations or goals should the research tap into?</div>
+    <textarea id="pb_pain_points" placeholder="e.g., 'Frustrated with manual workflows', 'Looking for better integrations', 'Cost reduction is top priority'..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How Familiar Is This Audience With the Topic?</div>
+    <div class="card-hint">This helps us calibrate the depth and complexity of interview questions.</div>
+    <div class="option-grid cols-3">
+      <div class="option-card" onclick="selectOption(this, 'pb_familiarity', 'expert')">
+        <input type="radio" name="pb_familiarity">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Expert</div><div class="option-desc">Deep knowledge, use it daily</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_familiarity', 'moderate')">
+        <input type="radio" name="pb_familiarity">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Moderate</div><div class="option-desc">Aware and somewhat involved</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_familiarity', 'low')">
+        <input type="radio" name="pb_familiarity">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Low</div><div class="option-desc">Early-stage or exploring</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">What Level of Decision-Making Should They Have?</div>
+    <div class="card-hint">Do we need people who sign off on purchases, or hands-on users, or both?</div>
+    <div class="option-grid cols-3">
+      <div class="option-card" onclick="selectOption(this, 'pb_decision_level', 'decision_maker')">
+        <input type="radio" name="pb_decision_level">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Decision-Maker</div><div class="option-desc">Budget holders, final approvers</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_decision_level', 'influencer')">
+        <input type="radio" name="pb_decision_level">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Influencer / User</div><div class="option-desc">Hands-on, recommends tools</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_decision_level', 'mix')">
+        <input type="radio" name="pb_decision_level">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Mix</div><div class="option-desc">Both decision-makers and users</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevBriefStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextBriefStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Brief Step 4: Competitive Context -->
+<div class="section" data-step="4">
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <h2 class="section-title">Competitive Context</h2>
+    <p class="section-desc">Tell us about the competitive landscape and key players.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title required">Should This Research Include Competitive Benchmarking?</div>
+    <div class="option-grid cols-3">
+      <div class="option-card" onclick="selectOption(this, 'pb_benchmarking', 'core_objective')">
+        <input type="radio" name="pb_benchmarking">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Core Objective</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_benchmarking', 'light_touch')">
+        <input type="radio" name="pb_benchmarking">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Light Touch</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_benchmarking', 'no')">
+        <input type="radio" name="pb_benchmarking">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">No</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Top 2-4 Competitors or Alternatives</div>
+    <textarea id="pb_competitors" placeholder="1. &#10;2. &#10;3. &#10;4. "></textarea>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevBriefStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextBriefStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Brief Step 5: Deliverables & Design -->
+<div class="section" data-step="5">
+  <div class="section-header">
+    <div class="section-number">5</div>
+    <h2 class="section-title">Deliverables & Design</h2>
+    <p class="section-desc">Help us understand how you'd like the final report to look and feel.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Design References</div>
+    <div class="card-hint">Share links or examples of designs you'd like us to emulate</div>
+    <textarea id="pb_design_references" placeholder="e.g., 'https://example.com/design1', or describe the style you like..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Level of Involvement</div>
+    <div class="card-hint">How involved does your team want to be in report creation, design, and marketing?</div>
+    <textarea id="pb_involvement_level" placeholder="e.g., 'We'll provide feedback on drafts', 'Hands-off — you handle it', 'Weekly design reviews'..."></textarea>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevBriefStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextBriefStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Brief Step 6: Logistics -->
+<div class="section" data-step="6">
+  <div class="section-header">
+    <div class="section-number">6</div>
+    <h2 class="section-title">Logistics</h2>
+    <p class="section-desc">Set expectations for project flow and key milestones.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Desired Deadline</div>
+    <div class="card-hint">When do you need the final report delivered?</div>
+    <input type="date" id="pb_deadline" style="margin-bottom: 16px;">
+    <div class="card-title" style="margin-top: 8px;">How Flexible Is This?</div>
+    <div class="option-grid cols-3">
+      <div class="option-card" onclick="selectOption(this, 'pb_deadline_flex', 'hard')">
+        <input type="radio" name="pb_deadline_flex">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Hard Deadline</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_deadline_flex', 'some_flex')">
+        <input type="radio" name="pb_deadline_flex">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Some Flexibility</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_deadline_flex', 'flexible')">
+        <input type="radio" name="pb_deadline_flex">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Flexible</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Milestones or Events</div>
+    <div class="card-hint">Anything this needs to align with? (e.g., "Board presentation May 15", "Product launch Q3")</div>
+    <textarea id="pb_milestones" placeholder="e.g., 'Final report by Dec 1st for Q4 earnings call'..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Preferred Communication Channel(s)</div>
+    <div class="card-hint">Select all that work for you.</div>
+    <div class="option-grid cols-3">
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'pb_comms_channel', 'Slack')">
+        <input type="checkbox" name="pb_comms_channel" value="Slack">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Slack</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'pb_comms_channel', 'Email')">
+        <input type="checkbox" name="pb_comms_channel" value="Email">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Email</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'pb_comms_channel', 'Calls')">
+        <input type="checkbox" name="pb_comms_channel" value="Calls">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Calls</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Any Blockers That Could Cause Delays?</div>
+    <div class="card-hint">Internal approvals, legal reviews, seasonal freezes, pending decisions — anything that might slow things down.</div>
+    <textarea id="pb_blockers" placeholder="e.g., 'Legal needs to approve the interview guide', 'Waiting on budget confirmation', 'Holiday freeze in December'..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Anything Else We Should Know?</div>
+    <textarea id="pb_additional_notes" placeholder="Any other context, constraints, or preferences..."></textarea>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevBriefStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextBriefStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Brief Step 7: Review & Submit -->
+<div class="section" data-step="7">
+  <div class="section-header">
+    <div class="section-number">7</div>
+    <h2 class="section-title">Review Your Brief</h2>
+    <p class="section-desc">Ready to submit? We'll use this to prepare for your kickoff call.</p>
+  </div>
+
+  <div id="pb-summary-container" style="margin-bottom: 32px;"></div>
+
+  <div style="margin-bottom: 20px;">
+    <button class="btn btn-primary" onclick="exportBriefClientPDF()" style="width: 100%; padding: 16px 24px; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+      📥 Download Summary (PDF)
+    </button>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevBriefStep()">← Back</button>
+    <button class="btn btn-primary" onclick="submitBrief()">Submit Brief →</button>
+  </div>
+</div>
+
+</div><!-- /brief .main -->
+
+<!-- Brief Admin Pricing Panel -->
+<div id="pb-adminPanel" class="admin-panel">
+  <h3>Pricing Calculator</h3>
+  <div id="pb-pricingBreakdown"></div>
+  <div class="admin-section" style="margin-top:24px;">
+    <div class="admin-section-title">Recommendations</div>
+    <div id="pb-adminRecommendations"></div>
+  </div>
+  <div class="admin-notes">
+    <h3 style="margin-top:20px;">Internal Notes</h3>
+    <textarea id="pb-adminNotes" rows="4" placeholder="Notes, risks, flags..."></textarea>
+    <div style="margin-top:12px;">
+      <label style="font-size:12px; color:var(--g2-gray-light);">Pricing approved by:</label>
+      <input type="text" id="pb-approvedBy" placeholder="Name" style="margin-top:6px; background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:white; padding:8px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.12); font-family:inherit; font-size:13px;">
+    </div>
+    <button onclick="exportBriefClientPDF()" style="margin-top:20px; width:100%; padding:12px; background:var(--g2-red-orange); color:white; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+      Export Client Summary (PDF)
+    </button>
+    <button onclick="exportBriefInternalScopesPDF()" style="margin-top:8px; width:100%; padding:12px; background:var(--g2-teal); color:white; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+      Export Internal Scoping PDF
+    </button>
+  </div>
+</div>
+
+</div><!-- /data-form="brief" -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   // Set this to your Apps Script Web App URL after deploying Code.gs
@@ -1284,8 +1737,15 @@
   let currentStep = 0;
   const maxSteps = 5; // Steps 0-4
   let adminMode = false;
+  let activeTab = 'proposal';
 
   const stepLabels = ['Welcome', 'About You', 'What Do You Need?', 'Goals & Context', 'Review'];
+
+  // ── Brief state ──────────────────────────────────────────────────────────────
+  let briefStep = 0;
+  const briefMaxSteps = 8; // Steps 0-7
+  let briefAdminMode = false;
+  const briefStepLabels = ['Welcome', 'Overview', 'Objectives', 'Audience', 'Competitive', 'Design', 'Logistics', 'Review'];
 
   // Pricing state
   let pricing = {
@@ -1317,10 +1777,17 @@
   // ============ ADMIN MODE ============
   document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.shiftKey && e.key === 'A') {
-      adminMode = !adminMode;
-      document.getElementById('adminPanel').classList.toggle('visible', adminMode);
-      document.getElementById('admin-badge').classList.toggle('visible', adminMode);
-      if (adminMode) updatePricing();
+      if (activeTab === 'brief') {
+        briefAdminMode = !briefAdminMode;
+        document.getElementById('pb-adminPanel').classList.toggle('visible', briefAdminMode);
+        document.getElementById('admin-badge').classList.toggle('visible', briefAdminMode);
+        if (briefAdminMode) updateBriefPricing();
+      } else {
+        adminMode = !adminMode;
+        document.getElementById('adminPanel').classList.toggle('visible', adminMode);
+        document.getElementById('admin-badge').classList.toggle('visible', adminMode);
+        if (adminMode) updatePricing();
+      }
     }
   });
 
@@ -1464,15 +1931,13 @@
   }
 
   function showStep(step) {
-    // Hide all sections
-    const sections = document.querySelectorAll('.section');
+    const container = document.querySelector('[data-form="proposal"]');
+    const sections = container.querySelectorAll('.section');
     sections.forEach(s => s.classList.remove('active'));
 
-    // Show correct section
-    const targetSection = document.querySelector(`.section[data-step="${step}"]`);
+    const targetSection = container.querySelector(`.section[data-step="${step}"]`);
     if (targetSection) targetSection.classList.add('active');
 
-    // Build summary if on final step
     if (step === 4) {
       buildSummary();
     }
@@ -2162,8 +2627,289 @@
     doc.save(`G2_Internal_Scoping_${new Date().getTime()}.pdf`);
   }
 
+  // ============ TAB SWITCHING ============
+  function switchTab(tab) {
+    activeTab = tab;
+    document.querySelectorAll('[data-form]').forEach(function(el) {
+      el.style.display = el.dataset.form === tab ? '' : 'none';
+    });
+    document.querySelectorAll('.tab-btn').forEach(function(btn, i) {
+      btn.classList.toggle('active', (i === 0 && tab === 'proposal') || (i === 1 && tab === 'brief'));
+    });
+    if (tab === 'brief' && briefStep !== 0) { goToBriefStep(0); }
+    else if (tab === 'brief') { updateBriefProgressBar(); }
+    window.scrollTo(0, 0);
+  }
+
+  // ============ BRIEF ADMIN ============
+  function updateBriefPricing() {
+    var html = '<div class="price-line"><span class="label">Pricing set during proposal — see calculator</span><span class="value">TBD</span></div>';
+    html += '<div class="price-total"><span>See proposal calculator</span><span class="value">TBD</span></div>';
+    document.getElementById('pb-pricingBreakdown').innerHTML = html;
+
+    var recs = [];
+    if (!document.getElementById('pb_company').value) recs.push('REQUIRED: Company name');
+    if (!document.getElementById('pb_research_questions').value) recs.push('REQUIRED: Research questions/topics');
+    if (!document.getElementById('pb_audience').value) recs.push('REQUIRED: Primary audience');
+    if (recs.length === 0) recs.push('All mandatory fields are complete.');
+    document.getElementById('pb-adminRecommendations').innerHTML = recs.map(function(r) { return '<div class="admin-flag">' + r + '</div>'; }).join('');
+  }
+
+  // ============ BRIEF PROGRESS BAR ============
+  function updateBriefProgressBar() {
+    var stepsHTML = '';
+    var labelsHTML = '';
+    for (var i = 0; i < briefMaxSteps; i++) {
+      var isActive = i === briefStep;
+      var isCompleted = i < briefStep;
+      var classes = 'progress-step';
+      if (isActive) classes += ' active';
+      if (isCompleted) classes += ' completed';
+      stepsHTML += '<div class="' + classes + '" data-label="' + (briefStepLabels[i] || '') + '"></div>';
+      labelsHTML += '<div class="step-label ' + (isActive ? 'active' : '') + '">' + (briefStepLabels[i] || '') + '</div>';
+    }
+    document.getElementById('pb-progress-steps').innerHTML = stepsHTML;
+    document.getElementById('pb-step-labels').innerHTML = labelsHTML;
+  }
+
+  // ============ BRIEF STEP NAVIGATION ============
+  function goToBriefStep(step) {
+    briefStep = step;
+    updateBriefProgressBar();
+    showBriefStep(step);
+  }
+
+  function nextBriefStep() {
+    if (briefStep < briefMaxSteps - 1) {
+      briefStep++;
+      updateBriefProgressBar();
+      showBriefStep(briefStep);
+    }
+  }
+
+  function prevBriefStep() {
+    if (briefStep > 0) {
+      briefStep--;
+      updateBriefProgressBar();
+      showBriefStep(briefStep);
+    }
+  }
+
+  function showBriefStep(step) {
+    var container = document.querySelector('[data-form="brief"]');
+    var sections = container.querySelectorAll('.section');
+    sections.forEach(function(s) { s.classList.remove('active'); });
+    var targetSection = container.querySelector('.section[data-step="' + step + '"]');
+    if (targetSection) targetSection.classList.add('active');
+    if (step === 7) { buildBriefSummary(); }
+    if (briefAdminMode) updateBriefPricing();
+    window.scrollTo(0, 0);
+  }
+
+  // ============ AI INTERVIEW LINK ============
+  function openAIInterview() {
+    window.open('https://interviews.g2.com/research/f66126de-47dd-4cfe-baa1-9e08ade26d2a', '_blank');
+  }
+
+  // ============ BRIEF SUMMARY BUILDER ============
+  function buildBriefSummary() {
+    var company = document.getElementById('pb_company').value || 'Not provided';
+    var audience = document.getElementById('pb_audience').value || 'Not provided';
+    var questions = document.getElementById('pb_research_questions').value || 'Not provided';
+    var customerTypeEl = document.querySelector('input[name="pb_customer_type"]:checked');
+    var customerType = customerTypeEl ? (customerTypeEl.closest('.option-card').querySelector('.option-label').textContent) : 'Not selected';
+    var commsChecked = document.querySelectorAll('input[name="pb_comms_channel"]:checked');
+    var commsChannel = Array.from(commsChecked).map(function(el) { return el.closest('.option-card').querySelector('.option-label').textContent; }).join(', ') || 'Not selected';
+    var deadline = document.getElementById('pb_deadline').value || 'Not provided';
+
+    var html = '<div class="summary-item"><div class="summary-label">Company</div><div class="summary-value">' + company + '</div></div>' +
+      '<div class="summary-item"><div class="summary-label">Primary Audience</div><div class="summary-value">' + audience + '</div></div>' +
+      '<div class="summary-item"><div class="summary-label">Research Questions</div><div class="summary-value">' + questions + '</div></div>' +
+      '<div class="summary-item"><div class="summary-label">Interview Target</div><div class="summary-value">' + customerType + '</div></div>' +
+      '<div class="summary-item"><div class="summary-label">Communication Channel</div><div class="summary-value">' + commsChannel + '</div></div>' +
+      '<div class="summary-item"><div class="summary-label">Desired Deadline</div><div class="summary-value">' + deadline + '</div></div>';
+
+    document.getElementById('pb-summary-container').innerHTML = html;
+  }
+
+  // ============ BRIEF SUBMISSION ============
+  function submitBrief() {
+    exportBriefClientPDF();
+  }
+
+  // ============ BRIEF PDF EXPORTS ============
+  function exportBriefClientPDF() {
+    var _jspdf = window.jspdf;
+    var doc = new _jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    var W = 210, H = 297, ML = 20, MR = 20, MT = 20, MB = 20;
+    var CW = W - ML - MR;
+    var y = MT;
+
+    var navy = [6, 40, 70], purple = [87, 70, 178], redOrange = [255, 73, 44];
+    var dark = [17, 17, 17], text = [80, 80, 89], lightGray = [199, 205, 214];
+
+    function checkPage(needed) {
+      if (y + needed > H - MB) { addFooter(); doc.addPage(); y = MT; }
+    }
+    function addFooter() {
+      doc.setFontSize(8); doc.setTextColor.apply(doc, lightGray);
+      doc.text('G2 AI Custom Research Project Brief', W / 2, H - 8, { align: 'center' });
+    }
+
+    doc.setFillColor.apply(doc, navy);
+    doc.rect(0, 0, W, 40, 'F');
+    doc.setFillColor.apply(doc, redOrange);
+    doc.roundedRect(ML, 12, 16, 16, 2.5, 2.5, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('G2', ML + 8, 22.5, { align: 'center' });
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('AI Custom Research', ML + 26, 20);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Project Brief Summary', ML + 26, 28);
+    y = 50;
+
+    var summaryData = {
+      company: document.getElementById('pb_company').value || 'Not provided',
+      audience: document.getElementById('pb_audience').value || 'Not provided',
+      questions: document.getElementById('pb_research_questions').value || 'Not provided',
+      keyInsights: document.getElementById('pb_key_insights').value || '',
+      usagePlans: document.getElementById('pb_usage_plans').value || '',
+      competitors: document.getElementById('pb_competitors').value || '',
+      designRefs: document.getElementById('pb_design_references').value || '',
+      milestones: document.getElementById('pb_milestones').value || '',
+      additionalNotes: document.getElementById('pb_additional_notes').value || '',
+      deadline: document.getElementById('pb_deadline').value || 'Not provided'
+    };
+    var customerTypeEl = document.querySelector('input[name="pb_customer_type"]:checked');
+    summaryData.customerType = customerTypeEl ? customerTypeEl.closest('.option-card').querySelector('.option-label').textContent : 'Not selected';
+    var commsChecked = document.querySelectorAll('input[name="pb_comms_channel"]:checked');
+    summaryData.comms = Array.from(commsChecked).map(function(el) { return el.closest('.option-card').querySelector('.option-label').textContent; }).join(', ') || 'Not selected';
+
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold');
+    doc.setTextColor.apply(doc, purple);
+    doc.text('PROJECT DETAILS', ML, y);
+    doc.setDrawColor.apply(doc, purple); doc.setLineWidth(0.5);
+    doc.line(ML, y + 2, W - MR, y + 2);
+    y += 10;
+
+    var addRow = function(label, value) {
+      if (!value) return;
+      checkPage(10);
+      doc.setDrawColor.apply(doc, lightGray); doc.setLineWidth(0.2);
+      doc.line(ML, y - 1, W - MR, y - 1);
+      doc.setFont('helvetica', 'bold'); doc.setTextColor.apply(doc, purple); doc.setFontSize(8.5);
+      doc.text(label + ':', ML, y + 3.5);
+      doc.setFont('helvetica', 'normal'); doc.setTextColor.apply(doc, text); doc.setFontSize(9);
+      var lines = doc.splitTextToSize(value, CW - 62);
+      doc.text(lines, ML + 62, y + 3.5);
+      y += Math.max(8, lines.length * 5) + 2;
+    };
+
+    addRow('Company', summaryData.company);
+    addRow('Primary Audience', summaryData.audience);
+    addRow('Research Questions', summaryData.questions);
+    addRow('Interview Target', summaryData.customerType);
+    if (summaryData.keyInsights) addRow('Key Insights', summaryData.keyInsights);
+    if (summaryData.usagePlans) addRow('Usage Plans', summaryData.usagePlans);
+    if (summaryData.competitors) addRow('Competitors', summaryData.competitors);
+    if (summaryData.comms) addRow('Communication', summaryData.comms);
+    addRow('Desired Deadline', summaryData.deadline);
+    if (summaryData.milestones) addRow('Key Milestones', summaryData.milestones);
+    if (summaryData.additionalNotes) addRow('Additional Notes', summaryData.additionalNotes);
+
+    addFooter();
+    doc.save('G2_Research_ProjectBrief_' + new Date().getTime() + '.pdf');
+  }
+
+  function exportBriefInternalScopesPDF() {
+    var _jspdf = window.jspdf;
+    var doc = new _jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    var W = 210, H = 297, ML = 20, MR = 20, MT = 20, MB = 20;
+    var CW = W - ML - MR;
+    var y = MT;
+
+    var navy = [6, 40, 70], purple = [87, 70, 178], redOrange = [255, 73, 44];
+    var dark = [17, 17, 17], text = [80, 80, 89], lightGray = [199, 205, 214];
+
+    function checkPage(needed) {
+      if (y + needed > H - MB) { addFooter(); doc.addPage(); y = MT; }
+    }
+    function addFooter() {
+      doc.setFontSize(8); doc.setTextColor.apply(doc, lightGray);
+      doc.text('G2 AI Custom Research — Internal Scoping Document | CONFIDENTIAL', W / 2, H - 8, { align: 'center' });
+    }
+
+    doc.setFillColor.apply(doc, navy);
+    doc.rect(0, 0, W, 50, 'F');
+    doc.setFillColor.apply(doc, redOrange);
+    doc.roundedRect(ML, 14, 16, 16, 2.5, 2.5, 'F');
+    doc.setTextColor(255, 255, 255); doc.setFontSize(11); doc.setFont('helvetica', 'bold');
+    doc.text('G2', ML + 8, 24.5, { align: 'center' });
+    doc.setFontSize(16); doc.setFont('helvetica', 'bold');
+    doc.text('AI Custom Research', ML + 26, 22);
+    doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+    doc.text('Project Brief & Scoping', ML + 26, 30);
+    doc.setFillColor.apply(doc, redOrange);
+    doc.roundedRect(W - MR - 38, 14, 38, 8, 1.5, 1.5, 'F');
+    doc.setTextColor(255, 255, 255); doc.setFontSize(7); doc.setFont('helvetica', 'bold');
+    doc.text('CONFIDENTIAL', W - MR - 36, 19);
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(255, 255, 255);
+    var approvedBy = document.getElementById('pb-approvedBy').value || '(Not specified)';
+    doc.text('Approved by: ' + approvedBy, ML + 22, 39);
+    doc.text('Date: ' + new Date().toLocaleDateString(), ML + 22, 45);
+    y = 60;
+
+    var data = {
+      company: document.getElementById('pb_company').value || 'TBD',
+      questions: document.getElementById('pb_research_questions').value || 'TBD',
+      audience: document.getElementById('pb_audience').value || 'TBD'
+    };
+    var customerTypeEl = document.querySelector('input[name="pb_customer_type"]:checked');
+    data.customerType = customerTypeEl ? customerTypeEl.closest('.option-card').querySelector('.option-label').textContent : 'TBD';
+
+    var sectionHeader = function(title) {
+      checkPage(12);
+      doc.setFillColor.apply(doc, purple);
+      doc.roundedRect(ML, y, CW, 8, 1, 1, 'F');
+      doc.setTextColor(255, 255, 255); doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+      doc.text(title.toUpperCase(), ML + 4, y + 5.5);
+      y += 12;
+    };
+    var kvRow = function(label, value) {
+      if (!value) return;
+      checkPage(6);
+      doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor.apply(doc, dark);
+      doc.text(label + ':', ML + 2, y + 4);
+      doc.setFont('helvetica', 'normal'); doc.setTextColor.apply(doc, text);
+      var lines = doc.splitTextToSize(value, CW - 50);
+      doc.text(lines, ML + 50, y + 4);
+      y += Math.max(6, lines.length * 3.5) + 1;
+    };
+
+    sectionHeader('Project Overview');
+    kvRow('Client', data.company);
+    kvRow('Research Questions', data.questions);
+    kvRow('Primary Audience', data.audience);
+    kvRow('Interview Target', data.customerType);
+
+    sectionHeader('Internal Notes');
+    var notes = document.getElementById('pb-adminNotes').value || 'None';
+    checkPage(Math.ceil(notes.length / 60) * 4 + 4);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor.apply(doc, text);
+    var noteLines = doc.splitTextToSize(notes, CW - 4);
+    doc.text(noteLines, ML + 2, y + 4);
+
+    addFooter();
+    doc.save('G2_ProjectBrief_Scoping_' + new Date().getTime() + '.pdf');
+  }
+
   // ============ INITIALIZE ============
   updateProgressBar();
+  updateBriefProgressBar();
 </script>
 
 </body>
