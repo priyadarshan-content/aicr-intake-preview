@@ -732,7 +732,7 @@
     <div class="welcome-content">
       <div class="welcome-eyebrow">G2 AI Custom Research</div>
       <h1 class="welcome-headline">Research that<br>moves markets.</h1>
-      <p class="welcome-subtext">Tell us what you need and we'll put together a tailored proposal. Takes about 3–5 minutes.</p>
+      <p class="welcome-subtext">Request a tailored proposal or submit a creative brief to kick off your research project. Either path takes about 3–5 minutes.</p>
       <div class="feature-pills">
         <span class="feature-pill">🎙️ AI-Moderated Interviews</span>
         <span class="feature-pill">📊 Actionable Deliverables</span>
@@ -1315,6 +1315,12 @@
 
 <div style="padding:10px 40px; background:var(--g2-white); border-bottom:1px solid var(--g2-cream-2);">
   <button onclick="switchTab('proposal'); goToStep(0);" style="background:none; border:none; color:var(--g2-text-light); font-size:13px; cursor:pointer; font-family:inherit; padding:0;">← Back to main page</button>
+</div>
+
+<!-- Brief Progress Bar -->
+<div class="progress-bar">
+  <div class="progress-steps" id="pb-progress-steps"></div>
+  <div class="step-labels" id="pb-step-labels"></div>
 </div>
 
 <!-- Brief Main Content -->
@@ -2601,7 +2607,21 @@
   }
 
   // ============ BRIEF PROGRESS BAR ============
-  function updateBriefProgressBar() { /* progress bar removed from brief */ }
+  function updateBriefProgressBar() {
+    var stepsHTML = '';
+    var labelsHTML = '';
+    for (var i = 1; i < briefMaxSteps; i++) { // skip step 0 (removed)
+      var isActive = i === briefStep;
+      var isCompleted = i < briefStep;
+      var classes = 'progress-step';
+      if (isActive) classes += ' active';
+      if (isCompleted) classes += ' completed';
+      stepsHTML += '<div class="' + classes + '" data-label="' + (briefStepLabels[i] || '') + '"></div>';
+      labelsHTML += '<div class="step-label ' + (isActive ? 'active' : '') + '">' + (briefStepLabels[i] || '') + '</div>';
+    }
+    document.getElementById('pb-progress-steps').innerHTML = stepsHTML;
+    document.getElementById('pb-step-labels').innerHTML = labelsHTML;
+  }
 
   // ============ BRIEF STEP NAVIGATION ============
   function goToBriefStep(step) {
