@@ -188,8 +188,6 @@ function onFormSubmit(e) {
   });
 }
 
-// ─── Slack — new intake form polling (time-driven trigger) ────────────────────
-
 function checkForNewResponses() {
   var ss = SpreadsheetApp.getActive();
   var sheet = ss.getSheetByName(TARGET_SHEET_NAME);
@@ -247,6 +245,8 @@ function sendSlackNotification(named, sheet, rowNum) {
     payload: JSON.stringify({ text: message })
   });
 }
+
+// ─── Slack — new intake form polling (time-driven trigger) ────────────────────
 
 function initializeLastProcessedRow() {
   var ss = SpreadsheetApp.getActive();
