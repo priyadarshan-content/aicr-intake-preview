@@ -185,43 +185,13 @@
     line-height: 1.5;
   }
 
-  /* Tab Navigation */
-  .tab-nav {
-    background: var(--g2-white);
-    padding: 0 40px;
-    position: sticky;
-    top: 68px;
-    z-index: 99;
-    border-bottom: 1px solid var(--g2-cream-2);
-    display: flex;
-    justify-content: center;
-  }
-  .tab-btn {
-    padding: 14px 28px;
-    font-size: 14px;
-    font-weight: 600;
-    border: none;
-    background: none;
-    color: var(--g2-text-light);
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -1px;
-    transition: color 0.2s, border-color 0.2s;
-    font-family: inherit;
-  }
-  .tab-btn.active {
-    color: var(--g2-purple);
-    border-bottom-color: var(--g2-purple);
-  }
-  .tab-btn:hover:not(.active) { color: var(--g2-text); }
-
   /* Progress */
   .progress-bar {
     background: var(--g2-white);
     padding: 16px 40px;
     position: sticky;
-    top: 116px;
-    z-index: 98;
+    top: 68px;
+    z-index: 99;
     border-bottom: 1px solid var(--g2-cream-2);
   }
   .progress-steps {
@@ -744,12 +714,6 @@
   <div class="admin-badge" id="admin-badge">ADMIN MODE</div>
 </div>
 
-<!-- Tab Navigation -->
-<nav class="tab-nav">
-  <button class="tab-btn active" onclick="switchTab('proposal')">Request a Proposal</button>
-  <button class="tab-btn" onclick="switchTab('brief')">Submit a Creative Brief</button>
-</nav>
-
 <!-- Proposal Form -->
 <div data-form="proposal">
 
@@ -774,7 +738,10 @@
         <span class="feature-pill">📊 Actionable Deliverables</span>
         <span class="feature-pill">🏆 Powered by G2 Data</span>
       </div>
-      <button class="btn btn-primary btn-large" onclick="goToStep(1)">Get Started →</button>
+      <div style="display:flex; gap:16px; flex-wrap:wrap;">
+        <button class="btn btn-primary btn-large" onclick="goToStep(1)">Request a Proposal →</button>
+        <button class="btn btn-secondary btn-large" onclick="startBrief()">Complete a Creative Brief →</button>
+      </div>
     </div>
     <div class="welcome-shapes" aria-hidden="true">
       <div class="shape-ring"></div>
@@ -1345,6 +1312,10 @@
 
 <!-- Creative Brief Form -->
 <div data-form="brief" style="display:none;">
+
+<div style="padding:10px 40px; background:var(--g2-white); border-bottom:1px solid var(--g2-cream-2);">
+  <button onclick="switchTab('proposal'); goToStep(0);" style="background:none; border:none; color:var(--g2-text-light); font-size:13px; cursor:pointer; font-family:inherit; padding:0;">← Back to main page</button>
+</div>
 
 <!-- Brief Progress Bar -->
 <div class="progress-bar">
@@ -2633,12 +2604,13 @@
     document.querySelectorAll('[data-form]').forEach(function(el) {
       el.style.display = el.dataset.form === tab ? '' : 'none';
     });
-    document.querySelectorAll('.tab-btn').forEach(function(btn, i) {
-      btn.classList.toggle('active', (i === 0 && tab === 'proposal') || (i === 1 && tab === 'brief'));
-    });
-    if (tab === 'brief' && briefStep !== 0) { goToBriefStep(0); }
-    else if (tab === 'brief') { updateBriefProgressBar(); }
+    if (tab === 'brief') { updateBriefProgressBar(); }
     window.scrollTo(0, 0);
+  }
+
+  function startBrief() {
+    switchTab('brief');
+    goToBriefStep(0);
   }
 
   // ============ BRIEF ADMIN ============
