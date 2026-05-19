@@ -728,6 +728,11 @@
 <!-- Proposal Form -->
 <div data-form="proposal">
 
+<!-- Back to main page (shown only when past step 0) -->
+<div id="proposal-back-to-main" style="display:none; padding:10px 40px; background:var(--g2-white); border-bottom:1px solid var(--g2-cream-2);">
+  <button onclick="goToStep(0);" style="background:none; border:none; color:var(--g2-text-light); font-size:13px; cursor:pointer; font-family:inherit; padding:0;">← Back to main page</button>
+</div>
+
 <!-- Progress Bar -->
 <div class="progress-bar" id="proposal-progress-bar" style="display:none;">
   <div class="progress-steps" id="progress-steps"></div>
@@ -1889,6 +1894,7 @@
     document.getElementById('progress-steps').innerHTML = stepsHTML;
     document.getElementById('step-labels').innerHTML = labelsHTML;
     document.getElementById('proposal-progress-bar').style.display = currentStep === 0 ? 'none' : '';
+    document.getElementById('proposal-back-to-main').style.display = currentStep === 0 ? 'none' : '';
   }
 
   // ============ STEP NAVIGATION ============
@@ -2707,6 +2713,9 @@
       briefStep--;
       updateBriefProgressBar();
       showBriefStep(briefStep);
+    } else {
+      switchTab('proposal');
+      goToStep(0);
     }
   }
 
