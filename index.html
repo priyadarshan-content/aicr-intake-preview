@@ -1507,6 +1507,7 @@
     card.classList.toggle('selected');
     const input = card.querySelector('input');
     input.checked = !input.checked;
+    input.value = value;
   }
 
   function selectProductType(card, productType) {
