@@ -675,20 +675,20 @@
 
   <div class="card" id="card_product_type">
     <div class="card-title required">Product Type</div>
-    <div class="card-hint">What type of research do you need?</div>
+    <div class="card-hint">What type of research do you need? Select all that apply.</div>
     <div class="option-grid cols-3">
-      <div class="option-card" onclick="selectProductType(this, 'custom_research')">
-        <input type="radio" name="rp_product_type">
+      <div class="option-card checkbox" onclick="toggleProductType(this, 'custom_research')">
+        <input type="checkbox" name="rp_product_type" value="custom_research">
         <div class="option-indicator"></div>
         <div class="option-content"><div class="option-label">Custom Research</div><div class="option-desc">AI-moderated interviews at scale with real people</div></div>
       </div>
-      <div class="option-card" onclick="selectProductType(this, 'synthetic_report')">
-        <input type="radio" name="rp_product_type">
+      <div class="option-card checkbox" onclick="toggleProductType(this, 'synthetic_report')">
+        <input type="checkbox" name="rp_product_type" value="synthetic_report">
         <div class="option-indicator"></div>
         <div class="option-content"><div class="option-label">Synthetic Report</div><div class="option-desc">Analysis of existing G2 review data — no custom fielding</div></div>
       </div>
-      <div class="option-card" onclick="selectProductType(this, 'case_study')">
-        <input type="radio" name="rp_product_type">
+      <div class="option-card checkbox" onclick="toggleProductType(this, 'case_study')">
+        <input type="checkbox" name="rp_product_type" value="case_study">
         <div class="option-indicator"></div>
         <div class="option-content"><div class="option-label">Case Study</div><div class="option-desc">1-on-1 customer interviews to capture outcomes and ROI</div></div>
       </div>
@@ -1356,26 +1356,27 @@
     input.checked = !input.checked;
   }
 
-  function selectProductType(card, productType) {
-    selectOption(card, 'rp_product_type', productType);
+  function toggleProductType(card, productType) {
+    card.classList.toggle('selected');
+    const input = card.querySelector('input');
+    input.checked = !input.checked;
+    updateProductTypeFields();
   }
 
-  function handleProductTypeChange(type) {
+  function updateProductTypeFields() {
     const customFields = document.getElementById('rp-custom-research-fields');
     const syntheticFields = document.getElementById('rp-synthetic-report-fields');
     const caseStudyFields = document.getElementById('rp-case-study-fields');
 
-    customFields.classList.remove('show');
-    syntheticFields.classList.remove('show');
-    caseStudyFields.classList.remove('show');
+    const selectedTypes = Array.from(document.querySelectorAll('input[name="rp_product_type"]:checked')).map(i => i.value);
 
-    if (type === 'custom_research') {
-      customFields.classList.add('show');
-    } else if (type === 'synthetic_report') {
-      syntheticFields.classList.add('show');
-    } else if (type === 'case_study') {
-      caseStudyFields.classList.add('show');
-    }
+    customFields.classList.toggle('show', selectedTypes.includes('custom_research'));
+    syntheticFields.classList.toggle('show', selectedTypes.includes('synthetic_report'));
+    caseStudyFields.classList.toggle('show', selectedTypes.includes('case_study'));
+  }
+
+  function handleProductTypeChange(type) {
+    updateProductTypeFields();
   }
 
   function handleEngagementChange(type) {
@@ -1392,7 +1393,9 @@
     const company = document.getElementById('rp_company').value || 'Not provided';
     const name = document.getElementById('rp_name').value || 'Not provided';
     const email = document.getElementById('rp_email').value || 'Not provided';
-    const productType = document.querySelector('input[name="rp_product_type"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
+    const selectedProductTypes = Array.from(document.querySelectorAll('input[name="rp_product_type"]:checked'));
+    const productTypeLabels = selectedProductTypes.map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ') || 'Not selected';
+    const productTypeValues = selectedProductTypes.map(i => i.value);
     const sampleSize = document.getElementById('rp_sample_size').value || 'Not provided';
     const seniority = document.querySelector('input[name="rp_seniority"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
     const caseStudyInterviews = document.querySelector('input[name="rp_case_study_interviews"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
@@ -1419,14 +1422,14 @@
       </div>
       <div class="summary-item">
         <div class="summary-label">Product Type</div>
-        <div class="summary-value">${productType}</div>
+        <div class="summary-value">${productTypeLabels}</div>
       </div>
     `;
 
     const researchDepth = document.querySelector('input[name="rp_research_depth"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
     const audioTranscript = document.querySelector('input[name="rp_audio_transcript"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
 
-    if (productType === 'Custom Research') {
+    if (productTypeValues.includes('custom_research')) {
       const interviewTargets = document.getElementById('rp_interview_targets')?.value || '';
       const researchTopics = document.getElementById('rp_research_topics')?.value || '';
       html += `
@@ -1451,7 +1454,7 @@
       `;
     }
 
-    if (productType === 'Synthetic Report') {
+    if (productTypeValues.includes('synthetic_report')) {
       const synthCategory = document.getElementById('rp_synth_category')?.value || 'Not provided';
       const synthAngle = document.getElementById('rp_synth_angle')?.value || 'Not provided';
       const synthPersona = document.getElementById('rp_synth_persona')?.value || '';
@@ -1468,7 +1471,7 @@
       `;
     }
 
-    if (productType === 'Case Study') {
+    if (productTypeValues.includes('case_study')) {
       html += `
         <div class="summary-item">
           <div class="summary-label">Number of Interviews</div>
