@@ -356,6 +356,14 @@
   .option-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
   .option-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
 
+  @media (max-width: 600px) {
+    .option-grid.cols-2,
+    .option-grid.cols-3,
+    .option-grid.cols-4 {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .option-card {
     position: relative;
     border: 2px solid var(--g2-cream-2);
@@ -2574,7 +2582,7 @@
       company: document.getElementById('rp_company')?.value || 'TBD',
       contact: document.getElementById('rp_name')?.value || 'TBD',
       email: document.getElementById('rp_email')?.value || 'TBD',
-      productType: document.querySelector('input[name="rp_product_type"]:checked')?.parentElement?.textContent?.trim() || 'TBD',
+      productType: Array.from(document.querySelectorAll('input[name="rp_product_type"]:checked')).map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ') || 'TBD',
       deliveryTier: document.querySelector('input[name="rp_delivery_tier"]:checked')?.parentElement?.textContent?.trim() || 'TBD',
       aeoAddon: document.querySelector('input[name="rp_aeo_addon"]:checked')?.parentElement?.textContent?.trim() || 'None',
       panelSize: document.getElementById('rp_sample_size')?.value || 'TBD',
