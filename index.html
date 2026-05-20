@@ -2696,7 +2696,55 @@
     showBriefStep(step);
   }
 
+  function validateBriefStep(step) {
+    let valid = true;
+
+    function markInputCard(fieldId) {
+      const el = document.getElementById(fieldId);
+      if (!el) return;
+      const card = el.closest('.card');
+      const val = el.value.trim();
+      if (!val) {
+        if (card) card.classList.add('card-error');
+        valid = false;
+      } else {
+        if (card) card.classList.remove('card-error');
+      }
+    }
+
+    function markRadioCard(name) {
+      const checked = document.querySelector(`input[name="${name}"]:checked`);
+      const any = document.querySelector(`input[name="${name}"]`);
+      const card = any ? any.closest('.card') : null;
+      if (!checked) {
+        if (card) card.classList.add('card-error');
+        valid = false;
+      } else {
+        if (card) card.classList.remove('card-error');
+      }
+    }
+
+    if (step === 1) {
+      markInputCard('pb_company');
+      markInputCard('pb_research_summary');
+    } else if (step === 2) {
+      markInputCard('pb_research_questions');
+    } else if (step === 3) {
+      markInputCard('pb_audience');
+    } else if (step === 4) {
+      markRadioCard('pb_benchmarking');
+    }
+
+    if (!valid) {
+      const firstErr = document.querySelector('[data-form="brief"] .section.active .card-error');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    return valid;
+  }
+
   function nextBriefStep() {
+    if (!validateBriefStep(briefStep)) return;
     if (briefStep < briefMaxSteps - 1) {
       briefStep++;
       updateBriefProgressBar();
@@ -2754,6 +2802,14 @@
 
   // ============ BRIEF SUBMISSION ============
   function submitBrief() {
+    for (let s = 1; s <= 4; s++) {
+      if (!validateBriefStep(s)) {
+        briefStep = s;
+        updateBriefProgressBar();
+        showBriefStep(s);
+        return;
+      }
+    }
     const data = gatherBriefData();
     const cbName = 'gsBriefCallback_' + Date.now();
     const script = document.createElement('script');
