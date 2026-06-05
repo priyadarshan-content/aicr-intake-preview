@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G2 AI Custom Research — Creative Brief</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --g2-rorange: #FF492C;
+    --g2-rorange-light: #FFF0ED;
+    --g2-purple: #5746B2;
+    --g2-purple-dark: #46389A;
+    --g2-purple-light: #EFEDF7;
+    --g2-navy: #062846;
+    --g2-green: #27D3BC;
+    --g2-green-light: #E5FAF6;
+    --g2-yellow: #FFC800;
+    --g2-blue: #288DFF;
+    --g2-red-orange: #FF492C;
+    --g2-red-orange-light: #FFF0ED;
+    --g2-teal: #27D3BC;
+    --g2-teal-light: #E5FAF6;
+    --g2-gold: #FFC800;
+    --g2-purple-deep: #062846;
+    --g2-dark: #111111;
+    --g2-dark-2: #1E1E2A;
+    --g2-dark-3: #2F2F3D;
+    --g2-text: #505059;
+    --g2-text-light: #8C8C96;
+    --g2-gray-light: #C7CDD6;
+    --g2-white: #FFFFFF;
+    --g2-cream: #F5F0EB;
+    --g2-cream-2: #EDE8E2;
+    --radius: 12px;
+    --shadow: 0 1px 2px rgba(17,17,17,0.04);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--g2-cream);
+    color: var(--g2-text);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: var(--g2-white);
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--g2-cream-2);
+    box-shadow: 0 1px 8px rgba(37,37,48,0.06);
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .g2-logo-svg {
+    width: 40px; height: 40px;
+    display: block;
+  }
+  .header-divider {
+    width: 1px;
+    height: 28px;
+    background: var(--g2-cream-2);
+  }
+  .header-title {
+    color: var(--g2-dark);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .header-subtitle {
+    color: var(--g2-text-light);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .admin-badge {
+    display: none;
+    background: var(--g2-purple);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    animation: pulse 2s infinite;
+  }
+  .admin-badge.visible { display: block; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  /* Admin pricing panel */
+  .admin-panel {
+    display: none;
+    position: fixed;
+    right: 0;
+    top: 68px;
+    width: 360px;
+    height: calc(100vh - 68px);
+    background: var(--g2-purple-deep);
+    color: white;
+    box-shadow: -4px 0 24px rgba(6,40,70,0.4);
+    z-index: 200;
+    overflow-y: auto;
+    padding: 28px;
+  }
+  .admin-panel.visible { display: block; animation: slideIn 0.3s ease; }
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  .admin-panel h3 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .price-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .price-line .label { color: rgba(255,255,255,0.6); }
+  .price-line .value { font-weight: 600; color: var(--g2-white); }
+  .price-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 0;
+    font-size: 20px;
+    font-weight: 800;
+    margin-top: 8px;
+    border-top: 2px solid var(--g2-red-orange);
+  }
+  .price-total .value { color: var(--g2-red-orange); }
+  .admin-notes { margin-top: 20px; }
+  .admin-notes textarea {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.12);
+    color: white;
+    font-size: 13px;
+  }
+  .admin-notes textarea:focus { border-color: var(--g2-purple); background: rgba(255,255,255,0.12); }
+  .admin-section { margin-bottom: 24px; }
+  .admin-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--g2-red-orange);
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .admin-flag {
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+  }
+
+  /* Progress */
+  .progress-bar {
+    background: var(--g2-white);
+    padding: 16px 40px;
+    position: sticky;
+    top: 68px;
+    z-index: 99;
+    border-bottom: 1px solid var(--g2-cream-2);
+  }
+  .progress-steps {
+    display: flex;
+    gap: 4px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .progress-step {
+    flex: 1;
+    height: 4px;
+    background: var(--g2-cream-2);
+    border-radius: 2px;
+    transition: background 0.4s;
+    cursor: pointer;
+    position: relative;
+  }
+  .progress-step.active { background: var(--g2-purple); }
+  .progress-step.completed { background: var(--g2-purple); opacity: 0.5; }
+  .progress-step:hover::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--g2-dark);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .step-labels {
+    display: flex;
+    max-width: 900px;
+    margin: 8px auto 0;
+    gap: 4px;
+  }
+  .step-label {
+    flex: 1;
+    text-align: center;
+    font-size: 10px;
+    color: var(--g2-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .step-label.active { color: var(--g2-purple); font-weight: 600; }
+
+  /* Main */
+  .main {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+
+  /* Section */
+  .section {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .section.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header { margin-bottom: 32px; }
+  .section-number {
+    display: inline-block;
+    background: var(--g2-purple);
+    color: white;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    text-align: center;
+    line-height: 32px;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--g2-dark);
+  }
+  .section-desc {
+    color: var(--g2-text-light);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--g2-white);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--g2-cream-2);
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--g2-dark);
+  }
+  .card-hint {
+    font-size: 13px;
+    color: var(--g2-text-light);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  /* Inputs */
+  input[type="text"], input[type="email"], input[type="url"], input[type="date"], textarea, select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--g2-cream-2);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    background: var(--g2-cream);
+    color: var(--g2-dark);
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--g2-purple);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(87, 70, 178, 0.12);
+  }
+  textarea { resize: vertical; min-height: 100px; }
+
+  /* Radio/Checkbox cards */
+  .option-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .option-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .option-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  @media (max-width: 600px) {
+    .option-grid.cols-2,
+    .option-grid.cols-3 { grid-template-columns: 1fr; }
+  }
+
+  .option-card {
+    position: relative;
+    border: 2px solid var(--g2-cream-2);
+    border-radius: 10px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--g2-white);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .option-card:hover { border-color: var(--g2-purple); background: var(--g2-purple-light); }
+  .option-card.selected {
+    border-color: var(--g2-purple);
+    background: var(--g2-purple-light);
+    box-shadow: 0 0 0 1px var(--g2-purple);
+  }
+  .option-card input { display: none; }
+  .option-indicator {
+    width: 22px; height: 22px;
+    border: 2px solid var(--g2-gray-light);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    margin-top: 1px;
+  }
+  .option-card.checkbox .option-indicator { border-radius: 6px; }
+  .option-card.selected .option-indicator {
+    border-color: var(--g2-purple);
+    background: var(--g2-purple);
+  }
+  .option-card.selected .option-indicator::after {
+    content: '';
+    width: 8px; height: 8px;
+    background: white;
+    border-radius: 50%;
+  }
+  .option-card.checkbox.selected .option-indicator::after {
+    content: '\2713';
+    background: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    width: auto; height: auto;
+    border-radius: 0;
+  }
+  .option-content { flex: 1; }
+  .option-label { font-weight: 600; font-size: 14px; color: var(--g2-dark); }
+  .option-desc { font-size: 12px; color: var(--g2-text-light); margin-top: 3px; line-height: 1.4; }
+
+  /* Welcome card */
+  .welcome-card {
+    background: var(--g2-white);
+    border: 1px solid var(--g2-cream-2);
+    border-radius: var(--radius);
+    padding: 60px 40px;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .welcome-card .welcome-title {
+    font-size: 50px;
+    font-weight: 800;
+    line-height: 1.12;
+    color: var(--g2-dark);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .welcome-card .welcome-subtitle {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--g2-rorange);
+    margin-bottom: 16px;
+  }
+  .welcome-card .welcome-text {
+    font-size: 15px;
+    color: var(--g2-text);
+    margin-bottom: 32px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--g2-navy);
+    color: white;
+  }
+  .btn-primary:hover {
+    background: #0a3a60;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(6, 40, 70, 0.22);
+  }
+  .btn-secondary {
+    background: var(--g2-white);
+    color: var(--g2-dark);
+    border: 2px solid var(--g2-gray-light);
+  }
+  .btn-secondary:hover {
+    border-color: var(--g2-purple);
+    color: var(--g2-purple);
+  }
+  .btn-large {
+    padding: 16px 40px;
+    font-size: 15px;
+  }
+
+  /* Navigation buttons */
+  .nav-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 40px;
+    justify-content: space-between;
+  }
+
+  /* Summary card */
+  .summary-item {
+    background: var(--g2-white);
+    border: 1px solid var(--g2-cream-2);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .summary-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--g2-text-light);
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .summary-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--g2-dark);
+    line-height: 1.6;
+  }
+
+  /* Required */
+  .required::after { content: ' *'; color: var(--g2-red-orange); font-weight: 700; }
+  .card-error {
+    border-color: var(--g2-red-orange) !important;
+    box-shadow: 0 0 0 2px rgba(255, 73, 44, 0.12) !important;
+  }
+  .required-legend { font-size: 12px; color: var(--g2-text-light); margin-bottom: 24px; }
+  .required-legend span { color: var(--g2-red-orange); font-weight: 700; }
+
+  /* Sub-header bar (back link + AI interview link) */
+  .sub-header {
+    padding: 10px 40px;
+    background: var(--g2-white);
+    border-bottom: 1px solid var(--g2-cream-2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .sub-header-back {
+    background: none;
+    border: none;
+    color: var(--g2-text-light);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 0;
+  }
+  .sub-header-back:hover { color: var(--g2-dark); }
+  .sub-header-ai { font-size: 13px; color: var(--g2-text-light); }
+  .sub-header-ai a {
+    color: var(--g2-purple);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .sub-header-ai a:hover { text-decoration: underline; }
+
+  /* Welcome hero (Step 0) */
+  .welcome-hero {
+    position: relative;
+    padding: 80px 0 64px;
+    overflow: hidden;
+    min-height: 460px;
+    display: flex;
+    align-items: flex-start;
+  }
+  .welcome-content {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+  }
+  .welcome-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: var(--g2-purple);
+    margin-bottom: 20px;
+  }
+  .welcome-headline {
+    font-size: 54px;
+    font-weight: 800;
+    line-height: 1.08;
+    color: var(--g2-navy);
+    letter-spacing: -0.025em;
+    margin-bottom: 22px;
+  }
+  .welcome-subtext {
+    font-size: 17px;
+    color: var(--g2-text);
+    line-height: 1.65;
+    margin-bottom: 36px;
+    max-width: 500px;
+  }
+  .feature-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 44px;
+  }
+  .feature-pill {
+    background: var(--g2-white);
+    border: 1px solid var(--g2-cream-2);
+    border-radius: 999px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--g2-dark);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .welcome-shapes {
+    position: absolute;
+    top: 0; right: -20px;
+    width: 320px; height: 100%;
+    pointer-events: none;
+  }
+  .shape-ring {
+    position: absolute;
+    top: 28px; right: 48px;
+    width: 140px; height: 140px;
+    border: 18px solid var(--g2-teal);
+    border-radius: 50%;
+  }
+  .shape-half {
+    position: absolute;
+    top: 148px; right: -4px;
+    width: 96px; height: 192px;
+    background: var(--g2-purple);
+    border-radius: 96px 0 0 96px;
+    opacity: 0.9;
+  }
+  .shape-quarter-a {
+    position: absolute;
+    bottom: 80px; right: 68px;
+    width: 88px; height: 88px;
+    background: var(--g2-rorange);
+    border-radius: 88px 0 0 0;
+  }
+  .shape-quarter-b {
+    position: absolute;
+    bottom: 80px; right: -4px;
+    width: 72px; height: 88px;
+    background: var(--g2-rorange);
+    border-radius: 0 0 0 72px;
+  }
+  @media (max-width: 680px) {
+    .welcome-shapes { display: none; }
+    .welcome-headline { font-size: 36px; }
+    .welcome-hero { padding: 48px 0 40px; min-height: auto; }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-logo">
+    <a href="https://aicr.sell.g2.com" aria-label="G2 AI Custom Research" style="display:inline-flex; line-height:0; text-decoration:none;">
+      <img src="https://www.google.com/s2/favicons?domain=g2.com&sz=64" alt="G2" class="g2-logo-svg">
+    </a>
+    <div class="header-divider" aria-hidden="true"></div>
+    <div>
+      <div class="header-title">AI Custom Research</div>
+      <div class="header-subtitle">Creative Brief</div>
+    </div>
+  </div>
+  <div class="admin-badge" id="admin-badge">ADMIN MODE</div>
+</div>
+
+<!-- AI Interview Banner -->
+<div class="sub-header" id="sub-header">
+  <button class="sub-header-back" onclick="goToStep(0)">← Back to main page</button>
+  <span class="sub-header-ai">
+    Prefer to talk it through?&nbsp;
+    <a href="https://interviews.g2.com/research/f66126de-47dd-4cfe-baa1-9e08ade26d2a" target="_blank" rel="noopener">
+      🎙️ Skip the form and speak to our AI →
+    </a>
+  </span>
+</div>
+
+<!-- Progress Bar -->
+<div class="progress-bar">
+  <div class="progress-steps" id="progress-steps"></div>
+  <div class="step-labels" id="step-labels"></div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+<!-- Step 0: Welcome -->
+<div class="section active" data-step="0">
+  <div class="welcome-hero">
+    <div class="welcome-content">
+      <div class="welcome-eyebrow">G2 AI Custom Research</div>
+      <h1 class="welcome-headline">Research that<br>moves markets.</h1>
+      <p class="welcome-subtext">Strengthen competitive positioning, sharpen AI discoverability, map the buyer journey, and capture voice of customer at scale — original, data-backed research designed to move the metrics that matter.</p>
+      <div class="feature-pills">
+        <span class="feature-pill">🎙️ AI-Moderated Interviews</span>
+        <span class="feature-pill">📊 Actionable Deliverables</span>
+        <span class="feature-pill">🏆 Powered by G2 Data</span>
+      </div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap;">
+        <button class="btn btn-secondary btn-large" onclick="goToStep(1)">Complete a Creative Brief →</button>
+      </div>
+    </div>
+    <div class="welcome-shapes" aria-hidden="true">
+      <div class="shape-ring"></div>
+      <div class="shape-half"></div>
+      <div class="shape-quarter-a"></div>
+      <div class="shape-quarter-b"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 1: Project Overview -->
+<div class="section active" data-step="1">
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <h2 class="section-title">Project Overview</h2>
+    <p class="section-desc">Basic information about your project.</p>
+  </div>
+
+  <div class="required-legend"><span>*</span> indicates required fields</div>
+
+  <div class="card">
+    <div class="card-title required">Company Name</div>
+    <input type="text" id="pb_company" placeholder="Your company name">
+  </div>
+
+  <div class="card">
+    <div class="card-title required">In a Sentence, What's This Research About?</div>
+    <input type="text" id="pb_research_summary" placeholder="e.g., 'Understanding why mid-market buyers switch ERP providers'">
+  </div>
+
+  <div class="nav-buttons">
+    <div></div>
+    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Step 2: Research Objectives -->
+<div class="section" data-step="2">
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <h2 class="section-title">Research Objectives</h2>
+    <p class="section-desc">Dive deeper into your research goals and key questions.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title required">Specific Topics, Challenges, or Questions</div>
+    <div class="card-hint">What specific areas should this research address?</div>
+    <textarea id="pb_research_questions" placeholder="e.g., 'How do buyers evaluate pricing models?', 'What features matter most?', 'What's the decision timeline?'"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Insights You're Hoping to Gain</div>
+    <textarea id="pb_key_insights" placeholder="e.g., 'Understand the top 3 buying criteria', 'Identify price sensitivity levels', 'Map decision-maker personas'..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How Will You Use the Findings?</div>
+    <div class="card-hint">What actions do you plan to take based on this research?</div>
+    <textarea id="pb_usage_plans" placeholder="e.g., 'Inform our messaging strategy', 'Build new product features', 'Create sales collateral'..."></textarea>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Step 3: Audience & Panel -->
+<div class="section" data-step="3">
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <h2 class="section-title">Audience & Panel</h2>
+    <p class="section-desc">Define your ideal respondents and sourcing preferences.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title required">Primary Audience</div>
+    <div class="card-hint">Job titles, roles, seniority, industries, company size, use cases, etc.</div>
+    <textarea id="pb_audience" placeholder="e.g., 'VP/Director-level procurement leaders at mid-market manufacturing companies (500-5000 employees) using ERP software...'"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Respondent Exclusions</div>
+    <div class="card-hint">Any companies, roles, or backgrounds to exclude?</div>
+    <textarea id="pb_exclusions" placeholder="e.g., 'Current customers', 'Companies with fewer than 100 employees'..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Who Should We Talk To?</div>
+    <div class="card-hint">Should we interview people who already use your product, people who don't yet, or a mix?</div>
+    <div class="option-grid cols-3">
+      <div class="option-card" onclick="selectOption(this, 'pb_customer_type', 'current')">
+        <input type="radio" name="pb_customer_type">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Existing Users</div><div class="option-desc">People already using your product</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_customer_type', 'prospective')">
+        <input type="radio" name="pb_customer_type">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Prospective Buyers</div><div class="option-desc">People not yet using your product</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_customer_type', 'both')">
+        <input type="radio" name="pb_customer_type">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Both</div><div class="option-desc">A mix of current and prospective</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Pain Points or Interests of This Audience</div>
+    <div class="card-hint">What does this audience care about most?</div>
+    <textarea id="pb_pain_points" placeholder="e.g., 'Frustrated with manual workflows', 'Looking for better integrations', 'Cost reduction is top priority'..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">How Familiar Is This Audience With the Topic?</div>
+    <div class="card-hint">This helps us calibrate the depth and complexity of interview questions.</div>
+    <div class="option-grid cols-3">
+      <div class="option-card" onclick="selectOption(this, 'pb_familiarity', 'expert')">
+        <input type="radio" name="pb_familiarity">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Expert</div><div class="option-desc">Deep knowledge, use it daily</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_familiarity', 'moderate')">
+        <input type="radio" name="pb_familiarity">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Moderate</div><div class="option-desc">Aware and somewhat involved</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_familiarity', 'low')">
+        <input type="radio" name="pb_familiarity">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Low</div><div class="option-desc">Early-stage or exploring</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">What Level of Decision-Making Should They Have?</div>
+    <div class="card-hint">Do we need people who sign off on purchases, or hands-on users, or both?</div>
+    <div class="option-grid cols-3">
+      <div class="option-card" onclick="selectOption(this, 'pb_decision_level', 'decision_maker')">
+        <input type="radio" name="pb_decision_level">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Decision-Maker</div><div class="option-desc">Budget holders, final approvers</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_decision_level', 'influencer')">
+        <input type="radio" name="pb_decision_level">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Influencer / User</div><div class="option-desc">Hands-on, recommends tools</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_decision_level', 'mix')">
+        <input type="radio" name="pb_decision_level">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Mix</div><div class="option-desc">Both decision-makers and users</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Step 4: Competitive Context -->
+<div class="section" data-step="4">
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <h2 class="section-title">Competitive Context</h2>
+    <p class="section-desc">Tell us about the competitive landscape and key players.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title required">Should This Research Include Competitive Benchmarking?</div>
+    <div class="option-grid cols-3">
+      <div class="option-card" onclick="selectOption(this, 'pb_benchmarking', 'core_objective')">
+        <input type="radio" name="pb_benchmarking">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Core Objective</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_benchmarking', 'light_touch')">
+        <input type="radio" name="pb_benchmarking">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Light Touch</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_benchmarking', 'no')">
+        <input type="radio" name="pb_benchmarking">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">No</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Top 2-4 Competitors or Alternatives</div>
+    <textarea id="pb_competitors" placeholder="1. &#10;2. &#10;3. &#10;4. "></textarea>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Step 5: Deliverables & Design -->
+<div class="section" data-step="5">
+  <div class="section-header">
+    <div class="section-number">5</div>
+    <h2 class="section-title">Deliverables & Design</h2>
+    <p class="section-desc">Help us understand how you'd like the final report to look and feel.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Design References</div>
+    <div class="card-hint">Share links or examples of designs you'd like us to emulate.</div>
+    <textarea id="pb_design_references" placeholder="e.g., 'https://example.com/design1', or describe the style you like..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Level of Involvement</div>
+    <div class="card-hint">How involved does your team want to be in report creation, design, and marketing?</div>
+    <textarea id="pb_involvement_level" placeholder="e.g., 'We'll provide feedback on drafts', 'Hands-off — you handle it', 'Weekly design reviews'..."></textarea>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Step 6: Logistics -->
+<div class="section" data-step="6">
+  <div class="section-header">
+    <div class="section-number">6</div>
+    <h2 class="section-title">Logistics</h2>
+    <p class="section-desc">Set expectations for project flow and key milestones.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Desired Deadline</div>
+    <div class="card-hint">When do you need the final report delivered?</div>
+    <input type="date" id="pb_deadline" style="margin-bottom: 16px;">
+    <div class="card-title" style="margin-top: 8px;">How Flexible Is This?</div>
+    <div class="option-grid cols-3">
+      <div class="option-card" onclick="selectOption(this, 'pb_deadline_flex', 'hard')">
+        <input type="radio" name="pb_deadline_flex">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Hard Deadline</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_deadline_flex', 'some_flex')">
+        <input type="radio" name="pb_deadline_flex">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Some Flexibility</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'pb_deadline_flex', 'flexible')">
+        <input type="radio" name="pb_deadline_flex">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Flexible</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Milestones or Events</div>
+    <div class="card-hint">Anything this needs to align with? (e.g., "Board presentation May 15", "Product launch Q3")</div>
+    <textarea id="pb_milestones" placeholder="e.g., 'Final report by Dec 1st for Q4 earnings call'..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Preferred Communication Channel(s)</div>
+    <div class="card-hint">Select all that work for you.</div>
+    <div class="option-grid cols-3">
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'pb_comms_channel', 'Slack')">
+        <input type="checkbox" name="pb_comms_channel" value="Slack">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Slack</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'pb_comms_channel', 'Email')">
+        <input type="checkbox" name="pb_comms_channel" value="Email">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Email</div></div>
+      </div>
+      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'pb_comms_channel', 'Calls')">
+        <input type="checkbox" name="pb_comms_channel" value="Calls">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Calls</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Any Blockers That Could Cause Delays?</div>
+    <div class="card-hint">Internal approvals, legal reviews, seasonal freezes, pending decisions.</div>
+    <textarea id="pb_blockers" placeholder="e.g., 'Legal needs to approve the interview guide', 'Waiting on budget confirmation', 'Holiday freeze in December'..."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Anything Else We Should Know?</div>
+    <textarea id="pb_additional_notes" placeholder="Any other context, constraints, or preferences..."></textarea>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+  </div>
+</div>
+
+<!-- Step 7: Review & Submit -->
+<div class="section" data-step="7">
+  <div class="section-header">
+    <div class="section-number">7</div>
+    <h2 class="section-title">Review Your Brief</h2>
+    <p class="section-desc">Ready to submit? We'll use this to prepare for your kickoff call.</p>
+  </div>
+
+  <div id="pb-summary-container" style="margin-bottom: 32px;"></div>
+
+  <div style="margin-bottom: 20px;">
+    <button class="btn btn-primary" onclick="exportBriefClientPDF()" style="width: 100%; padding: 16px 24px; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+      📥 Download Summary (PDF)
+    </button>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
+    <button class="btn btn-primary" onclick="submitBrief()">Submit Brief →</button>
+  </div>
+</div>
+
+</div><!-- /.main -->
+
+<!-- Confirmation Screen -->
+<div id="pb-confirmation" style="display:none;">
+  <div class="main">
+    <div class="welcome-card">
+      <div style="font-size:48px; margin-bottom:16px;">✅</div>
+      <div class="welcome-title" style="font-size:32px;">Brief Submitted!</div>
+      <div class="welcome-subtitle">We'll review your brief and be in touch shortly.</div>
+      <button class="btn btn-primary btn-large" onclick="exportBriefClientPDF()">📥 Download Your Brief (PDF)</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div id="adminPanel" class="admin-panel">
+  <h3>Brief Review</h3>
+  <div id="pricingBreakdown"></div>
+  <div class="admin-section" style="margin-top:24px;">
+    <div class="admin-section-title">Completeness Check</div>
+    <div id="adminRecommendations"></div>
+  </div>
+  <div class="admin-notes">
+    <h3 style="margin-top:20px;">Internal Notes</h3>
+    <textarea id="adminNotes" rows="4" placeholder="Notes, risks, flags..."></textarea>
+    <div style="margin-top:12px;">
+      <label style="font-size:12px; color:var(--g2-gray-light);">Reviewed by:</label>
+      <input type="text" id="approvedBy" placeholder="Name" style="margin-top:6px; background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.12); color:white; padding:8px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.12); font-family:inherit; font-size:13px;">
+    </div>
+    <button onclick="exportBriefClientPDF()" style="margin-top:20px; width:100%; padding:12px; background:var(--g2-red-orange); color:white; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+      Export Client Brief (PDF)
+    </button>
+    <button onclick="exportBriefInternalScopesPDF()" style="margin-top:8px; width:100%; padding:12px; background:var(--g2-teal); color:white; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+      Export Internal Scoping PDF
+    </button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  // Apps Script Web App URL — deploy BriefCode.gs and paste the URL here
+  const BRIEF_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0ZoNoFzU9rXQYfRZRH_eQL2MFkTqQJM6BAcQaxemlvJXi7n3EPgiOq4cfdPV3HbXA/exec';
+
+  // ============ STATE ============
+  let currentStep = 0;
+  const maxSteps = 8; // steps 0–7
+  let adminMode = false;
+
+  const stepLabels = ['', 'Overview', 'Objectives', 'Audience', 'Competitive', 'Design', 'Logistics', 'Review'];
+
+  // ============ ADMIN MODE ============
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+      adminMode = !adminMode;
+      document.getElementById('adminPanel').classList.toggle('visible', adminMode);
+      document.getElementById('admin-badge').classList.toggle('visible', adminMode);
+      if (adminMode) updateAdminPanel();
+    }
+  });
+
+  function updateAdminPanel() {
+    const html = '<div class="price-line"><span class="label">Pricing set during proposal — see calculator</span><span class="value">TBD</span></div>' +
+      '<div class="price-total"><span>See proposal calculator</span><span class="value">TBD</span></div>';
+    document.getElementById('pricingBreakdown').innerHTML = html;
+
+    const recs = [];
+    if (!document.getElementById('pb_company').value) recs.push('REQUIRED: Company name missing');
+    if (!document.getElementById('pb_research_questions').value) recs.push('REQUIRED: Research questions missing');
+    if (!document.getElementById('pb_audience').value) recs.push('REQUIRED: Primary audience missing');
+    if (!document.querySelector('input[name="pb_benchmarking"]:checked')) recs.push('REQUIRED: Benchmarking answer missing');
+    if (recs.length === 0) recs.push('✅ All mandatory fields complete.');
+    document.getElementById('adminRecommendations').innerHTML = recs.map(r => `<div class="admin-flag">${r}</div>`).join('');
+  }
+
+  // ============ PROGRESS BAR ============
+  function updateProgressBar() {
+    const onHero = currentStep === 0;
+    document.querySelector('.progress-bar').style.display = onHero ? 'none' : '';
+    document.getElementById('sub-header').style.display = onHero ? 'none' : '';
+
+    let stepsHTML = '';
+    let labelsHTML = '';
+    for (let i = 1; i < maxSteps; i++) {
+      const isActive = i === currentStep;
+      const isCompleted = i < currentStep;
+      let classes = 'progress-step';
+      if (isActive) classes += ' active';
+      if (isCompleted) classes += ' completed';
+      stepsHTML += `<div class="${classes}" data-label="${stepLabels[i] || ''}"></div>`;
+      labelsHTML += `<div class="step-label ${isActive ? 'active' : ''}">${stepLabels[i] || ''}</div>`;
+    }
+    document.getElementById('progress-steps').innerHTML = stepsHTML;
+    document.getElementById('step-labels').innerHTML = labelsHTML;
+  }
+
+  // ============ NAVIGATION ============
+  function goToStep(step) {
+    currentStep = step;
+    updateProgressBar();
+    showStep(step);
+  }
+
+  function nextStep() {
+    if (currentStep > 0 && !validateStep(currentStep)) return;
+    if (currentStep < maxSteps - 1) {
+      currentStep++;
+      updateProgressBar();
+      showStep(currentStep);
+    }
+  }
+
+  function prevStep() {
+    if (currentStep > 0) {
+      currentStep--;
+      updateProgressBar();
+      showStep(currentStep);
+    }
+  }
+
+  function showStep(step) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const target = document.querySelector(`.section[data-step="${step}"]`);
+    if (target) target.classList.add('active');
+    if (step === 7) buildSummary();
+    if (adminMode) updateAdminPanel();
+    window.scrollTo(0, 0);
+  }
+
+  // ============ OPTION SELECTION ============
+  function selectOption(card, fieldName, value) {
+    card.parentElement.querySelectorAll('.option-card').forEach(s => s.classList.remove('selected'));
+    card.classList.add('selected');
+    const input = card.querySelector('input');
+    input.checked = true;
+    input.value = value;
+  }
+
+  function toggleCheckbox(card, fieldName, value) {
+    card.classList.toggle('selected');
+    const input = card.querySelector('input');
+    input.checked = !input.checked;
+    input.value = value;
+  }
+
+  // ============ VALIDATION ============
+  function validateStep(step) {
+    let valid = true;
+
+    function markInput(fieldId) {
+      const el = document.getElementById(fieldId);
+      if (!el) return;
+      const card = el.closest('.card');
+      if (!el.value.trim()) {
+        if (card) card.classList.add('card-error');
+        valid = false;
+      } else {
+        if (card) card.classList.remove('card-error');
+      }
+    }
+
+    function markRadio(name) {
+      const checked = document.querySelector(`input[name="${name}"]:checked`);
+      const any = document.querySelector(`input[name="${name}"]`);
+      const card = any ? any.closest('.card') : null;
+      if (!checked) {
+        if (card) card.classList.add('card-error');
+        valid = false;
+      } else {
+        if (card) card.classList.remove('card-error');
+      }
+    }
+
+    if (step === 1) { markInput('pb_company'); markInput('pb_research_summary'); }
+    else if (step === 2) { markInput('pb_research_questions'); }
+    else if (step === 3) { markInput('pb_audience'); }
+    else if (step === 4) { markRadio('pb_benchmarking'); }
+
+    if (!valid) {
+      const firstErr = document.querySelector('.section.active .card-error');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    return valid;
+  }
+
+  // ============ SUMMARY BUILDER ============
+  function buildSummary() {
+    const get = id => document.getElementById(id)?.value || 'Not provided';
+    const radio = name => document.querySelector(`input[name="${name}"]:checked`)?.closest('.option-card')?.querySelector('.option-label')?.textContent || 'Not selected';
+    const checkboxes = name => Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+      .map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent).filter(Boolean).join(', ') || 'Not selected';
+
+    const rows = [
+      ['Company', get('pb_company')],
+      ['Research Summary', get('pb_research_summary')],
+      ['Research Questions', get('pb_research_questions')],
+      ['Key Insights', get('pb_key_insights')],
+      ['Usage Plans', get('pb_usage_plans')],
+      ['Primary Audience', get('pb_audience')],
+      ['Respondent Exclusions', get('pb_exclusions')],
+      ['Interview Target', radio('pb_customer_type')],
+      ['Audience Familiarity', radio('pb_familiarity')],
+      ['Decision Level', radio('pb_decision_level')],
+      ['Competitive Benchmarking', radio('pb_benchmarking')],
+      ['Competitors', get('pb_competitors')],
+      ['Design References', get('pb_design_references')],
+      ['Level of Involvement', get('pb_involvement_level')],
+      ['Desired Deadline', get('pb_deadline')],
+      ['Deadline Flexibility', radio('pb_deadline_flex')],
+      ['Key Milestones', get('pb_milestones')],
+      ['Communication Channel', checkboxes('pb_comms_channel')],
+      ['Blockers', get('pb_blockers')],
+      ['Additional Notes', get('pb_additional_notes')],
+    ];
+
+    document.getElementById('pb-summary-container').innerHTML = rows
+      .filter(([, v]) => v && v !== 'Not provided')
+      .map(([l, v]) => `<div class="summary-item"><div class="summary-label">${l}</div><div class="summary-value">${v}</div></div>`)
+      .join('');
+  }
+
+  // ============ GATHER DATA ============
+  function gatherData() {
+    const get = id => (document.getElementById(id)?.value || '').trim();
+    const radio = name => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; };
+    const checkboxes = name => Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(i => i.value).join(', ');
+    return {
+      timestamp:           new Date().toISOString(),
+      company:             get('pb_company'),
+      researchSummary:     get('pb_research_summary'),
+      researchQuestions:   get('pb_research_questions'),
+      keyInsights:         get('pb_key_insights'),
+      usagePlans:          get('pb_usage_plans'),
+      audience:            get('pb_audience'),
+      exclusions:          get('pb_exclusions'),
+      customerType:        radio('pb_customer_type'),
+      painPoints:          get('pb_pain_points'),
+      familiarity:         radio('pb_familiarity'),
+      decisionLevel:       radio('pb_decision_level'),
+      benchmarking:        radio('pb_benchmarking'),
+      competitors:         get('pb_competitors'),
+      designReferences:    get('pb_design_references'),
+      involvementLevel:    get('pb_involvement_level'),
+      deadline:            get('pb_deadline'),
+      deadlineFlexibility: radio('pb_deadline_flex'),
+      milestones:          get('pb_milestones'),
+      commsChannel:        checkboxes('pb_comms_channel'),
+      blockers:            get('pb_blockers'),
+      additionalNotes:     get('pb_additional_notes'),
+    };
+  }
+
+  // ============ FORM SUBMISSION ============
+  function submitBrief() {
+    // Re-validate all required steps before final submit
+    for (let s = 1; s <= 4; s++) {
+      if (!validateStep(s)) {
+        currentStep = s;
+        updateProgressBar();
+        showStep(s);
+        return;
+      }
+    }
+
+    const data = gatherData();
+    const cbName = 'gsBriefCb_' + Date.now();
+    const script = document.createElement('script');
+    const btn = document.querySelector('[onclick="submitBrief()"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+
+    let settled = false;
+    let timeoutId;
+
+    const done = (ok, errMsg) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeoutId);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Brief →'; }
+      if (ok) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelector('.progress-bar').style.display = 'none';
+        document.getElementById('sub-header').style.display = 'none';
+        document.getElementById('pb-confirmation').style.display = 'block';
+        window.scrollTo(0, 0);
+        exportBriefClientPDF();
+      } else {
+        let errEl = document.getElementById('brief-submit-error');
+        if (!errEl) {
+          errEl = document.createElement('p');
+          errEl.id = 'brief-submit-error';
+          errEl.style.cssText = 'color:#cc0000;margin-top:8px;font-size:14px;';
+          if (btn) btn.insertAdjacentElement('afterend', errEl);
+        }
+        errEl.textContent = 'Submission error: ' + (errMsg || 'unknown — check Apps Script executions log');
+      }
+    };
+
+    window[cbName] = res => done(res && res.success, res && res.error);
+    script.onerror = () => done(false, 'Network error — could not reach Apps Script');
+    script.src = BRIEF_SCRIPT_URL + '?callback=' + cbName + '&payload=' + encodeURIComponent(JSON.stringify(data));
+    timeoutId = setTimeout(() => done(false, 'Timed out after 15 s'), 15000);
+    document.head.appendChild(script);
+  }
+
+  // ============ PDF EXPORTS ============
+  function exportBriefClientPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const W = 210, H = 297, ML = 20, MR = 20, MT = 20, MB = 20;
+    const CW = W - ML - MR;
+    let y = MT;
+
+    const navy      = [6, 40, 70];
+    const purple    = [87, 70, 178];
+    const redOrange = [255, 73, 44];
+    const dark      = [17, 17, 17];
+    const text      = [80, 80, 89];
+    const lightGray = [199, 205, 214];
+
+    function checkPage(needed) {
+      if (y + needed > H - MB) { addFooter(); doc.addPage(); y = MT; }
+    }
+    function addFooter() {
+      doc.setFontSize(8);
+      doc.setTextColor(...lightGray);
+      doc.text('G2 AI Custom Research — Creative Brief', W / 2, H - 8, { align: 'center' });
+    }
+
+    // Header
+    doc.setFillColor(...navy);
+    doc.rect(0, 0, W, 40, 'F');
+    doc.setFillColor(...redOrange);
+    doc.roundedRect(ML, 12, 16, 16, 2.5, 2.5, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('G2', ML + 8, 22.5, { align: 'center' });
+    doc.setFontSize(16);
+    doc.text('AI Custom Research', ML + 26, 20);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Creative Brief Summary', ML + 26, 28);
+    y = 50;
+
+    // Section heading
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...purple);
+    doc.text('PROJECT DETAILS', ML, y);
+    doc.setDrawColor(...purple);
+    doc.setLineWidth(0.5);
+    doc.line(ML, y + 2, W - MR, y + 2);
+    y += 10;
+
+    const addRow = (label, value) => {
+      if (!value || value === 'Not provided') return;
+      checkPage(10);
+      doc.setDrawColor(...lightGray);
+      doc.setLineWidth(0.2);
+      doc.line(ML, y - 1, W - MR, y - 1);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...purple);
+      doc.setFontSize(8.5);
+      doc.text(label + ':', ML, y + 3.5);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...text);
+      doc.setFontSize(9);
+      const lines = doc.splitTextToSize(value, CW - 62);
+      doc.text(lines, ML + 62, y + 3.5);
+      y += Math.max(8, lines.length * 5) + 2;
+    };
+
+    const get = id => document.getElementById(id)?.value || '';
+    const radio = name => document.querySelector(`input[name="${name}"]:checked`)?.closest('.option-card')?.querySelector('.option-label')?.textContent || '';
+    const checkboxes = name => Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+      .map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent).filter(Boolean).join(', ');
+
+    addRow('Company',                get('pb_company'));
+    addRow('Research Summary',       get('pb_research_summary'));
+    addRow('Research Questions',     get('pb_research_questions'));
+    addRow('Key Insights',           get('pb_key_insights'));
+    addRow('Usage Plans',            get('pb_usage_plans'));
+    addRow('Primary Audience',       get('pb_audience'));
+    addRow('Respondent Exclusions',  get('pb_exclusions'));
+    addRow('Interview Target',       radio('pb_customer_type'));
+    addRow('Audience Familiarity',   radio('pb_familiarity'));
+    addRow('Decision Level',         radio('pb_decision_level'));
+    addRow('Competitive Benchmarking', radio('pb_benchmarking'));
+    addRow('Competitors',            get('pb_competitors'));
+    addRow('Design References',      get('pb_design_references'));
+    addRow('Involvement Level',      get('pb_involvement_level'));
+    addRow('Desired Deadline',       get('pb_deadline'));
+    addRow('Deadline Flexibility',   radio('pb_deadline_flex'));
+    addRow('Key Milestones',         get('pb_milestones'));
+    addRow('Communication',          checkboxes('pb_comms_channel'));
+    addRow('Blockers',               get('pb_blockers'));
+    addRow('Additional Notes',       get('pb_additional_notes'));
+
+    addFooter();
+    doc.save('G2_CreativeBrief_' + new Date().getTime() + '.pdf');
+  }
+
+  function exportBriefInternalScopesPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const W = 210, H = 297, ML = 20, MR = 20, MT = 20, MB = 20;
+    const CW = W - ML - MR;
+    let y = MT;
+
+    const navy      = [6, 40, 70];
+    const purple    = [87, 70, 178];
+    const redOrange = [255, 73, 44];
+    const dark      = [17, 17, 17];
+    const text      = [80, 80, 89];
+    const lightGray = [199, 205, 214];
+
+    function checkPage(needed) {
+      if (y + needed > H - MB) { addFooter(); doc.addPage(); y = MT; }
+    }
+    function addFooter() {
+      doc.setFontSize(8);
+      doc.setTextColor(...lightGray);
+      doc.text('G2 AI Custom Research — Internal Scoping Document | CONFIDENTIAL', W / 2, H - 8, { align: 'center' });
+    }
+
+    // Header
+    doc.setFillColor(...navy);
+    doc.rect(0, 0, W, 50, 'F');
+    doc.setFillColor(...redOrange);
+    doc.roundedRect(ML, 14, 16, 16, 2.5, 2.5, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('G2', ML + 8, 24.5, { align: 'center' });
+    doc.setFontSize(16);
+    doc.text('AI Custom Research', ML + 26, 22);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Creative Brief & Scoping', ML + 26, 30);
+    doc.setFillColor(...redOrange);
+    doc.roundedRect(W - MR - 38, 14, 38, 8, 1.5, 1.5, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.text('CONFIDENTIAL', W - MR - 36, 19);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    const approvedBy = document.getElementById('approvedBy').value || '(Not specified)';
+    doc.text('Reviewed by: ' + approvedBy, ML + 22, 39);
+    doc.text('Date: ' + new Date().toLocaleDateString(), ML + 22, 45);
+    y = 60;
+
+    const get = id => document.getElementById(id)?.value || 'TBD';
+    const radio = name => document.querySelector(`input[name="${name}"]:checked`)?.closest('.option-card')?.querySelector('.option-label')?.textContent || 'TBD';
+
+    const sectionHeader = (title) => {
+      checkPage(12);
+      doc.setFillColor(...purple);
+      doc.roundedRect(ML, y, CW, 8, 1, 1, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(title.toUpperCase(), ML + 4, y + 5.5);
+      y += 12;
+    };
+
+    const kvRow = (label, value) => {
+      if (!value || value === 'TBD') return;
+      checkPage(6);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...dark);
+      doc.text(label + ':', ML + 2, y + 4);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...text);
+      const lines = doc.splitTextToSize(value, CW - 50);
+      doc.text(lines, ML + 50, y + 4);
+      y += Math.max(6, lines.length * 3.5) + 1;
+    };
+
+    sectionHeader('Project Overview');
+    kvRow('Client', get('pb_company'));
+    kvRow('Research Summary', get('pb_research_summary'));
+    kvRow('Primary Audience', get('pb_audience'));
+    kvRow('Interview Target', radio('pb_customer_type'));
+
+    sectionHeader('Research Objectives');
+    kvRow('Research Questions', get('pb_research_questions'));
+    kvRow('Key Insights', get('pb_key_insights'));
+    kvRow('Usage Plans', get('pb_usage_plans'));
+
+    sectionHeader('Competitive Context');
+    kvRow('Benchmarking', radio('pb_benchmarking'));
+    kvRow('Competitors', get('pb_competitors'));
+
+    sectionHeader('Internal Notes');
+    const notes = document.getElementById('adminNotes').value || 'None';
+    checkPage(Math.ceil(notes.length / 60) * 4 + 4);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...text);
+    const noteLines = doc.splitTextToSize(notes, CW - 4);
+    doc.text(noteLines, ML + 2, y + 4);
+
+    addFooter();
+    doc.save('G2_CreativeBrief_Scoping_' + new Date().getTime() + '.pdf');
+  }
+
+  // ============ INITIALIZE ============
+  goToStep(0);
+</script>
+
+</body>
+</html>
