@@ -1,27 +1,8 @@
-const { google } = require('googleapis');
+// Routes AICR intake form submissions → n8n
+// n8n handles: Google Sheets append + email notification to ppatel3@g2.com
 
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-const SHEET_NAME = 'New Intake Form';
-
-const HEADERS = [
-  'Timestamp', 'Company', 'G2 Profile', 'Contact Name', 'Contact Email',
-  'Stakeholders', 'Product Type', 'Sample Size', 'Respondent Seniority',
-  'Research Depth', 'Interview Targets', 'Research Topics',
-  'Synth Category', 'Synth Angle', 'Synth Persona',
-  'Case Study Interviews', 'Case Study Seniority',
-  'Geographies', 'Delivery Tier', 'AEO Add-on', 'Report Format',
-  'Goals', 'Brief Description', 'Engagement Type', 'Cadence',
-  'Deadline', 'Deadline Flexibility'
-];
-
-async function getSheet() {
-  const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-  const auth = new google.auth.GoogleAuth({
-    credentials,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
-  return google.sheets({ version: 'v4', auth });
-}
+const N8N_WEBHOOK_URL =
+  process.env.N8N_WEBHOOK_URL || 'https://n8n.g2.com/webhook/aicr-intake';
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -32,59 +13,16 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const d = req.body;
-    const sheets = await getSheet();
-
-    const meta = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A1:A1`,
-    }).catch(() => null);
-
-    const hasHeaders = meta?.data?.values?.length > 0;
-    const rows = [];
-    if (!hasHeaders) rows.push(HEADERS);
-
-    rows.push([
-      d.timestamp            || '',
-      d.company              || '',
-      d.g2Profile            || '',
-      d.contactName          || '',
-      d.contactEmail         || '',
-      d.stakeholders         || '',
-      d.productType          || '',
-      d.sampleSize           || '',
-      d.seniority            || '',
-      d.researchDepth        || '',
-      d.interviewTargets     || '',
-      d.researchTopics       || '',
-      d.synthCategory        || '',
-      d.synthAngle           || '',
-      d.synthPersona         || '',
-      d.caseStudyInterviews  || '',
-      d.caseStudySeniority   || '',
-      d.geographies          || '',
-      d.deliveryTier         || '',
-      d.aeoAddon             || '',
-      d.reportFormat         || '',
-      d.goals                || '',
-      d.description          || '',
-      d.engagementType       || '',
-      d.cadence              || '',
-      d.deadline             || '',
-      d.deadlineFlexibility  || '',
-    ]);
-
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A1`,
-      valueInputOption: 'RAW',
-      insertDataOption: 'INSERT_ROWS',
-      requestBody: { values: rows },
+    const response = await fetch(N8N_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
     });
 
-    return res.status(200).json({ success: true });
+    const data = await response.json().catch(() => ({ success: response.ok }));
+    return res.status(response.ok ? 200 : 500).json(data);
   } catch (err) {
-    console.error('Sheet write failed:', err);
+    console.error('n8n webhook forward failed:', err);
     return res.status(500).json({ error: err.message });
   }
 };
