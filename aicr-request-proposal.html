@@ -1516,9 +1516,46 @@
   }
 
   // ============ FORM SUBMISSION ============
-  function submitForm() {
-    alert('Request A Proposal submitted! Our team will review and get back to you within 1-2 business days.');
-    console.log('RP form data submitted');
+  async function submitForm() {
+    if (!validateStep(3)) return;
+    const data = gatherData();
+    const btn = document.querySelector('[onclick="submitForm()"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+    try {
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json();
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Request →'; }
+      if (json.success) {
+        currentStep = maxSteps;
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        const confirmEl = document.getElementById('rp-confirmation');
+        if (confirmEl) confirmEl.style.display = 'block';
+        window.scrollTo(0, 0);
+      } else {
+        let errEl = document.getElementById('submit-error');
+        if (!errEl) {
+          errEl = document.createElement('p');
+          errEl.id = 'submit-error';
+          errEl.style.cssText = 'color:#cc0000;margin-top:8px;font-size:14px;';
+          if (btn) btn.insertAdjacentElement('afterend', errEl);
+        }
+        errEl.textContent = 'Submission error: ' + (json.error || 'unknown error');
+      }
+    } catch (e) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Request →'; }
+      let errEl = document.getElementById('submit-error');
+      if (!errEl) {
+        errEl = document.createElement('p');
+        errEl.id = 'submit-error';
+        errEl.style.cssText = 'color:#cc0000;margin-top:8px;font-size:14px;';
+        if (btn) btn.insertAdjacentElement('afterend', errEl);
+      }
+      errEl.textContent = 'Network error — could not reach server';
+    }
   }
 
   // ============ PDF EXPORT FUNCTIONS ============
