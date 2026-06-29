@@ -1074,10 +1074,24 @@
     </button>
   </div>
 
+  <div id="rp-submit-error" style="display:none; background:#FFF0ED; border:1px solid #FF492C; color:#C0280E; border-radius:8px; padding:12px 16px; font-size:14px; margin-bottom:16px;"></div>
+
   <div class="nav-buttons">
     <button class="btn btn-secondary" onclick="prevStep()">← Back</button>
-    <button class="btn btn-primary" onclick="submitForm()">Submit Request →</button>
+    <button class="btn btn-primary" id="rp-submit-btn" onclick="submitForm()">Submit Request →</button>
   </div>
+</div>
+
+<!-- Confirmation Screen (shown after successful submit) -->
+<div id="rp-confirmation" style="display:none; text-align:center; padding: 64px 24px 80px;">
+  <div style="width:72px; height:72px; background:var(--g2-green-light); border-radius:50%; display:flex; align-items:center; justify-content:center; margin: 0 auto 28px;">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--g2-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <h2 style="font-size:28px; font-weight:800; color:var(--g2-dark); margin-bottom:12px;">Request submitted!</h2>
+  <p style="font-size:16px; color:var(--g2-text); max-width:420px; margin:0 auto 32px; line-height:1.6;">
+    Our team will review your request and get back to you within <strong>1–2 business days</strong> with a tailored proposal.
+  </p>
+  <p style="font-size:14px; color:var(--g2-text-light);">Questions? Email <a href="mailto:research@g2.com" style="color:var(--g2-purple);">research@g2.com</a></p>
 </div>
 
 </div>
@@ -1383,9 +1397,103 @@
   }
 
   // ============ FORM SUBMISSION ============
-  function submitForm() {
-    alert('Request A Proposal submitted! Our team will review and get back to you within 1-2 business days.');
-    console.log('RP form data submitted');
+  async function submitForm() {
+    const btn = document.getElementById('rp-submit-btn');
+    const errEl = document.getElementById('rp-submit-error');
+    const origText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    if (errEl) errEl.style.display = 'none';
+
+    // ── helpers ──────────────────────────────────────────────
+    function val(id) { return (document.getElementById(id)?.value || '').trim(); }
+    function radioVal(name) { return document.querySelector(`input[name="${name}"]:checked`)?.value || ''; }
+    function radioLabel(name) {
+      return document.querySelector(`input[name="${name}"]:checked`)
+        ?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || '';
+    }
+    function checkLabels(name) {
+      return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+        .map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim())
+        .filter(Boolean);
+    }
+
+    // ── analysis lens (has explicit value attrs + detail inputs) ──
+    const analysisLensItems = [];
+    const lensMap = {
+      vs_category:      { label: 'You vs. category',      detailId: 'rp_lens_category_detail' },
+      vs_competitors:   { label: 'You vs. competitors',   detailId: 'rp_lens_competitors_detail' },
+      feature_spotlight:{ label: 'Feature spotlight',     detailId: 'rp_lens_feature_detail' }
+    };
+    document.querySelectorAll('input[name="rp_analysis_lens"]:checked').forEach(input => {
+      const meta = lensMap[input.value];
+      if (!meta) return;
+      const detail = val(meta.detailId);
+      analysisLensItems.push(detail ? `${meta.label}: ${detail}` : meta.label);
+    });
+
+    // ── budget label ──────────────────────────────────────────
+    const budgetEl = document.getElementById('rp_budget');
+    const budgetValue = budgetEl?.value || '';
+    const budgetText  = budgetEl?.options[budgetEl?.selectedIndex]?.text || '';
+
+    // ── build payload ─────────────────────────────────────────
+    const payload = {
+      company:            val('rp_company'),
+      name:               val('rp_name'),
+      email:              val('rp_email'),
+      g2Profile:          val('rp_g2_profile'),
+      stakeholders:       val('rp_stakeholders'),
+      intendedUse:        radioLabel('rp_intended_use'),
+      productType:        radioVal('rp_product_type'),
+      // Custom Research
+      researchAngle:      val('rp_research_angle'),
+      sampleSize:         val('rp_sample_size'),
+      geographies:        checkLabels('rp_geographies'),
+      respondentProfile:  radioLabel('rp_respondent_profile'),
+      respondentMore:     val('rp_respondent_more'),
+      customReportFormat: radioLabel('rp_custom_report_format'),
+      customAddons:       checkLabels('rp_custom_addons'),
+      // Synthetic Report
+      synthCategory:      val('rp_synth_category'),
+      synthAngle:         val('rp_synth_angle'),
+      synthPersona:       val('rp_synth_persona'),
+      analysisLens:       analysisLensItems,
+      synthReportFormat:  radioLabel('rp_synth_report_format'),
+      synthAddons:        checkLabels('rp_synth_addons'),
+      // Goals & Context
+      goals:              checkLabels('rp_goals'),
+      budgetValue:        budgetValue,
+      budgetText:         budgetText,
+      deadlineDate:       val('rp_deadline_date'),
+      deadlineFlex:       radioLabel('rp_deadline_flex'),
+      submittedAt:        new Date().toISOString()
+    };
+
+    try {
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Server error ${res.status}`);
+      }
+      // ── success: show confirmation ────────────────────────
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      const confirm = document.getElementById('rp-confirmation');
+      if (confirm) confirm.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      console.error('Submit error:', err);
+      btn.disabled = false;
+      btn.textContent = origText;
+      if (errEl) {
+        errEl.textContent = 'Something went wrong. Please try again or email research@g2.com directly.';
+        errEl.style.display = 'block';
+      }
+    }
   }
 
   // ============ PDF EXPORT FUNCTIONS ============
