@@ -11,8 +11,12 @@ const ASANA_ACCESS_TOKEN  = process.env.ASANA_ACCESS_TOKEN;
 const ASANA_PROJECT_GID   = process.env.ASANA_PROJECT_GID;
 const ASANA_WORKSPACE_GID = '46608419138132';
 
-const SLACK_BOT_TOKEN  = process.env.SLACK_BOT_TOKEN;
-const SLACK_CHANNEL_ID = 'C0ARNJBP93P'; // #aicr-intake
+// Set ONE of these in Vercel env vars:
+//   SLACK_WEBHOOK_URL — Incoming Webhook URL (https://hooks.slack.com/services/...)
+//   SLACK_BOT_TOKEN   — Bot token (xoxb-...) with chat:write scope
+const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
+const SLACK_BOT_TOKEN   = process.env.SLACK_BOT_TOKEN;
+const SLACK_CHANNEL_ID  = 'C0ARNJBP93P'; // #aicr-intake (used with bot token only)
 
 const PRODUCT_LABEL = {
   custom_research:  'Custom Research',
@@ -144,7 +148,7 @@ async function ensureCustomFields() {
 
 // ── Slack notification ────────────────────────────────────────────────────────
 async function postSlackNotification({ company, name, email, productLabel, budgetText, deadlineDate, deadlineFlex, intendedUse, asanaTaskGid }) {
-  if (!SLACK_BOT_TOKEN) return; // silently skip if not configured
+  if (!SLACK_WEBHOOK_URL && !SLACK_BOT_TOKEN) return; // silently skip if not configured
 
   const dash = (v) => v || '—';
   const asanaUrl = asanaTaskGid
@@ -181,19 +185,24 @@ async function postSlackNotification({ company, name, email, productLabel, budge
     });
   }
 
+  const fallbackText = `New AICR intake: ${company || 'Unknown'} — ${productLabel}`;
+
   try {
-    await fetch('https://slack.com/api/chat.postMessage', {
-      method:  'POST',
-      headers: {
-        Authorization:  `Bearer ${SLACK_BOT_TOKEN}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        channel: SLACK_CHANNEL_ID,
-        text:    `New AICR intake: ${company || 'Unknown'} — ${productLabel}`,
-        blocks
-      })
-    });
+    if (SLACK_WEBHOOK_URL) {
+      // Incoming Webhook (simpler, no channel ID needed)
+      await fetch(SLACK_WEBHOOK_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ text: fallbackText, blocks })
+      });
+    } else {
+      // Bot token via Web API
+      await fetch('https://slack.com/api/chat.postMessage', {
+        method:  'POST',
+        headers: { Authorization: `Bearer ${SLACK_BOT_TOKEN}`, 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ channel: SLACK_CHANNEL_ID, text: fallbackText, blocks })
+      });
+    }
   } catch (err) {
     // Non-fatal — don't fail the submission if Slack is down
     console.error('[submit] Slack notification error:', err);
