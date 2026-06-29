@@ -1,24 +1,160 @@
 // POST /api/submit
-// Receives AICR intake form data → creates Asana task
+// Receives AICR intake form data → creates Asana task with custom field columns
 //
 // Required Vercel env vars:
-//   ASANA_ACCESS_TOKEN  — Asana personal access token (Settings → Apps → Developer apps)
-//   ASANA_PROJECT_GID   — GID from Asana project URL: app.asana.com/0/<GID>/...
+//   ASANA_ACCESS_TOKEN  — Asana personal access token
+//   ASANA_PROJECT_GID   — GID of "AICR Intake Submissions" project (1216104302009748)
 
-const ASANA_ACCESS_TOKEN = process.env.ASANA_ACCESS_TOKEN;
-const ASANA_PROJECT_GID  = process.env.ASANA_PROJECT_GID;
+const ASANA_ACCESS_TOKEN  = process.env.ASANA_ACCESS_TOKEN;
+const ASANA_PROJECT_GID   = process.env.ASANA_PROJECT_GID;
+const ASANA_WORKSPACE_GID = '46608419138132';
 
 const PRODUCT_LABEL = {
   custom_research:  'Custom Research',
   synthetic_report: 'Synthetic Report'
 };
 
+// ── Custom field definitions ──────────────────────────────────────────────────
+// On first submission, these are created on the project automatically
+// and cached for the lifetime of the Lambda instance.
+const FIELD_DEFS = [
+  { name: 'Company',       resource_subtype: 'text' },
+  { name: 'Contact Email', resource_subtype: 'text' },
+  { name: 'Intended Use',  resource_subtype: 'text' },
+  {
+    name: 'Product Type',
+    resource_subtype: 'enum',
+    enum_options: [
+      { name: 'Custom Research',  color: 'blue',  enabled: true },
+      { name: 'Synthetic Report', color: 'green', enabled: true }
+    ]
+  },
+  {
+    name: 'Budget',
+    resource_subtype: 'enum',
+    enum_options: [
+      { name: 'Under $25k',    color: 'green',        enabled: true },
+      { name: '$25k – $50k',   color: 'yellow-green', enabled: true },
+      { name: '$50k – $100k',  color: 'yellow',       enabled: true },
+      { name: '$100k – $200k', color: 'orange',       enabled: true },
+      { name: '$200k+',        color: 'red',          enabled: true },
+      { name: 'Not sure yet',  color: 'cool-gray',    enabled: true }
+    ]
+  }
+];
+
+// Module-level cache — survives warm Lambda re-use between requests
+let _fieldGids = null;
+
+// ── Asana REST helper ─────────────────────────────────────────────────────────
+async function asana(path, method = 'GET', body = null) {
+  const opts = {
+    method,
+    headers: {
+      Authorization:  `Bearer ${ASANA_ACCESS_TOKEN}`,
+      'Content-Type': 'application/json',
+      Accept:         'application/json'
+    }
+  };
+  if (body) opts.body = JSON.stringify({ data: body });
+  const r = await fetch(`https://app.asana.com/api/1.0${path}`, opts);
+  return r.json();
+}
+
+// ── Ensure custom fields exist on the project ─────────────────────────────────
+async function ensureCustomFields() {
+  if (_fieldGids) return _fieldGids;
+
+  // Fetch existing project custom fields (with enum options)
+  const project = await asana(
+    `/projects/${ASANA_PROJECT_GID}?opt_fields=` +
+    `custom_field_settings.custom_field.gid,` +
+    `custom_field_settings.custom_field.name,` +
+    `custom_field_settings.custom_field.resource_subtype,` +
+    `custom_field_settings.custom_field.type,` +
+    `custom_field_settings.custom_field.enum_options`
+  );
+
+  const existing = {};
+  for (const s of (project.data?.custom_field_settings ?? [])) {
+    existing[s.custom_field.name] = s.custom_field;
+  }
+
+  const gids = {};
+
+  for (const def of FIELD_DEFS) {
+    if (existing[def.name]) {
+      // Field already exists on project — use it as-is
+      gids[def.name] = existing[def.name];
+      continue;
+    }
+
+    // ── Create field in the workspace ─────────────────────────────────────
+    const created = await asana('/custom_fields', 'POST', {
+      name:             def.name,
+      resource_subtype: def.resource_subtype,
+      workspace:        ASANA_WORKSPACE_GID
+    });
+
+    if (!created.data?.gid) {
+      console.error(`[setup] Could not create field "${def.name}":`, JSON.stringify(created));
+      continue;
+    }
+
+    const fieldGid    = created.data.gid;
+    const enumOptions = [];
+
+    // ── Add enum options individually (most reliable approach) ────────────
+    if (def.enum_options) {
+      for (const opt of def.enum_options) {
+        const optRes = await asana(`/custom_fields/${fieldGid}/enum_options`, 'POST', {
+          name:    opt.name,
+          color:   opt.color,
+          enabled: true
+        });
+        if (optRes.data?.gid) {
+          enumOptions.push({ gid: optRes.data.gid, name: opt.name });
+        }
+      }
+    }
+
+    // ── Attach field to project (is_important = show as a column) ─────────
+    await asana(`/projects/${ASANA_PROJECT_GID}/addCustomFieldSetting`, 'POST', {
+      custom_field: fieldGid,
+      is_important: true
+    });
+
+    gids[def.name] = {
+      gid:             fieldGid,
+      name:            def.name,
+      resource_subtype: def.resource_subtype,
+      enum_options:    enumOptions
+    };
+    console.log(`[setup] Created + attached field "${def.name}" → ${fieldGid}`);
+  }
+
+  _fieldGids = gids;
+  return gids;
+}
+
+// Find enum option GID by label (case-insensitive, whitespace-trimmed)
+function enumOptionGid(field, label) {
+  if (!field?.enum_options || !label) return null;
+  const norm = s => s.trim().toLowerCase();
+  return field.enum_options.find(o => norm(o.name) === norm(label))?.gid ?? null;
+}
+
+// ── Main handler ─────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const body = req.body;
+  if (!ASANA_ACCESS_TOKEN || !ASANA_PROJECT_GID) {
+    console.error('[submit] Missing ASANA_ACCESS_TOKEN or ASANA_PROJECT_GID env vars');
+    return res.status(500).json({ error: 'Asana not configured' });
+  }
+
   const {
     company, name, email, g2Profile, stakeholders,
     intendedUse, productType,
@@ -26,29 +162,26 @@ export default async function handler(req, res) {
     customReportFormat, customAddons,
     synthCategory, synthAngle, synthPersona, analysisLens,
     synthReportFormat, synthAddons,
-    goals, budgetValue, budgetText, deadlineDate, deadlineFlex,
+    goals, budgetText, deadlineDate, deadlineFlex,
     submittedAt
-  } = body;
+  } = req.body;
 
   const productLabel    = PRODUCT_LABEL[productType] || productType || '';
-  const geosStr         = (geographies || []).join(', ');
-  const goalsStr        = (goals       || []).join(', ');
-  const addons          = [...(customAddons || []), ...(synthAddons || [])].join(', ');
+  const geosStr         = (geographies  || []).join(', ');
+  const goalsStr        = (goals        || []).join(', ');
   const analysisLensStr = (analysisLens || []).join('; ');
 
-  // ── Asana task body ───────────────────────────────────────────────────
-  function line(label, value) {
-    return value ? `${label}: ${value}` : null;
-  }
+  // ── Task notes (full detail in description) ───────────────────────────────
+  const line = (label, value) => value ? `${label}: ${value}` : null;
 
   const customSection = productType === 'custom_research' ? [
     line('Research Angle / Topics', researchAngle),
-    line('Sample Size',      sampleSize ? `${sampleSize} respondents` : null),
-    line('Geographies',      geosStr),
-    line('Respondent Profile', respondentProfile),
-    line('Respondent Detail',  respondentMore),
-    line('Report Format',    customReportFormat),
-    line('Add-ons',          (customAddons || []).join(', '))
+    line('Sample Size',             sampleSize ? `${sampleSize} respondents` : null),
+    line('Geographies',             geosStr),
+    line('Respondent Profile',      respondentProfile),
+    line('Respondent Detail',       respondentMore),
+    line('Report Format',           customReportFormat),
+    line('Add-ons',                 (customAddons || []).join(', '))
   ].filter(Boolean).join('\n') : [
     line('G2 Category / Product',   synthCategory),
     line('Research Angle / Topics', synthAngle),
@@ -72,14 +205,14 @@ export default async function handler(req, res) {
     customSection,
     '',
     `━━ GOALS & CONTEXT ━━`,
-    line('Goals',   goalsStr),
-    line('Budget',  budgetText),
+    line('Goals',  goalsStr),
+    line('Budget', budgetText),
     deadlineDate
       ? `Publish Date: ${deadlineDate}${deadlineFlex ? ` (${deadlineFlex})` : ''}`
       : null,
     '',
     `Submitted: ${new Date(submittedAt || Date.now()).toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
+      timeZone:  'America/Chicago',
       dateStyle: 'medium',
       timeStyle: 'short'
     })} CT`
@@ -87,28 +220,52 @@ export default async function handler(req, res) {
 
   const taskName = `[AICR] ${company || 'Unknown'} — ${productLabel}`;
 
-  // ── POST to Asana ─────────────────────────────────────────────────────
-  if (!ASANA_ACCESS_TOKEN || !ASANA_PROJECT_GID) {
-    console.error('[submit] Missing ASANA_ACCESS_TOKEN or ASANA_PROJECT_GID env vars');
-    return res.status(500).json({ error: 'Asana not configured' });
+  // ── Ensure custom fields exist on the project ─────────────────────────────
+  let fields = {};
+  try {
+    fields = await ensureCustomFields();
+  } catch (err) {
+    // Non-fatal: task will still be created, just without column values
+    console.error('[submit] ensureCustomFields error:', err);
   }
+
+  // ── Map form values → Asana custom_fields ────────────────────────────────
+  const custom_fields = {};
+
+  const setText = (fieldName, value) => {
+    const f = fields[fieldName];
+    if (f?.gid && value) custom_fields[f.gid] = value;
+  };
+
+  setText('Company',       company);
+  setText('Contact Email', email);
+  setText('Intended Use',  intendedUse);
+
+  const ptGid = enumOptionGid(fields['Product Type'], productLabel);
+  if (ptGid && fields['Product Type']?.gid) custom_fields[fields['Product Type'].gid] = ptGid;
+
+  const budgetGid = enumOptionGid(fields['Budget'], budgetText);
+  if (budgetGid && fields['Budget']?.gid) custom_fields[fields['Budget'].gid] = budgetGid;
+
+  // ── Create Asana task ─────────────────────────────────────────────────────
+  const taskData = {
+    name:     taskName,
+    notes:    taskNotes,
+    projects: [ASANA_PROJECT_GID],
+    ...(deadlineDate                      ? { due_on: deadlineDate } : {}),
+    ...(Object.keys(custom_fields).length ? { custom_fields }        : {})
+  };
 
   let asanaResponse;
   try {
     const r = await fetch('https://app.asana.com/api/1.0/tasks', {
-      method: 'POST',
+      method:  'POST',
       headers: {
-        'Authorization': `Bearer ${ASANA_ACCESS_TOKEN}`,
+        Authorization:  `Bearer ${ASANA_ACCESS_TOKEN}`,
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        Accept:         'application/json'
       },
-      body: JSON.stringify({
-        data: {
-          name: taskName,
-          notes: taskNotes,
-          projects: [ASANA_PROJECT_GID]
-        }
-      })
+      body: JSON.stringify({ data: taskData })
     });
     asanaResponse = await r.json();
   } catch (err) {
@@ -122,7 +279,7 @@ export default async function handler(req, res) {
   }
 
   return res.status(200).json({
-    ok: true,
+    ok:           true,
     asanaTaskGid: asanaResponse?.data?.gid ?? null
   });
 }
