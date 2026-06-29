@@ -1,13 +1,18 @@
 // POST /api/submit
 // Receives AICR intake form data → creates Asana task with custom field columns
+//                                 → posts Slack notification to #aicr-intake
 //
 // Required Vercel env vars:
 //   ASANA_ACCESS_TOKEN  — Asana personal access token
 //   ASANA_PROJECT_GID   — GID of "AICR Intake Submissions" project (1216104302009748)
+//   SLACK_BOT_TOKEN     — Slack bot token (xoxb-...) with chat:write scope
 
 const ASANA_ACCESS_TOKEN  = process.env.ASANA_ACCESS_TOKEN;
 const ASANA_PROJECT_GID   = process.env.ASANA_PROJECT_GID;
 const ASANA_WORKSPACE_GID = '46608419138132';
+
+const SLACK_BOT_TOKEN  = process.env.SLACK_BOT_TOKEN;
+const SLACK_CHANNEL_ID = 'C0ARNJBP93P'; // #aicr-intake
 
 const PRODUCT_LABEL = {
   custom_research:  'Custom Research',
@@ -135,6 +140,64 @@ async function ensureCustomFields() {
 
   _fieldGids = gids;
   return gids;
+}
+
+// ── Slack notification ────────────────────────────────────────────────────────
+async function postSlackNotification({ company, name, email, productLabel, budgetText, deadlineDate, deadlineFlex, intendedUse, asanaTaskGid }) {
+  if (!SLACK_BOT_TOKEN) return; // silently skip if not configured
+
+  const dash = (v) => v || '—';
+  const asanaUrl = asanaTaskGid
+    ? `https://app.asana.com/0/${ASANA_PROJECT_GID}/${asanaTaskGid}`
+    : null;
+
+  const blocks = [
+    {
+      type: 'header',
+      text: { type: 'plain_text', text: '🎉 New AICR Intake Request', emoji: true }
+    },
+    {
+      type: 'section',
+      fields: [
+        { type: 'mrkdwn', text: `*Company*\n${dash(company)}` },
+        { type: 'mrkdwn', text: `*Product Type*\n${dash(productLabel)}` },
+        { type: 'mrkdwn', text: `*Contact*\n${dash(name)}${email ? `\n${email}` : ''}` },
+        { type: 'mrkdwn', text: `*Budget*\n${dash(budgetText)}` },
+        { type: 'mrkdwn', text: `*Intended Use*\n${dash(intendedUse)}` },
+        { type: 'mrkdwn', text: `*Publish Date*\n${deadlineDate ? `${deadlineDate}${deadlineFlex ? ` _(${deadlineFlex})_` : ''}` : '—'}` }
+      ]
+    }
+  ];
+
+  if (asanaUrl) {
+    blocks.push({
+      type: 'actions',
+      elements: [{
+        type: 'button',
+        text: { type: 'plain_text', text: 'View in Asana →', emoji: true },
+        url:  asanaUrl,
+        style: 'primary'
+      }]
+    });
+  }
+
+  try {
+    await fetch('https://slack.com/api/chat.postMessage', {
+      method:  'POST',
+      headers: {
+        Authorization:  `Bearer ${SLACK_BOT_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        channel: SLACK_CHANNEL_ID,
+        text:    `New AICR intake: ${company || 'Unknown'} — ${productLabel}`,
+        blocks
+      })
+    });
+  } catch (err) {
+    // Non-fatal — don't fail the submission if Slack is down
+    console.error('[submit] Slack notification error:', err);
+  }
 }
 
 // Find enum option GID by label (case-insensitive, whitespace-trimmed)
@@ -278,8 +341,13 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Asana task creation failed', detail: asanaResponse.errors });
   }
 
-  return res.status(200).json({
-    ok:           true,
-    asanaTaskGid: asanaResponse?.data?.gid ?? null
+  const asanaTaskGid = asanaResponse?.data?.gid ?? null;
+
+  // ── Slack notification (non-fatal) ───────────────────────────────────────
+  await postSlackNotification({
+    company, name, email, productLabel, budgetText,
+    deadlineDate, deadlineFlex, intendedUse, asanaTaskGid
   });
+
+  return res.status(200).json({ ok: true, asanaTaskGid });
 }
