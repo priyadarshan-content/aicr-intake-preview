@@ -673,32 +673,55 @@
 
   <div class="required-legend"><span>*</span> Required field</div>
 
+  <!-- Intended Use Case -->
+  <div class="card" id="card_intended_use">
+    <div class="card-title required">Intended Use Case</div>
+    <div class="option-grid cols-2">
+      <div class="option-card" onclick="selectOption(this, 'rp_intended_use', 'internal')">
+        <input type="radio" name="rp_intended_use" value="internal">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">Internal use</div><div class="option-desc">Best for internal-use market intelligence or due diligence</div></div>
+      </div>
+      <div class="option-card" onclick="selectOption(this, 'rp_intended_use', 'external')">
+        <input type="radio" name="rp_intended_use" value="external">
+        <div class="option-indicator"></div>
+        <div class="option-content"><div class="option-label">External publish</div><div class="option-desc">Best for AI visibility, thought leadership, or lead gen</div></div>
+      </div>
+    </div>
+    <div class="error-msg" id="err_intended_use">Please select an intended use case.</div>
+  </div>
+
+  <!-- Product Type (single-select, no Case Study) -->
   <div class="card" id="card_product_type">
     <div class="card-title required">Product Type</div>
-    <div class="card-hint">What type of research do you need? Select all that apply.</div>
-    <div class="option-grid cols-3">
-      <div class="option-card checkbox" onclick="toggleProductType(this, 'custom_research')">
-        <input type="checkbox" name="rp_product_type" value="custom_research">
+    <div class="card-hint">What type of research are you interested in? If more than one, please fill out a separate form for each.</div>
+    <div class="option-grid cols-2">
+      <div class="option-card" onclick="selectProductType(this, 'custom_research')">
+        <input type="radio" name="rp_product_type" value="custom_research">
         <div class="option-indicator"></div>
         <div class="option-content"><div class="option-label">Custom Research</div><div class="option-desc">AI-moderated interviews at scale with real people</div></div>
       </div>
-      <div class="option-card checkbox" onclick="toggleProductType(this, 'synthetic_report')">
-        <input type="checkbox" name="rp_product_type" value="synthetic_report">
+      <div class="option-card" onclick="selectProductType(this, 'synthetic_report')">
+        <input type="radio" name="rp_product_type" value="synthetic_report">
         <div class="option-indicator"></div>
         <div class="option-content"><div class="option-label">Synthetic Report</div><div class="option-desc">Analysis of existing G2 review data — no custom fielding</div></div>
       </div>
-      <div class="option-card checkbox" onclick="toggleProductType(this, 'case_study')">
-        <input type="checkbox" name="rp_product_type" value="case_study">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">Case Study</div><div class="option-desc">1-on-1 customer interviews to capture outcomes and ROI</div></div>
-      </div>
     </div>
+    <div class="error-msg" id="err_product_type">Please select a product type.</div>
   </div>
 
-  <!-- Conditional: Custom Research fields -->
+  <!-- Branching option 1: Custom Research -->
   <div class="conditional" id="rp-custom-research-fields">
+
+    <div class="card">
+      <div class="card-title required">Research Angle, Topics & Key Insights</div>
+      <div class="card-hint">What specific narratives, topics, challenges and pain points, or questions should the research explore? What insights are you hoping to get out of this? What actions are you hoping to influence with the findings?</div>
+      <textarea id="rp_research_angle" placeholder="e.g., 'How is AI impacting procurement workflows? What are the biggest pain points with current tools? How do buyers evaluate vendors in this space?'"></textarea>
+    </div>
+
     <div class="card" id="card_sample_size">
       <div class="card-title required">Approximate Sample Size</div>
+      <div class="card-hint">Tell us how many respondents you'd like us to interview per report or refresh.</div>
       <select id="rp_sample_size">
         <option value="">Select sample size...</option>
         <option value="100">100 respondents</option>
@@ -715,66 +738,121 @@
       </select>
     </div>
 
-    <div class="card" id="card_seniority">
-      <div class="card-title required">Who Do You Want to Talk To?</div>
-      <div class="card-hint">Seniority level affects recruitment complexity and research design.</div>
+    <div class="card" id="card_geographies">
+      <div class="card-title required">Geographies</div>
       <div class="option-grid cols-3">
-        <div class="option-card" onclick="selectOption(this, 'rp_seniority', 'standard')">
-          <input type="radio" name="rp_seniority">
+        <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'North America')">
+          <input type="checkbox" name="rp_geographies">
           <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">Manager & Below</div><div class="option-desc">ICs, analysts, team leads, managers</div></div>
+          <div class="option-content"><div class="option-label">North America</div></div>
         </div>
-        <div class="option-card" onclick="selectOption(this, 'rp_seniority', 'senior_director')">
-          <input type="radio" name="rp_seniority">
+        <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'Western Europe')">
+          <input type="checkbox" name="rp_geographies">
           <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">Director+</div><div class="option-desc">Directors, VPs, C-Suite, Founders</div></div>
+          <div class="option-content"><div class="option-label">Western Europe</div></div>
         </div>
-        <div class="option-card" onclick="selectOption(this, 'rp_seniority', 'b2c_consumer')">
-          <input type="radio" name="rp_seniority">
+        <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'APAC')">
+          <input type="checkbox" name="rp_geographies">
           <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">B2C / Consumer</div><div class="option-desc">End users, general population</div></div>
+          <div class="option-content"><div class="option-label">APAC</div></div>
+        </div>
+        <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'Latin America')">
+          <input type="checkbox" name="rp_geographies">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Latin America</div></div>
+        </div>
+        <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'Middle East & Africa')">
+          <input type="checkbox" name="rp_geographies">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Middle East & Africa</div></div>
+        </div>
+        <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'Global')">
+          <input type="checkbox" name="rp_geographies">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Global</div></div>
         </div>
       </div>
     </div>
 
-    <div class="card" id="card_research_depth">
-      <div class="card-title required">Research Depth</div>
-      <div class="card-hint">How deep should each conversation go? This helps us design the right interview length.</div>
+    <div class="card" id="card_respondent_profile">
+      <div class="card-title required">Respondent Profile: Who Should We Interview?</div>
       <div class="option-grid cols-3">
-        <div class="option-card" onclick="selectOption(this, 'rp_research_depth', 'quick_pulse')">
-          <input type="radio" name="rp_research_depth">
+        <div class="option-card" onclick="selectOption(this, 'rp_respondent_profile', 'leaders')">
+          <input type="radio" name="rp_respondent_profile">
           <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">Quick Pulse</div><div class="option-desc">1-2 focused topics, high-level sentiment</div></div>
+          <div class="option-content"><div class="option-label">Leaders</div><div class="option-desc">C-Suite and founders</div></div>
         </div>
-        <div class="option-card" onclick="selectOption(this, 'rp_research_depth', 'standard')">
-          <input type="radio" name="rp_research_depth">
+        <div class="option-card" onclick="selectOption(this, 'rp_respondent_profile', 'buyers')">
+          <input type="radio" name="rp_respondent_profile">
           <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">Standard</div><div class="option-desc">3-5 themes with follow-up questions</div></div>
+          <div class="option-content"><div class="option-label">Buyers</div><div class="option-desc">Director and VP decision-makers</div></div>
         </div>
-        <div class="option-card" onclick="selectOption(this, 'rp_research_depth', 'deep_dive')">
-          <input type="radio" name="rp_research_depth">
+        <div class="option-card" onclick="selectOption(this, 'rp_respondent_profile', 'end_users')">
+          <input type="radio" name="rp_respondent_profile">
           <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">Deep Dive</div><div class="option-desc">Comprehensive exploration, complex topics</div></div>
+          <div class="option-content"><div class="option-label">End Users</div><div class="option-desc">ICs, analysts, or consumers</div></div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Who Should We Be Interviewing? <span style="color: var(--g2-text-light);">(optional)</span></div>
+      <div class="card-title">Respondent Profile: Tell Us More <span style="color: var(--g2-text-light);">(optional)</span></div>
       <div class="card-hint">Describe the ideal interviewee — job titles, roles, industries, company size, or level of expertise. The more specific you are, the better we can design the screener.</div>
-      <textarea id="rp_interview_targets" placeholder="e.g., 'IT Directors and VP-level decision-makers at enterprise companies (1,000+ employees) in financial services, healthcare, and manufacturing'"></textarea>
+      <textarea id="rp_respondent_more" placeholder="e.g., 'IT Directors and VP-level decision-makers at enterprise companies (1,000+ employees) in financial services, healthcare, and manufacturing'"></textarea>
+    </div>
+
+    <div class="card" id="card_custom_report_format">
+      <div class="card-title required">Report Format</div>
+      <div class="option-grid">
+        <div class="option-card" onclick="selectOption(this, 'rp_custom_report_format', 'insights_report')">
+          <input type="radio" name="rp_custom_report_format">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Insights report (for internal use)</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_custom_report_format', 'pdf_g2')">
+          <input type="radio" name="rp_custom_report_format">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">One-time PDF with G2 branding</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_custom_report_format', 'pdf_cobranded')">
+          <input type="radio" name="rp_custom_report_format">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">One-time PDF, co-branded (your logo included)</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_custom_report_format', 'pdf_client')">
+          <input type="radio" name="rp_custom_report_format">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">One-time PDF with your branding</div></div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'rp_custom_report_format', 'g2_hosted')">
+          <input type="radio" name="rp_custom_report_format">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">G2-hosted page with scheduled refreshes</div></div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Topics & Key Insights <span style="color: var(--g2-text-light);">(optional)</span></div>
-      <div class="card-hint">What specific topics, challenges, or questions should the research explore? What insights are you hoping to get out of this?</div>
-      <textarea id="rp_research_topics" placeholder="e.g., 'How is AI impacting procurement workflows? What are the biggest pain points with current tools? How do buyers evaluate vendors in this space?'"></textarea>
+      <div class="card-title">Add-on Content <span style="color: var(--g2-text-light);">(optional)</span></div>
+      <div class="option-grid cols-2">
+        <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_custom_addons', 'Social assets')">
+          <input type="checkbox" name="rp_custom_addons">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Social assets</div></div>
+        </div>
+        <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_custom_addons', 'Live presentation or webinar')">
+          <input type="checkbox" name="rp_custom_addons">
+          <div class="option-indicator"></div>
+          <div class="option-content"><div class="option-label">Live presentation or webinar</div></div>
+        </div>
+      </div>
     </div>
 
   </div>
 
-  <!-- Conditional: Synthetic Report fields -->
+  <!-- Branching option 2: Synthetic Report -->
   <div class="conditional" id="rp-synthetic-report-fields">
+
     <div class="card" id="card_synth_category">
       <div class="card-title required">G2 Category or Product</div>
       <div class="card-hint">Synthetic reports are built from G2 review data — the more reviews in the category or product, the richer the output. Share the G2 category or product profile(s) you'd like the report to focus on.</div>
@@ -782,166 +860,90 @@
     </div>
 
     <div class="card" id="card_synth_angle">
-      <div class="card-title required">Report Topic / Angle</div>
-      <div class="card-hint">What narrative or theme should the report explore? This shapes the interview questions the AI personas respond to based on real reviewer data.</div>
+      <div class="card-title required">Research Angle, Topics & Key Insights</div>
+      <div class="card-hint">What specific narratives, topics, challenges and pain points, or questions should the research explore? What insights are you hoping to get out of this? What actions are you hoping to influence with the findings?</div>
       <textarea id="rp_synth_angle" placeholder="e.g., 'Buyer priorities when evaluating project management tools for mid-market teams' or 'How our product compares to the category on ease of use and implementation'"></textarea>
     </div>
 
     <div class="card">
-      <div class="card-title">Target Persona <span style="color: var(--g2-text-light);">(optional)</span></div>
-      <div class="card-hint">Whose perspective should the report reflect? Note: G2 reviews skew toward end users and managers — if you need senior leadership perspectives, custom research with real interviews may be a better fit.</div>
+      <div class="card-title">Target Review Persona <span style="color: var(--g2-text-light);">(optional)</span></div>
+      <div class="card-hint">What type of reviewer/user should we include in our analysis? Note: G2 reviews skew toward end users and managers — if you need senior leadership perspectives, custom research with real interviews may be a better fit.</div>
       <textarea id="rp_synth_persona" placeholder="e.g., 'IT Directors evaluating security tools at mid-market companies' or 'End users of HR platforms at enterprises with 500+ employees'"></textarea>
     </div>
-  </div>
 
-  <!-- Conditional: Case Study fields -->
-  <div class="conditional" id="rp-case-study-fields">
-    <div class="card" id="card_cs_interviews">
-      <div class="card-title required">How Many Interviews?</div>
-      <div class="card-hint">Select the number of customer interviews you need.</div>
+    <div class="card" id="card_analysis_lens">
+      <div class="card-title">Analysis Lens <span style="color: var(--g2-text-light);">(optional)</span></div>
+      <div class="card-hint">What kind of comparison or narrative should this research explore? Select all that apply.</div>
+
+      <div class="option-card checkbox" style="margin-bottom: 12px;" onclick="toggleAnalysisLens(this, 'vs_category')">
+        <input type="checkbox" name="rp_analysis_lens" value="vs_category">
+        <div class="option-indicator"></div>
+        <div class="option-content">
+          <div class="option-label">You vs. category / category segment</div>
+          <div class="option-desc">Compare your product's performance against category averages or a slice of the category (e.g., segmented by company size, industry, geography)</div>
+          <div class="conditional" id="lens_category_detail" style="margin-top: 10px;">
+            <input type="text" id="rp_lens_category_detail" placeholder="e.g., 'Project Management category, mid-market segment'" onclick="event.stopPropagation()">
+          </div>
+        </div>
+      </div>
+
+      <div class="option-card checkbox" style="margin-bottom: 12px;" onclick="toggleAnalysisLens(this, 'vs_competitors')">
+        <input type="checkbox" name="rp_analysis_lens" value="vs_competitors">
+        <div class="option-indicator"></div>
+        <div class="option-content">
+          <div class="option-label">You vs. 2 or more named competitors</div>
+          <div class="option-desc">Compare your performance against your peers</div>
+          <div class="conditional" id="lens_competitors_detail" style="margin-top: 10px;">
+            <input type="text" id="rp_lens_competitors_detail" placeholder="e.g., 'Salesforce, HubSpot, Pipedrive'" onclick="event.stopPropagation()">
+          </div>
+        </div>
+      </div>
+
+      <div class="option-card checkbox" onclick="toggleAnalysisLens(this, 'feature_spotlight')">
+        <input type="checkbox" name="rp_analysis_lens" value="feature_spotlight">
+        <div class="option-indicator"></div>
+        <div class="option-content">
+          <div class="option-label">Feature / functionality spotlight</div>
+          <div class="option-desc">Bring attention to what users say drives value</div>
+          <div class="conditional" id="lens_feature_detail" style="margin-top: 10px;">
+            <input type="text" id="rp_lens_feature_detail" placeholder="e.g., 'AI-powered forecasting, pipeline management'" onclick="event.stopPropagation()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card_synth_report_format">
+      <div class="card-title">Report Format <span style="color: var(--g2-text-light);">(optional)</span></div>
       <div class="option-grid cols-3">
-        <div class="option-card" onclick="selectOption(this, 'rp_case_study_interviews', '1-2')">
-          <input type="radio" name="rp_case_study_interviews">
+        <div class="option-card" onclick="selectOption(this, 'rp_synth_report_format', 'insights_report')">
+          <input type="radio" name="rp_synth_report_format">
           <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">1–2</div></div>
+          <div class="option-content"><div class="option-label">Insights report (for internal use)</div></div>
         </div>
-        <div class="option-card" onclick="selectOption(this, 'rp_case_study_interviews', '3-4')">
-          <input type="radio" name="rp_case_study_interviews">
+        <div class="option-card" onclick="selectOption(this, 'rp_synth_report_format', 'pdf_g2')">
+          <input type="radio" name="rp_synth_report_format">
           <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">3–4</div></div>
+          <div class="option-content"><div class="option-label">PDF with G2 branding</div></div>
         </div>
-        <div class="option-card" onclick="selectOption(this, 'rp_case_study_interviews', '5-9')">
-          <input type="radio" name="rp_case_study_interviews">
+        <div class="option-card" onclick="selectOption(this, 'rp_synth_report_format', 'pdf_cobranded')">
+          <input type="radio" name="rp_synth_report_format">
           <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">5–9</div></div>
-        </div>
-        <div class="option-card" onclick="selectOption(this, 'rp_case_study_interviews', '10-14')">
-          <input type="radio" name="rp_case_study_interviews">
-          <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">10–14</div></div>
-        </div>
-        <div class="option-card" onclick="selectOption(this, 'rp_case_study_interviews', '15-19')">
-          <input type="radio" name="rp_case_study_interviews">
-          <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">15–19</div></div>
-        </div>
-        <div class="option-card" onclick="selectOption(this, 'rp_case_study_interviews', '20+')">
-          <input type="radio" name="rp_case_study_interviews">
-          <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">20+</div></div>
+          <div class="option-content"><div class="option-label">PDF, co-branded (your logo included)</div></div>
         </div>
       </div>
     </div>
 
-    <div class="card" id="card_cs_seniority">
-      <div class="card-title required">Customer Seniority</div>
-      <div class="card-hint">Who will be interviewed?</div>
-      <div class="option-grid cols-2">
-        <div class="option-card" onclick="selectOption(this, 'rp_cs_seniority', 'standard')">
-          <input type="radio" name="rp_cs_seniority">
+    <div class="card">
+      <div class="card-title">Add-on Content <span style="color: var(--g2-text-light);">(optional)</span></div>
+      <div class="option-grid">
+        <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_synth_addons', 'Social assets')">
+          <input type="checkbox" name="rp_synth_addons">
           <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">Manager & Below</div><div class="option-desc">ICs, analysts, team leads, managers</div></div>
-        </div>
-        <div class="option-card" onclick="selectOption(this, 'rp_cs_seniority', 'senior_director')">
-          <input type="radio" name="rp_cs_seniority">
-          <div class="option-indicator"></div>
-          <div class="option-content"><div class="option-label">Director+</div><div class="option-desc">Directors, VPs, C-Suite, Founders</div></div>
+          <div class="option-content"><div class="option-label">Social assets</div></div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Common fields for all product types -->
-  <div class="card" id="card_geographies">
-    <div class="card-title required">Geographies</div>
-    <div class="option-grid cols-3">
-      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'North America')">
-        <input type="checkbox" name="rp_geographies">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">North America</div></div>
-      </div>
-      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'Western Europe')">
-        <input type="checkbox" name="rp_geographies">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">Western Europe</div></div>
-      </div>
-      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'APAC')">
-        <input type="checkbox" name="rp_geographies">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">APAC</div></div>
-      </div>
-      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'Latin America')">
-        <input type="checkbox" name="rp_geographies">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">Latin America</div></div>
-      </div>
-      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'Middle East & Africa')">
-        <input type="checkbox" name="rp_geographies">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">Middle East & Africa</div></div>
-      </div>
-      <div class="option-card checkbox" onclick="toggleCheckbox(this, 'rp_geographies', 'Global')">
-        <input type="checkbox" name="rp_geographies">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">Global</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" id="card_report_type">
-    <div class="card-title required">Report Type</div>
-    <div class="card-hint">Choose the level of deliverable and branding.</div>
-    <div class="option-grid cols-2">
-      <div class="option-card" onclick="selectOption(this, 'rp_delivery_tier', 'standard')">
-        <input type="radio" name="rp_delivery_tier">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">Standard Report</div><div class="option-desc">G2-branded report, 2 iteration rounds, standard deliverable package</div></div>
-      </div>
-      <div class="option-card" onclick="selectOption(this, 'rp_delivery_tier', 'custom')">
-        <input type="radio" name="rp_delivery_tier">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">Custom Report</div><div class="option-desc">Client-branded report, 4 iteration rounds, premium deliverable package</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">AEO Add-on <span style="color: var(--g2-dark); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;">AI Engine Optimization</span> <span style="color: var(--g2-text-light);">(optional)</span></div>
-    <div class="card-hint">Get your report published as an interactive HTML page with a parallel AI-optimized markdown file — so AI engines (ChatGPT, Perplexity, Gemini) can discover and cite your content. Works best when hosted on G2 for maximum reach.</div>
-    <div class="option-grid cols-2">
-      <div class="option-card" onclick="selectOption(this, 'rp_aeo_addon', 'g2_hosted')">
-        <input type="radio" name="rp_aeo_addon">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">Yes (G2-hosted)</div><div class="option-desc">Published on G2 — maximum AI engine discoverability and traffic</div></div>
-      </div>
-      <div class="option-card" onclick="selectOption(this, 'rp_aeo_addon', 'no')">
-        <input type="radio" name="rp_aeo_addon">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">Not now</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Report Format <span style="color: var(--g2-text-light);">(optional)</span></div>
-    <div class="card-hint">Choose PDF report, findings presentation, or both.</div>
-    <div class="option-grid cols-3">
-      <div class="option-card" onclick="selectOption(this, 'rp_report_format', 'pdf')">
-        <input type="radio" name="rp_report_format">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">PDF Report</div></div>
-      </div>
-      <div class="option-card" onclick="selectOption(this, 'rp_report_format', 'pptx')">
-        <input type="radio" name="rp_report_format">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">Findings Presentation (PPTX)</div></div>
-      </div>
-      <div class="option-card" onclick="selectOption(this, 'rp_report_format', 'both')">
-        <input type="radio" name="rp_report_format">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">Both</div></div>
-      </div>
-    </div>
   </div>
 
   <div class="nav-buttons">
@@ -1006,43 +1008,22 @@
     </div>
   </div>
 
-  <div class="card" id="card_description">
-    <div class="card-title required">Brief Description</div>
-    <div class="card-hint">What's the topic or research question?</div>
-    <textarea id="rp_description" placeholder="e.g., 'We want to understand buyer priorities for AI-powered procurement tools and how our product is perceived vs. competitors...'"></textarea>
+  <div class="card">
+    <div class="card-title">Approximate Budget <span style="color: var(--g2-text-light);">(optional)</span></div>
+    <div class="card-hint">Sharing a budget range helps us tailor the scope and deliverables to what's realistic for you.</div>
+    <select id="rp_budget">
+      <option value="">Select a range...</option>
+      <option value="under_25k">Under $25k</option>
+      <option value="25k_50k">$25k – $50k</option>
+      <option value="50k_100k">$50k – $100k</option>
+      <option value="100k_200k">$100k – $200k</option>
+      <option value="200k_plus">$200k+</option>
+      <option value="tbd">Not sure yet</option>
+    </select>
   </div>
 
   <div class="card">
-    <div class="card-title">One-off or Recurring? <span style="color: var(--g2-text-light);">(optional)</span></div>
-    <div class="option-grid cols-2">
-      <div class="option-card" onclick="selectOption(this, 'rp_engagement_type', 'one-off')">
-        <input type="radio" name="rp_engagement_type">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">One-off Report</div></div>
-      </div>
-      <div class="option-card" onclick="selectOption(this, 'rp_engagement_type', 'recurring')">
-        <input type="radio" name="rp_engagement_type">
-        <div class="option-indicator"></div>
-        <div class="option-content"><div class="option-label">Recurring Engagement</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="conditional" id="rp-cadence-field">
-    <div class="card">
-      <div class="card-title">Cadence (if Recurring)</div>
-      <select id="rp_cadence">
-        <option value="">Select cadence...</option>
-        <option value="monthly">Monthly</option>
-        <option value="quarterly">Quarterly</option>
-        <option value="semi-annual">Semi-annual</option>
-        <option value="annual">Annual</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">When Do You Need This By? <span style="color: var(--g2-text-light);">(optional)</span></div>
+    <div class="card-title">Estimated Publish Date <span style="color: var(--g2-text-light);">(optional)</span></div>
     <input type="date" id="rp_deadline_date">
     <div style="margin-top: 16px;">
       <div class="option-grid cols-3">
@@ -1136,31 +1117,16 @@
 
   const stepLabels = ['Welcome', 'About You', 'What Do You Need?', 'Goals & Context', 'Review'];
 
-  // Pricing state
-  let pricing = {
-    panelSize: null,
-    panelPrice: 0,
-    deliveryTier: null,
-    aeoAddon: null,
-    caseStudyInterviews: null
-  };
-
-  // New 3D pricing model: basePriceTable[seniority][reportType] × panelMultipliers[panelSize]
+  // Pricing model: basePriceTable[respondentProfile] × panelMultipliers[panelSize]
   const basePriceTable = {
-    users:  { standard: 25000, custom: 35000 },
-    buyers: { standard: 35000, custom: 50000 },
-    vp:     { standard: 65000, custom: 75000 }
+    end_users: { base: 25000 },
+    buyers:    { base: 35000 },
+    leaders:   { base: 65000 }
   };
 
   const panelMultipliers = {
     100: 1.00, 150: 1.50, 200: 1.80, 300: 2.45, 400: 2.95,
     500: 3.45, 600: 3.85, 700: 4.25, 800: 4.55, 900: 4.85, 1000: 5.05
-  };
-
-  const interviewLengthModifiers = {
-    quick_pulse: 0,
-    standard: 0.15,
-    deep_dive: 0.30
   };
 
   // ============ ADMIN MODE ============
@@ -1177,70 +1143,24 @@
     let lines = [];
     let total = 0;
 
-    // Gather current form values
+    const productType = document.querySelector('input[name="rp_product_type"]:checked')?.value || '';
     const panelSize = document.getElementById('rp_sample_size')?.value;
-    const seniority = document.querySelector('input[name="rp_seniority"]:checked')?.value || 'users';
-    const reportType = document.querySelector('input[name="rp_delivery_tier"]:checked')?.value || 'standard';
-    const researchDepth = document.querySelector('input[name="rp_research_depth"]:checked')?.value || 'standard';
-    const aeoAddon = document.querySelector('input[name="rp_aeo_addon"]:checked')?.value;
+    const respondentProfile = document.querySelector('input[name="rp_respondent_profile"]:checked')?.value || 'end_users';
 
-    // Base pricing via 3D model
-    const seniorityLabels = { users: 'Users', buyers: 'Buyers', vp: 'VP+' };
-    const reportLabels = { standard: 'Standard', custom: 'Custom' };
+    const profileLabels = { end_users: 'End Users', buyers: 'Buyers', leaders: 'Leaders' };
 
-    if (panelSize && basePriceTable[seniority] && panelMultipliers[panelSize]) {
-      const baseAt100 = basePriceTable[seniority][reportType] || basePriceTable[seniority].standard;
-      const mult = panelMultipliers[panelSize];
-      const lenMod = interviewLengthModifiers[researchDepth] || 0;
+    if (productType === 'custom_research' && panelSize && basePriceTable[respondentProfile] && panelMultipliers[parseInt(panelSize)]) {
+      const baseAt100 = basePriceTable[respondentProfile].base;
+      const mult = panelMultipliers[parseInt(panelSize)];
       const scaledBase = Math.round(baseAt100 * mult);
-      const adjustedBase = Math.round(scaledBase * (1 + lenMod));
 
-      lines.push({ label: `Base (${seniorityLabels[seniority]} / ${reportLabels[reportType]})`, value: baseAt100, dim: true });
+      lines.push({ label: `Base (${profileLabels[respondentProfile]} @ N=100)`, value: baseAt100, dim: true });
       lines.push({ label: `× ${mult}x panel multiplier (N=${panelSize})`, value: scaledBase, dim: true });
-      if (lenMod > 0) {
-        lines.push({ label: `+ ${Math.round(lenMod * 100)}% interview length`, value: adjustedBase - scaledBase, dim: true });
-      }
-      lines.push({ label: `Subtotal: ${reportLabels[reportType]} Report`, value: adjustedBase });
-      total += adjustedBase;
-    }
-
-    // AEO add-on
-    if (aeoAddon === 'g2_hosted') {
-      lines.push({ label: 'AEO: G2-hosted', value: 3000 });
-      total += 3000;
-    }
-
-    // Audio Recording & Transcript ($50/respondent)
-    const audioTranscript = document.querySelector('input[name="rp_audio_transcript"]:checked')?.value;
-    if (audioTranscript === 'yes' && panelSize) {
-      const audioTotal = 50 * parseInt(panelSize);
-      lines.push({ label: `Audio & Transcript (${panelSize} × $50)`, value: audioTotal });
-      total += audioTotal;
-    }
-
-    // Report format add-on
-    const reportFormat = document.querySelector('input[name="rp_report_format"]:checked')?.value;
-    if (reportFormat === 'both') {
-      lines.push({ label: 'Both PDF + PPTX', value: 5000 });
-      total += 5000;
-    }
-
-    // Case study pricing
-    const caseStudyInterviews = document.querySelector('input[name="rp_case_study_interviews"]:checked')?.value;
-    if (caseStudyInterviews) {
-      const interviews = parseInt(caseStudyInterviews);
-      let caseStudyPrice = 0;
-      if (interviews <= 2) caseStudyPrice = interviews * 5000;
-      else if (interviews <= 4) caseStudyPrice = interviews * 4000;
-      else if (interviews <= 9) caseStudyPrice = interviews * 3500;
-      else if (interviews <= 14) caseStudyPrice = interviews * 3000;
-      else if (interviews <= 19) caseStudyPrice = interviews * 2750;
-      else caseStudyPrice = interviews * 2500;
-
-      if (caseStudyPrice > 0) {
-        lines.push({ label: `Case Studies (${interviews} interviews)`, value: caseStudyPrice });
-        total += caseStudyPrice;
-      }
+      lines.push({ label: `Custom Research Subtotal`, value: scaledBase });
+      total += scaledBase;
+    } else if (productType === 'synthetic_report') {
+      lines.push({ label: 'Synthetic Report', value: 15000 });
+      total += 15000;
     }
 
     // Render pricing breakdown
@@ -1250,19 +1170,21 @@
       const dimStyle = l.dim ? ' style="opacity:0.6; font-size:12px;"' : '';
       html += `<div class="price-line"${dimStyle}><span class="label">${l.label}</span><span class="value">${formatted}</span></div>`;
     });
+    if (lines.length === 0) {
+      html = '<div class="price-line" style="color:var(--g2-text-light);">Select a product type and options above</div>';
+    }
     html += `<div class="price-total"><span>Estimated Total</span><span class="value">$${total.toLocaleString()}</span></div>`;
     document.getElementById('pricingBreakdown').innerHTML = html;
 
     // Generate recommendations
     let recs = [];
-    if (panelSize && parseInt(panelSize) < 150) {
-      recs.push('UPSELL: Consider recommending larger panel (150+) for more robust insights.');
-    }
-    if (reportType === 'standard') {
-      recs.push('UPSELL: Custom Report adds client branding + 4 iterations — higher value for the client.');
-    }
-    if (seniority === 'users' && panelSize && parseInt(panelSize) >= 400) {
-      recs.push('NOTE: Large User-tier panel — check if Buyers tier is more appropriate for the research goals.');
+    if (productType === 'custom_research') {
+      if (panelSize && parseInt(panelSize) < 150) {
+        recs.push('UPSELL: Consider recommending larger panel (150+) for more robust insights.');
+      }
+      if (respondentProfile === 'end_users' && panelSize && parseInt(panelSize) >= 400) {
+        recs.push('NOTE: Large End User panel — confirm Buyers or Leaders tier isn\'t more appropriate.');
+      }
     }
     if (recs.length === 0) recs.push('No flags — selections look well-aligned.');
     document.getElementById('adminRecommendations').innerHTML = recs.map(r => `<div class="admin-flag">${r}</div>`).join('');
@@ -1340,14 +1262,6 @@
     const input = card.querySelector('input');
     input.checked = true;
 
-    // Handle conditional visibility
-    if (fieldName === 'rp_product_type') {
-      handleProductTypeChange(value);
-    }
-
-    if (fieldName === 'rp_engagement_type') {
-      handleEngagementChange(value);
-    }
   }
 
   function toggleCheckbox(card, fieldName, value) {
@@ -1356,36 +1270,29 @@
     input.checked = !input.checked;
   }
 
-  function toggleProductType(card, productType) {
+  function selectProductType(card, productType) {
+    // Single-select: deselect all siblings first
+    const siblings = card.parentElement.querySelectorAll('.option-card');
+    siblings.forEach(s => s.classList.remove('selected'));
+    card.classList.add('selected');
+    const input = card.querySelector('input');
+    input.checked = true;
+    updateProductTypeFields(productType);
+  }
+
+  function updateProductTypeFields(productType) {
+    const customFields = document.getElementById('rp-custom-research-fields');
+    const syntheticFields = document.getElementById('rp-synthetic-report-fields');
+    customFields.classList.toggle('show', productType === 'custom_research');
+    syntheticFields.classList.toggle('show', productType === 'synthetic_report');
+  }
+
+  function toggleAnalysisLens(card, lensKey) {
     card.classList.toggle('selected');
     const input = card.querySelector('input');
     input.checked = !input.checked;
-    updateProductTypeFields();
-  }
-
-  function updateProductTypeFields() {
-    const customFields = document.getElementById('rp-custom-research-fields');
-    const syntheticFields = document.getElementById('rp-synthetic-report-fields');
-    const caseStudyFields = document.getElementById('rp-case-study-fields');
-
-    const selectedTypes = Array.from(document.querySelectorAll('input[name="rp_product_type"]:checked')).map(i => i.value);
-
-    customFields.classList.toggle('show', selectedTypes.includes('custom_research'));
-    syntheticFields.classList.toggle('show', selectedTypes.includes('synthetic_report'));
-    caseStudyFields.classList.toggle('show', selectedTypes.includes('case_study'));
-  }
-
-  function handleProductTypeChange(type) {
-    updateProductTypeFields();
-  }
-
-  function handleEngagementChange(type) {
-    const cadenceField = document.getElementById('rp-cadence-field');
-    if (type === 'recurring') {
-      cadenceField.classList.add('show');
-    } else {
-      cadenceField.classList.remove('show');
-    }
+    const detailEl = document.getElementById('lens_' + lensKey + '_detail');
+    if (detailEl) detailEl.classList.toggle('show', input.checked);
   }
 
   // ============ SUMMARY BUILDER ============
@@ -1393,23 +1300,17 @@
     const company = document.getElementById('rp_company').value || 'Not provided';
     const name = document.getElementById('rp_name').value || 'Not provided';
     const email = document.getElementById('rp_email').value || 'Not provided';
-    const selectedProductTypes = Array.from(document.querySelectorAll('input[name="rp_product_type"]:checked'));
-    const productTypeLabels = selectedProductTypes.map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ') || 'Not selected';
-    const productTypeValues = selectedProductTypes.map(i => i.value);
-    const sampleSize = document.getElementById('rp_sample_size').value || 'Not provided';
-    const seniority = document.querySelector('input[name="rp_seniority"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
-    const caseStudyInterviews = document.querySelector('input[name="rp_case_study_interviews"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
 
-    const geographies = Array.from(document.querySelectorAll('input[name="rp_geographies"]:checked')).map(i => i.parentElement.textContent.trim()).join(', ') || 'Not selected';
-    const deliveryTier = document.querySelector('input[name="rp_delivery_tier"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
-    const aeoAddon = document.querySelector('input[name="rp_aeo_addon"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
+    const intendedUse = document.querySelector('input[name="rp_intended_use"]:checked')?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || 'Not selected';
+    const productTypeEl = document.querySelector('input[name="rp_product_type"]:checked');
+    const productTypeLabel = productTypeEl?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || 'Not selected';
+    const productTypeValue = productTypeEl?.value || '';
 
-    const goals = Array.from(document.querySelectorAll('input[name="rp_goals"]:checked')).map(i => i.parentElement.textContent.trim()).join(', ') || 'Not selected';
-    const description = document.getElementById('rp_description').value || 'Not provided';
-    const engagementType = document.querySelector('input[name="rp_engagement_type"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
-    const cadence = (engagementType === 'Recurring Engagement') ? (document.getElementById('rp_cadence').value || 'Not selected') : 'N/A';
+    const goals = Array.from(document.querySelectorAll('input[name="rp_goals"]:checked')).map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ') || 'Not selected';
+    const budget = document.getElementById('rp_budget')?.value || '';
+    const budgetLabel = budget ? document.getElementById('rp_budget').options[document.getElementById('rp_budget').selectedIndex]?.text : 'Not provided';
     const deadline = document.getElementById('rp_deadline_date').value || 'Not provided';
-    const deadlineFlexibility = document.querySelector('input[name="rp_deadline_flex"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
+    const deadlineFlexibility = document.querySelector('input[name="rp_deadline_flex"]:checked')?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || 'Not selected';
 
     let html = `
       <div class="summary-item">
@@ -1421,93 +1322,59 @@
         <div class="summary-value">${name} (${email})</div>
       </div>
       <div class="summary-item">
+        <div class="summary-label">Intended Use Case</div>
+        <div class="summary-value">${intendedUse}</div>
+      </div>
+      <div class="summary-item">
         <div class="summary-label">Product Type</div>
-        <div class="summary-value">${productTypeLabels}</div>
+        <div class="summary-value">${productTypeLabel}</div>
       </div>
     `;
 
-    const researchDepth = document.querySelector('input[name="rp_research_depth"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
-    const audioTranscript = document.querySelector('input[name="rp_audio_transcript"]:checked')?.parentElement.textContent?.trim() || 'Not selected';
-
-    if (productTypeValues.includes('custom_research')) {
-      const interviewTargets = document.getElementById('rp_interview_targets')?.value || '';
-      const researchTopics = document.getElementById('rp_research_topics')?.value || '';
+    if (productTypeValue === 'custom_research') {
+      const angle = document.getElementById('rp_research_angle')?.value || '';
+      const sampleSize = document.getElementById('rp_sample_size')?.value || 'Not selected';
+      const geographies = Array.from(document.querySelectorAll('input[name="rp_geographies"]:checked')).map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ') || 'Not selected';
+      const respondentProfile = document.querySelector('input[name="rp_respondent_profile"]:checked')?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || 'Not selected';
+      const respondentMore = document.getElementById('rp_respondent_more')?.value || '';
+      const reportFormat = document.querySelector('input[name="rp_custom_report_format"]:checked')?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || 'Not selected';
+      const addons = Array.from(document.querySelectorAll('input[name="rp_custom_addons"]:checked')).map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ');
       html += `
-        <div class="summary-item">
-          <div class="summary-label">Sample Size</div>
-          <div class="summary-value">${sampleSize}</div>
-        </div>
-        <div class="summary-item">
-          <div class="summary-label">Respondent Seniority</div>
-          <div class="summary-value">${seniority}</div>
-        </div>
-        <div class="summary-item">
-          <div class="summary-label">Research Depth</div>
-          <div class="summary-value">${researchDepth}</div>
-        </div>
-        ${interviewTargets ? `<div class="summary-item"><div class="summary-label">Interview Targets</div><div class="summary-value">${interviewTargets}</div></div>` : ''}
-        ${researchTopics ? `<div class="summary-item"><div class="summary-label">Topics & Key Insights</div><div class="summary-value">${researchTopics}</div></div>` : ''}
-        <div class="summary-item">
-          <div class="summary-label">Audio Recording & Transcript</div>
-          <div class="summary-value">${audioTranscript}</div>
-        </div>
+        ${angle ? `<div class="summary-item"><div class="summary-label">Research Angle & Topics</div><div class="summary-value">${angle}</div></div>` : ''}
+        <div class="summary-item"><div class="summary-label">Sample Size</div><div class="summary-value">${sampleSize}</div></div>
+        <div class="summary-item"><div class="summary-label">Geographies</div><div class="summary-value">${geographies}</div></div>
+        <div class="summary-item"><div class="summary-label">Respondent Profile</div><div class="summary-value">${respondentProfile}</div></div>
+        ${respondentMore ? `<div class="summary-item"><div class="summary-label">Respondent Details</div><div class="summary-value">${respondentMore}</div></div>` : ''}
+        <div class="summary-item"><div class="summary-label">Report Format</div><div class="summary-value">${reportFormat}</div></div>
+        ${addons ? `<div class="summary-item"><div class="summary-label">Add-on Content</div><div class="summary-value">${addons}</div></div>` : ''}
       `;
     }
 
-    if (productTypeValues.includes('synthetic_report')) {
+    if (productTypeValue === 'synthetic_report') {
       const synthCategory = document.getElementById('rp_synth_category')?.value || 'Not provided';
-      const synthAngle = document.getElementById('rp_synth_angle')?.value || 'Not provided';
+      const synthAngle = document.getElementById('rp_synth_angle')?.value || '';
       const synthPersona = document.getElementById('rp_synth_persona')?.value || '';
+      const lenses = Array.from(document.querySelectorAll('input[name="rp_analysis_lens"]:checked')).map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ');
+      const reportFormat = document.querySelector('input[name="rp_synth_report_format"]:checked')?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || '';
+      const addons = Array.from(document.querySelectorAll('input[name="rp_synth_addons"]:checked')).map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ');
       html += `
-        <div class="summary-item">
-          <div class="summary-label">G2 Category / Product</div>
-          <div class="summary-value">${synthCategory}</div>
-        </div>
-        <div class="summary-item">
-          <div class="summary-label">Report Topic / Angle</div>
-          <div class="summary-value">${synthAngle}</div>
-        </div>
-        ${synthPersona ? `<div class="summary-item"><div class="summary-label">Target Persona</div><div class="summary-value">${synthPersona}</div></div>` : ''}
-      `;
-    }
-
-    if (productTypeValues.includes('case_study')) {
-      html += `
-        <div class="summary-item">
-          <div class="summary-label">Number of Interviews</div>
-          <div class="summary-value">${caseStudyInterviews}</div>
-        </div>
+        <div class="summary-item"><div class="summary-label">G2 Category / Product</div><div class="summary-value">${synthCategory}</div></div>
+        ${synthAngle ? `<div class="summary-item"><div class="summary-label">Research Angle & Topics</div><div class="summary-value">${synthAngle}</div></div>` : ''}
+        ${synthPersona ? `<div class="summary-item"><div class="summary-label">Target Review Persona</div><div class="summary-value">${synthPersona}</div></div>` : ''}
+        ${lenses ? `<div class="summary-item"><div class="summary-label">Analysis Lens</div><div class="summary-value">${lenses}</div></div>` : ''}
+        ${reportFormat ? `<div class="summary-item"><div class="summary-label">Report Format</div><div class="summary-value">${reportFormat}</div></div>` : ''}
+        ${addons ? `<div class="summary-item"><div class="summary-label">Add-on Content</div><div class="summary-value">${addons}</div></div>` : ''}
       `;
     }
 
     html += `
       <div class="summary-item">
-        <div class="summary-label">Geographies</div>
-        <div class="summary-value">${geographies}</div>
-      </div>
-      <div class="summary-item">
-        <div class="summary-label">Delivery Tier</div>
-        <div class="summary-value">${deliveryTier}</div>
-      </div>
-      <div class="summary-item">
-        <div class="summary-label">AEO Add-on</div>
-        <div class="summary-value">${aeoAddon}</div>
-      </div>
-      <div class="summary-item">
         <div class="summary-label">Goals</div>
         <div class="summary-value">${goals}</div>
       </div>
+      ${budget ? `<div class="summary-item"><div class="summary-label">Approximate Budget</div><div class="summary-value">${budgetLabel}</div></div>` : ''}
       <div class="summary-item">
-        <div class="summary-label">Research Focus</div>
-        <div class="summary-value">${description}</div>
-      </div>
-      <div class="summary-item">
-        <div class="summary-label">Engagement Type</div>
-        <div class="summary-value">${engagementType}</div>
-      </div>
-      ${cadence !== 'N/A' ? `<div class="summary-item"><div class="summary-label">Cadence</div><div class="summary-value">${cadence}</div></div>` : ''}
-      <div class="summary-item">
-        <div class="summary-label">Deadline</div>
+        <div class="summary-label">Estimated Publish Date</div>
         <div class="summary-value">${deadline} (${deadlineFlexibility})</div>
       </div>
     `;
@@ -1516,46 +1383,9 @@
   }
 
   // ============ FORM SUBMISSION ============
-  async function submitForm() {
-    if (!validateStep(3)) return;
-    const data = gatherData();
-    const btn = document.querySelector('[onclick="submitForm()"]');
-    if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
-    try {
-      const res = await fetch('/api/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const json = await res.json();
-      if (btn) { btn.disabled = false; btn.textContent = 'Submit Request →'; }
-      if (json.success) {
-        currentStep = maxSteps;
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        const confirmEl = document.getElementById('rp-confirmation');
-        if (confirmEl) confirmEl.style.display = 'block';
-        window.scrollTo(0, 0);
-      } else {
-        let errEl = document.getElementById('submit-error');
-        if (!errEl) {
-          errEl = document.createElement('p');
-          errEl.id = 'submit-error';
-          errEl.style.cssText = 'color:#cc0000;margin-top:8px;font-size:14px;';
-          if (btn) btn.insertAdjacentElement('afterend', errEl);
-        }
-        errEl.textContent = 'Submission error: ' + (json.error || 'unknown error');
-      }
-    } catch (e) {
-      if (btn) { btn.disabled = false; btn.textContent = 'Submit Request →'; }
-      let errEl = document.getElementById('submit-error');
-      if (!errEl) {
-        errEl = document.createElement('p');
-        errEl.id = 'submit-error';
-        errEl.style.cssText = 'color:#cc0000;margin-top:8px;font-size:14px;';
-        if (btn) btn.insertAdjacentElement('afterend', errEl);
-      }
-      errEl.textContent = 'Network error — could not reach server';
-    }
+  function submitForm() {
+    alert('Request A Proposal submitted! Our team will review and get back to you within 1-2 business days.');
+    console.log('RP form data submitted');
   }
 
   // ============ PDF EXPORT FUNCTIONS ============
@@ -1617,22 +1447,18 @@
     y = 50;
 
     // Gather data
+    const productTypeEl = document.querySelector('input[name="rp_product_type"]:checked');
+    const productTypeVal = productTypeEl?.value || '';
     let summaryData = {
       company: document.getElementById('rp_company')?.value || 'Not provided',
       contact: document.getElementById('rp_name')?.value || 'Not provided',
       email: document.getElementById('rp_email')?.value || 'Not provided',
-      productType: Array.from(document.querySelectorAll('input[name="rp_product_type"]:checked')).map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ') || 'Not selected',
-      deliveryTier: document.querySelector('input[name="rp_delivery_tier"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
-      aeoAddon: document.querySelector('input[name="rp_aeo_addon"]:checked')?.parentElement?.textContent?.trim() || 'None',
-      panelSize: document.getElementById('rp_sample_size')?.value || 'Not selected',
-      seniority: document.querySelector('input[name="rp_seniority"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
-      researchDepth: document.querySelector('input[name="rp_research_depth"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
-      complexity: Array.from(document.querySelectorAll('input[name="rp_complexity"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || 'None',
-      audioTranscript: document.querySelector('input[name="rp_audio_transcript"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
-      geographies: Array.from(document.querySelectorAll('input[name="rp_geographies"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || 'Not selected',
-      goals: Array.from(document.querySelectorAll('input[name="rp_goals"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || 'Not selected',
-      description: document.getElementById('rp_description')?.value || 'Not provided',
-      engagementType: document.querySelector('input[name="rp_engagement_type"]:checked')?.parentElement?.textContent?.trim() || 'Not selected',
+      intendedUse: document.querySelector('input[name="rp_intended_use"]:checked')?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || 'Not selected',
+      productType: productTypeEl?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || 'Not selected',
+      panelSize: document.getElementById('rp_sample_size')?.value || '',
+      respondentProfile: document.querySelector('input[name="rp_respondent_profile"]:checked')?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || '',
+      geographies: Array.from(document.querySelectorAll('input[name="rp_geographies"]:checked')).map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ') || 'Not selected',
+      goals: Array.from(document.querySelectorAll('input[name="rp_goals"]:checked')).map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ') || 'Not selected',
       deadline: document.getElementById('rp_deadline_date')?.value || 'Not provided'
     };
 
@@ -1662,19 +1488,15 @@
 
     addRow('Company', summaryData.company);
     addRow('Primary Contact', `${summaryData.contact} (${summaryData.email})`);
+    addRow('Intended Use', summaryData.intendedUse);
     addRow('Product Type', summaryData.productType);
-    addRow('Delivery Tier', summaryData.deliveryTier);
-    if (summaryData.aeoAddon) addRow('AEO Add-on', summaryData.aeoAddon);
     if (summaryData.panelSize) addRow('Panel Size', `${summaryData.panelSize} respondents`);
-    if (summaryData.seniority) addRow('Respondent Seniority', summaryData.seniority);
-    if (summaryData.researchDepth) addRow('Research Depth', summaryData.researchDepth);
-    if (summaryData.complexity && summaryData.complexity !== 'None') addRow('Complexity Factors', summaryData.complexity);
-    if (summaryData.audioTranscript) addRow('Audio & Transcript', summaryData.audioTranscript);
-    if (summaryData.geographies) addRow('Geographies', summaryData.geographies);
+    if (summaryData.respondentProfile) addRow('Respondent Profile', summaryData.respondentProfile);
+    if (productTypeVal === 'custom_research') {
+      addRow('Geographies', summaryData.geographies);
+    }
     if (summaryData.goals) addRow('Goals', summaryData.goals);
-    if (summaryData.description) addRow('Research Focus', summaryData.description);
-    if (summaryData.engagementType) addRow('Engagement Type', summaryData.engagementType);
-    addRow('Target Delivery Date', summaryData.deadline);
+    addRow('Estimated Publish Date', summaryData.deadline);
 
     addFooter();
     doc.save(`G2_Research_Summary_${new Date().getTime()}.pdf`);
@@ -1753,19 +1575,20 @@
     y = 60;
 
     // Gather data
+    const intProdEl = document.querySelector('input[name="rp_product_type"]:checked');
+    const intProdVal = intProdEl?.value || '';
     let data = {
       company: document.getElementById('rp_company')?.value || 'TBD',
       contact: document.getElementById('rp_name')?.value || 'TBD',
       email: document.getElementById('rp_email')?.value || 'TBD',
-      productType: Array.from(document.querySelectorAll('input[name="rp_product_type"]:checked')).map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ') || 'TBD',
-      deliveryTier: document.querySelector('input[name="rp_delivery_tier"]:checked')?.parentElement?.textContent?.trim() || 'TBD',
-      aeoAddon: document.querySelector('input[name="rp_aeo_addon"]:checked')?.parentElement?.textContent?.trim() || 'None',
-      panelSize: document.getElementById('rp_sample_size')?.value || 'TBD',
-      researchDepth: document.querySelector('input[name="rp_research_depth"]:checked')?.parentElement?.textContent?.trim() || 'TBD',
-      complexity: Array.from(document.querySelectorAll('input[name="rp_complexity"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || 'None',
-      audioTranscript: document.querySelector('input[name="rp_audio_transcript"]:checked')?.parentElement?.textContent?.trim() || 'No',
-      goals: Array.from(document.querySelectorAll('input[name="rp_goals"]:checked')).map(i => i.closest('.option-card')?.textContent?.trim()).join(', ') || '',
-      description: document.getElementById('rp_description')?.value || ''
+      intendedUse: document.querySelector('input[name="rp_intended_use"]:checked')?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || 'TBD',
+      productType: intProdEl?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || 'TBD',
+      panelSize: document.getElementById('rp_sample_size')?.value || '',
+      respondentProfile: document.querySelector('input[name="rp_respondent_profile"]:checked')?.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim() || '',
+      geographies: Array.from(document.querySelectorAll('input[name="rp_geographies"]:checked')).map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ') || '',
+      goals: Array.from(document.querySelectorAll('input[name="rp_goals"]:checked')).map(i => i.closest('.option-card')?.querySelector('.option-label')?.textContent?.trim()).filter(Boolean).join(', ') || '',
+      budget: document.getElementById('rp_budget')?.options[document.getElementById('rp_budget')?.selectedIndex]?.text || '',
+      deadline: document.getElementById('rp_deadline_date')?.value || ''
     };
 
     // Section header helper
@@ -1797,17 +1620,16 @@
     sectionHeader('Engagement Overview');
     kvRow('Client', data.company);
     kvRow('Contact', `${data.contact} (${data.email})`);
+    kvRow('Intended Use', data.intendedUse);
     kvRow('Product Type', data.productType);
-    kvRow('Delivery Tier', data.deliveryTier);
 
     sectionHeader('Scope of Work');
     if (data.panelSize) kvRow('Panel Size', `${data.panelSize} respondents`);
-    if (data.researchDepth) kvRow('Research Depth', data.researchDepth);
-    if (data.complexity && data.complexity !== 'None') kvRow('Complexity Factors', data.complexity);
-    if (data.audioTranscript && data.audioTranscript !== 'No') kvRow('Audio & Transcript', data.audioTranscript);
-    if (data.aeoAddon && data.aeoAddon !== 'None') kvRow('AEO Add-on', data.aeoAddon);
+    if (data.respondentProfile) kvRow('Respondent Profile', data.respondentProfile);
+    if (intProdVal === 'custom_research' && data.geographies) kvRow('Geographies', data.geographies);
     if (data.goals) kvRow('Goals', data.goals);
-    if (data.description) kvRow('Research Focus', data.description);
+    if (data.budget) kvRow('Approximate Budget', data.budget);
+    if (data.deadline) kvRow('Estimated Publish Date', data.deadline);
 
     sectionHeader('Pricing Breakdown');
     // Get pricing breakdown from admin panel
