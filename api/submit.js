@@ -26,7 +26,9 @@ const SLACK_CHANNEL_ID  = 'C0ARNJBP93P'; // #aicr-intake
 const SLACK_PING_USERS = [
   'U0ABL3X68PR',  // Priyadarshan Patel (PP)
   'U09VC21UA77',  // Patrycja Bagrowska
-  'U08Q2SA7MHQ'   // Praveen Maloo
+  'U08Q2SA7MHQ',  // Praveen Maloo
+  'U0ABL34JFPZ',  // Molly Burke
+  'U0ACEENHJC9'   // Aurora Martina Granata
 ];
 
 const PRODUCT_LABEL = {
@@ -161,7 +163,7 @@ async function ensureCustomFields() {
 async function postSlackNotification({ company, name, email, productLabel, budgetText, deadlineDate, deadlineFlex, intendedUse, asanaTaskGid }) {
   if (!SLACK_WEBHOOK_URL && !SLACK_BOT_TOKEN) return; // silently skip if not configured
 
-  const dash = (v) => v || '-';
+  const dash = (v) => v || '—';
   const asanaUrl = asanaTaskGid
     ? `https://app.asana.com/0/${ASANA_PROJECT_GID}/${asanaTaskGid}`
     : null;
@@ -185,7 +187,7 @@ async function postSlackNotification({ company, name, email, productLabel, budge
         { type: 'mrkdwn', text: `*Contact*\n${dash(name)}${email ? `\n${email}` : ''}` },
         { type: 'mrkdwn', text: `*Budget*\n${dash(budgetText)}` },
         { type: 'mrkdwn', text: `*Intended Use*\n${dash(intendedUse)}` },
-        { type: 'mrkdwn', text: `*Publish Date*\n${deadlineDate ? `${deadlineDate}${deadlineFlex ? ` (${deadlineFlex})` : ''}` : '-'}` }
+        { type: 'mrkdwn', text: `*Publish Date*\n${deadlineDate ? `${deadlineDate}${deadlineFlex ? ` _(${deadlineFlex})_` : ''}` : '—'}` }
       ]
     }
   ];
@@ -195,7 +197,7 @@ async function postSlackNotification({ company, name, email, productLabel, budge
       type: 'actions',
       elements: [{
         type: 'button',
-        text: { type: 'plain_text', text: 'View in Asana ->', emoji: true },
+        text: { type: 'plain_text', text: 'View in Asana →', emoji: true },
         url:  asanaUrl,
         style: 'primary'
       }]
@@ -207,6 +209,7 @@ async function postSlackNotification({ company, name, email, productLabel, budge
   try {
     let slackRes;
     if (SLACK_WEBHOOK_URL) {
+      // Incoming Webhook (simpler, no channel ID needed)
       slackRes = await fetch(SLACK_WEBHOOK_URL, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -214,19 +217,14 @@ async function postSlackNotification({ company, name, email, productLabel, budge
       });
       console.log('[submit] Slack webhook status:', slackRes.status);
     } else {
+      // Bot token via Web API
       slackRes = await fetch('https://slack.com/api/chat.postMessage', {
         method:  'POST',
         headers: { Authorization: `Bearer ${SLACK_BOT_TOKEN}`, 'Content-Type': 'application/json' },
         body:    JSON.stringify({ channel: SLACK_CHANNEL_ID, text: fallbackText, blocks })
       });
       const slackJson = await slackRes.json();
-      console.log('[submit] Slack API response:', JSON.stringify(slackJson));
-    }
-  } catch (err) {
-    console.error('[submit] Slack notification error:', err);
-  }
-}
-));
+  2   console.log('[submit] Slack API response:', JSON.stringify(slackJson));
     }
   } catch (err) {
     // Non-fatal — don't fail the submission if Slack is down
