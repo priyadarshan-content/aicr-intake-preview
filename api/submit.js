@@ -205,20 +205,24 @@ async function postSlackNotification({ company, name, email, productLabel, budge
   const fallbackText = `${pingText} New AICR intake: ${company || 'Unknown'} â ${productLabel}`;
 
   try {
+    let slackRes;
     if (SLACK_WEBHOOK_URL) {
       // Incoming Webhook (simpler, no channel ID needed)
-      await fetch(SLACK_WEBHOOK_URL, {
+      slackRes = await fetch(SLACK_WEBHOOK_URL, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ text: fallbackText, blocks })
       });
+      console.log('[submit] Slack webhook status:', slackRes.status);
     } else {
       // Bot token via Web API
-      await fetch('https://slack.com/api/chat.postMessage', {
+      slackRes = await fetch('https://slack.com/api/chat.postMessage', {
         method:  'POST',
         headers: { Authorization: `Bearer ${SLACK_BOT_TOKEN}`, 'Content-Type': 'application/json' },
         body:    JSON.stringify({ channel: SLACK_CHANNEL_ID, text: fallbackText, blocks })
       });
+      const slackJson = await slackRes.json();
+      console.log('[submit] Slack API response:', JSON.stringify(slackJson));
     }
   } catch (err) {
     // Non-fatal â don't fail the submission if Slack is down
