@@ -1,23 +1,23 @@
 // POST /api/submit
-// Receives AICR intake form data â creates Asana task with custom field columns
-//                                 â writes row to Google Sheet (via GAS)
-//                                 â posts Slack notification to #aicr-intake
+// Receives AICR intake form data → creates Asana task with custom field columns
+//                                 → writes row to Google Sheet (via GAS)
+//                                 → posts Slack notification to #aicr-intake
 //
 // Required Vercel env vars:
-//   ASANA_ACCESS_TOKEN  â Asana personal access token
-//   ASANA_PROJECT_GID   â GID of "AICR Intake Submissions" project (1216104302009748)
-//   SLACK_BOT_TOKEN     â Slack bot token (xoxb-...) with chat:write scope
+//   ASANA_ACCESS_TOKEN  — Asana personal access token
+//   ASANA_PROJECT_GID   — GID of "AICR Intake Submissions" project (1216104302009748)
+//   SLACK_BOT_TOKEN     — Slack bot token (xoxb-...) with chat:write scope
 
 const ASANA_ACCESS_TOKEN  = process.env.ASANA_ACCESS_TOKEN;
 const ASANA_PROJECT_GID   = process.env.ASANA_PROJECT_GID;
 const ASANA_WORKSPACE_GID = '46608419138132';
 
-// Google Apps Script endpoint â writes to "AICR Intake Questions (Responses)" sheet
+// Google Apps Script endpoint — writes to "AICR Intake Questions (Responses)" sheet
 const GAS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8C1hxDK69JKs0mBkZj4SJ7oOw9KS_hwXP4krjpCskGbfdIINuoYIAAld1sk1PVE_NFw/exec';
 
 // Set ONE of these in Vercel env vars:
-//   SLACK_WEBHOOK_URL â Incoming Webhook URL (https://hooks.slack.com/services/...)
-//   SLACK_BOT_TOKEN   â Bot token (xoxb-...) with chat:write scope
+//   SLACK_WEBHOOK_URL — Incoming Webhook URL (https://hooks.slack.com/services/...)
+//   SLACK_BOT_TOKEN   — Bot token (xoxb-...) with chat:write scope
 const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 const SLACK_BOT_TOKEN   = process.env.SLACK_BOT_TOKEN;
 const SLACK_CHANNEL_ID  = 'C0ARNJBP93P'; // #aicr-intake
@@ -34,7 +34,7 @@ const PRODUCT_LABEL = {
   synthetic_report: 'Synthetic Report'
 };
 
-// ââ Custom field definitions ââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Custom field definitions ──────────────────────────────────────────────────
 // On first submission, these are created on the project automatically
 // and cached for the lifetime of the Lambda instance.
 const FIELD_DEFS = [
@@ -54,19 +54,19 @@ const FIELD_DEFS = [
     resource_subtype: 'enum',
     enum_options: [
       { name: 'Under $25k',    color: 'green',        enabled: true },
-      { name: '$25k â $50k',   color: 'yellow-green', enabled: true },
-      { name: '$50k â $100k',  color: 'yellow',       enabled: true },
-      { name: '$100k â $200k', color: 'orange',       enabled: true },
+      { name: '$25k – $50k',   color: 'yellow-green', enabled: true },
+      { name: '$50k – $100k',  color: 'yellow',       enabled: true },
+      { name: '$100k – $200k', color: 'orange',       enabled: true },
       { name: '$200k+',        color: 'red',          enabled: true },
       { name: 'Not sure yet',  color: 'cool-gray',    enabled: true }
     ]
   }
 ];
 
-// Module-level cache â survives warm Lambda re-use between requests
+// Module-level cache — survives warm Lambda re-use between requests
 let _fieldGids = null;
 
-// ââ Asana REST helper âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Asana REST helper ─────────────────────────────────────────────────────────
 async function asana(path, method = 'GET', body = null) {
   const opts = {
     method,
@@ -81,7 +81,7 @@ async function asana(path, method = 'GET', body = null) {
   return r.json();
 }
 
-// ââ Ensure custom fields exist on the project âââââââââââââââââââââââââââââââââ
+// ── Ensure custom fields exist on the project ─────────────────────────────────
 async function ensureCustomFields() {
   if (_fieldGids) return _fieldGids;
 
@@ -104,12 +104,12 @@ async function ensureCustomFields() {
 
   for (const def of FIELD_DEFS) {
     if (existing[def.name]) {
-      // Field already exists on project â use it as-is
+      // Field already exists on project — use it as-is
       gids[def.name] = existing[def.name];
       continue;
     }
 
-    // ââ Create field in the workspace âââââââââââââââââââââââââââââââââââââ
+    // ── Create field in the workspace ─────────────────────────────────────
     const created = await asana('/custom_fields', 'POST', {
       name:             def.name,
       resource_subtype: def.resource_subtype,
@@ -124,7 +124,7 @@ async function ensureCustomFields() {
     const fieldGid    = created.data.gid;
     const enumOptions = [];
 
-    // ââ Add enum options individually (most reliable approach) ââââââââââââ
+    // ── Add enum options individually (most reliable approach) ────────────
     if (def.enum_options) {
       for (const opt of def.enum_options) {
         const optRes = await asana(`/custom_fields/${fieldGid}/enum_options`, 'POST', {
@@ -138,7 +138,7 @@ async function ensureCustomFields() {
       }
     }
 
-    // ââ Attach field to project (is_important = show as a column) âââââââââ
+    // ── Attach field to project (is_important = show as a column) ─────────
     await asana(`/projects/${ASANA_PROJECT_GID}/addCustomFieldSetting`, 'POST', {
       custom_field: fieldGid,
       is_important: true
@@ -150,18 +150,18 @@ async function ensureCustomFields() {
       resource_subtype: def.resource_subtype,
       enum_options:    enumOptions
     };
-    console.log(`[setup] Created + attached field "${def.name}" â ${fieldGid}`);
+    console.log(`[setup] Created + attached field "${def.name}" → ${fieldGid}`);
   }
 
   _fieldGids = gids;
   return gids;
 }
 
-// ââ Slack notification ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Slack notification ────────────────────────────────────────────────────────
 async function postSlackNotification({ company, name, email, productLabel, budgetText, deadlineDate, deadlineFlex, intendedUse, asanaTaskGid }) {
   if (!SLACK_WEBHOOK_URL && !SLACK_BOT_TOKEN) return; // silently skip if not configured
 
-  const dash = (v) => v || 'â';
+  const dash = (v) => v || '-';
   const asanaUrl = asanaTaskGid
     ? `https://app.asana.com/0/${ASANA_PROJECT_GID}/${asanaTaskGid}`
     : null;
@@ -171,11 +171,11 @@ async function postSlackNotification({ company, name, email, productLabel, budge
   const blocks = [
     {
       type: 'section',
-      text: { type: 'mrkdwn', text: `${pingText} :inbox_tray: *New AICR intake response* â *${company || 'Unknown'}*` }
+      text: { type: 'mrkdwn', text: `${pingText} :inbox_tray: *New AICR intake response* - *${company || 'Unknown'}*` }
     },
     {
       type: 'header',
-      text: { type: 'plain_text', text: 'ð New AICR Intake Request', emoji: true }
+      text: { type: 'plain_text', text: ':tada: New AICR Intake Request', emoji: true }
     },
     {
       type: 'section',
@@ -185,7 +185,7 @@ async function postSlackNotification({ company, name, email, productLabel, budge
         { type: 'mrkdwn', text: `*Contact*\n${dash(name)}${email ? `\n${email}` : ''}` },
         { type: 'mrkdwn', text: `*Budget*\n${dash(budgetText)}` },
         { type: 'mrkdwn', text: `*Intended Use*\n${dash(intendedUse)}` },
-        { type: 'mrkdwn', text: `*Publish Date*\n${deadlineDate ? `${deadlineDate}${deadlineFlex ? ` _(${deadlineFlex})_` : ''}` : 'â'}` }
+        { type: 'mrkdwn', text: `*Publish Date*\n${deadlineDate ? `${deadlineDate}${deadlineFlex ? ` (${deadlineFlex})` : ''}` : '-'}` }
       ]
     }
   ];
@@ -195,19 +195,18 @@ async function postSlackNotification({ company, name, email, productLabel, budge
       type: 'actions',
       elements: [{
         type: 'button',
-        text: { type: 'plain_text', text: 'View in Asana â', emoji: true },
+        text: { type: 'plain_text', text: 'View in Asana ->', emoji: true },
         url:  asanaUrl,
         style: 'primary'
       }]
     });
   }
 
-  const fallbackText = `${pingText} New AICR intake: ${company || 'Unknown'} â ${productLabel}`;
+  const fallbackText = `${pingText} New AICR intake: ${company || 'Unknown'} - ${productLabel}`;
 
   try {
     let slackRes;
     if (SLACK_WEBHOOK_URL) {
-      // Incoming Webhook (simpler, no channel ID needed)
       slackRes = await fetch(SLACK_WEBHOOK_URL, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -215,7 +214,6 @@ async function postSlackNotification({ company, name, email, productLabel, budge
       });
       console.log('[submit] Slack webhook status:', slackRes.status);
     } else {
-      // Bot token via Web API
       slackRes = await fetch('https://slack.com/api/chat.postMessage', {
         method:  'POST',
         headers: { Authorization: `Bearer ${SLACK_BOT_TOKEN}`, 'Content-Type': 'application/json' },
@@ -225,12 +223,18 @@ async function postSlackNotification({ company, name, email, productLabel, budge
       console.log('[submit] Slack API response:', JSON.stringify(slackJson));
     }
   } catch (err) {
-    // Non-fatal â don't fail the submission if Slack is down
+    console.error('[submit] Slack notification error:', err);
+  }
+}
+));
+    }
+  } catch (err) {
+    // Non-fatal — don't fail the submission if Slack is down
     console.error('[submit] Slack notification error:', err);
   }
 }
 
-// ââ Google Sheet writer (non-fatal) ââââââââââââââââââââââââââââââââââââââââââ
+// ── Google Sheet writer (non-fatal) ──────────────────────────────────────────
 async function writeToGoogleSheet(payload) {
   try {
     // GAS accepts a GET request with ?payload=<json>
@@ -251,7 +255,7 @@ function enumOptionGid(field, label) {
   return field.enum_options.find(o => norm(o.name) === norm(label))?.gid ?? null;
 }
 
-// ââ Main handler âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Main handler ─────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -288,7 +292,7 @@ export default async function handler(req, res) {
   const goalsStr        = (goals        || []).join(', ');
   const analysisLensStr = (analysisLens || []).join('; ');
 
-  // ââ Task notes (full detail in description) âââââââââââââââââââââââââââââââ
+  // ── Task notes (full detail in description) ───────────────────────────────
   const line = (label, value) => value ? `${label}: ${value}` : null;
 
   const customSection = productType === 'custom_research' ? [
@@ -309,19 +313,19 @@ export default async function handler(req, res) {
   ].filter(Boolean).join('\n');
 
   const taskNotes = [
-    `ââ CONTACT ââ`,
+    `━━ CONTACT ━━`,
     line('Company',      company),
     line('Contact',      [name, email ? `<${email}>` : null].filter(Boolean).join('  ')),
     line('G2 Profile',   g2Profile),
     line('Stakeholders', stakeholders),
     '',
-    `ââ REQUEST ââ`,
+    `━━ REQUEST ━━`,
     line('Intended Use', intendedUse),
     line('Product Type', productLabel),
     '',
     customSection,
     '',
-    `ââ GOALS & CONTEXT ââ`,
+    `━━ GOALS & CONTEXT ━━`,
     line('Goals',  goalsStr),
     line('Budget', budgetText),
     deadlineDate
@@ -335,9 +339,9 @@ export default async function handler(req, res) {
     })} CT`
   ].filter(v => v !== null).join('\n');
 
-  const taskName = `[AICR] ${company || 'Unknown'} â ${productLabel}`;
+  const taskName = `[AICR] ${company || 'Unknown'} — ${productLabel}`;
 
-  // ââ Ensure custom fields exist on the project âââââââââââââââââââââââââââââ
+  // ── Ensure custom fields exist on the project ─────────────────────────────
   let fields = {};
   try {
     fields = await ensureCustomFields();
@@ -346,7 +350,7 @@ export default async function handler(req, res) {
     console.error('[submit] ensureCustomFields error:', err);
   }
 
-  // ââ Map form values â Asana custom_fields ââââââââââââââââââââââââââââââââ
+  // ── Map form values → Asana custom_fields ────────────────────────────────
   const custom_fields = {};
 
   const setText = (fieldName, value) => {
@@ -364,7 +368,7 @@ export default async function handler(req, res) {
   const budgetGid = enumOptionGid(fields['Budget'], budgetText);
   if (budgetGid && fields['Budget']?.gid) custom_fields[fields['Budget'].gid] = budgetGid;
 
-  // ââ Create Asana task âââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── Create Asana task ─────────────────────────────────────────────────────
   const taskData = {
     name:     taskName,
     notes:    taskNotes,
@@ -397,7 +401,7 @@ export default async function handler(req, res) {
 
   const asanaTaskGid = asanaResponse?.data?.gid ?? null;
 
-  // ââ Write to Google Sheet (non-fatal) ââââââââââââââââââââââââââââââââââââ
+  // ── Write to Google Sheet (non-fatal) ────────────────────────────────────
   // Field names match GAS writeRow_() exactly
   await writeToGoogleSheet({
     timestamp:           new Date(submittedAt || Date.now()).toISOString(),
@@ -430,7 +434,7 @@ export default async function handler(req, res) {
     budget:              budget || budgetText || ''
   });
 
-  // ââ Slack notification (non-fatal) âââââââââââââââââââââââââââââââââââââââ
+  // ── Slack notification (non-fatal) ───────────────────────────────────────
   await postSlackNotification({
     company, name, email, productLabel, budgetText,
     deadlineDate, deadlineFlex, intendedUse, asanaTaskGid
