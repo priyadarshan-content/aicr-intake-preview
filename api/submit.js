@@ -112,11 +112,16 @@ async function ensureCustomFields() {
     }
 
     // ── Create field in the workspace ─────────────────────────────────────
-    const created = await asana('/custom_fields', 'POST', {
+    const fieldPayload = {
       name:             def.name,
       resource_subtype: def.resource_subtype,
       workspace:        ASANA_WORKSPACE_GID
-    });
+    };
+    // Asana requires enum_options in the creation payload for enum fields
+    if (def.enum_options) {
+      fieldPayload.enum_options = def.enum_options.map(o => ({ name: o.name, color: o.color, enabled: true }));
+    }
+    const created = await asana('/custom_fields', 'POST', fieldPayload);
 
     if (!created.data?.gid) {
       console.error(`[setup] Could not create field "${def.name}":`, JSON.stringify(created));
@@ -124,21 +129,8 @@ async function ensureCustomFields() {
     }
 
     const fieldGid    = created.data.gid;
-    const enumOptions = [];
-
-    // ── Add enum options individually (most reliable approach) ────────────
-    if (def.enum_options) {
-      for (const opt of def.enum_options) {
-        const optRes = await asana(`/custom_fields/${fieldGid}/enum_options`, 'POST', {
-          name:    opt.name,
-          color:   opt.color,
-          enabled: true
-        });
-        if (optRes.data?.gid) {
-          enumOptions.push({ gid: optRes.data.gid, name: opt.name });
-        }
-      }
-    }
+    // Options are created inline with the field; extract from response
+    const enumOptions = (created.data.enum_options || []).map(o => ({ gid: o.gid, name: o.name }));
 
     // ── Attach field to project (is_important = show as a column) ─────────
     await asana(`/projects/${ASANA_PROJECT_GID}/addCustomFieldSetting`, 'POST', {
@@ -224,7 +216,7 @@ async function postSlackNotification({ company, name, email, productLabel, budge
         body:    JSON.stringify({ channel: SLACK_CHANNEL_ID, text: fallbackText, blocks })
       });
       const slackJson = await slackRes.json();
-  2   console.log('[submit] Slack API response:', JSON.stringify(slackJson));
+      console.log('[submit] Slack API response:', JSON.stringify(slackJson));
     }
   } catch (err) {
     // Non-fatal — don't fail the submission if Slack is down
